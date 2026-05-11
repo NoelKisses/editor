@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useEditorStore } from "@/store/editor-store";
+import { GenerateImageDialog } from "@/components/editor/generate-image-dialog";
 import {
   Type,
   ImagePlus,
@@ -16,6 +17,7 @@ import {
   Download,
   Wand2,
   Loader2,
+  Sparkles,
 } from "lucide-react";
 
 interface CanvasToolbarProps {
@@ -25,6 +27,7 @@ interface CanvasToolbarProps {
 
 export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [generateOpen, setGenerateOpen] = useState(false);
   const {
     undo,
     redo,
@@ -117,7 +120,7 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
         toast.success("Análise concluída! Veja as sugestões no painel.");
       }
     } catch {
-      toast.error("Erro ao analisar imagem. Verifique sua API key do Claude.");
+      toast.error("Erro ao analisar imagem. Verifique sua GEMINI_API_KEY no .env.local.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -188,7 +191,17 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
 
       <div className="flex-1" />
 
-      {/* AI e Export */}
+      {/* Gerar, Analisar e Export */}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setGenerateOpen(true)}
+        className="border-violet-500/30 text-violet-400 hover:bg-violet-500/10 gap-1.5"
+      >
+        <Sparkles className="w-4 h-4" />
+        Gerar com IA
+      </Button>
+
       <Button
         variant="outline"
         size="sm"
@@ -201,13 +214,19 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
         ) : (
           <Wand2 className="w-4 h-4 mr-1.5" />
         )}
-        Analisar com IA
+        Analisar
       </Button>
 
       <Button size="sm" onClick={handleExport} className="gap-1.5">
         <Download className="w-4 h-4" />
         Exportar
       </Button>
+
+      <GenerateImageDialog
+        open={generateOpen}
+        onClose={() => setGenerateOpen(false)}
+        fabricCanvas={fabricCanvas}
+      />
     </div>
   );
 }
