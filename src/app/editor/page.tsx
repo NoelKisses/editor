@@ -23,6 +23,8 @@ import { ImageFiltersPanel } from "@/components/editor/image-filters-panel";
 import { GradientPanel } from "@/components/editor/gradient-panel";
 import { FramesPanel } from "@/components/editor/frames-panel";
 import { IconsPanel } from "@/components/editor/icons-panel";
+import { ColorPalettePanel } from "@/components/editor/color-palette-panel";
+import { EffectsPanel } from "@/components/editor/effects-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -39,6 +41,8 @@ import {
   FolderOpen,
   Filter,
   Palette,
+  Droplets,
+  Zap,
   Frame,
   LayoutGrid,
 } from "lucide-react";
@@ -194,10 +198,10 @@ export default function EditorPage() {
           </div>
         </main>
 
-        {/* Right sidebar — 8 abas */}
+        {/* Right sidebar — 10 abas */}
         <aside className="w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden">
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-8 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid grid-cols-10 m-2 flex-shrink-0 h-8">
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -221,6 +225,12 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="history" title="Histórico" className="px-0.5">
                 <Clock className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="palette" title="Paletas de Cores" className="px-0.5">
+                <Droplets className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="effects" title="Efeitos (Sombra e Borda)" className="px-0.5">
+                <Zap className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -276,6 +286,18 @@ export default function EditorPage() {
             <TabsContent value="history" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <HistoryPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="palette" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ColorPalettePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="effects" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <EffectsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
