@@ -64,6 +64,7 @@ export interface EditorState {
   zoom: number;
   isAnalyzing: boolean;
   aiSuggestions: string[];
+  snapToGrid: boolean;
 }
 
 export interface ExportOptions {

@@ -19,6 +19,8 @@ interface EditorStore extends EditorState {
   clearCanvas: () => void;
   exportOptions: ExportOptions;
   setExportOptions: (options: Partial<ExportOptions>) => void;
+  snapToGrid: boolean;
+  setSnapToGrid: (snap: boolean) => void;
 }
 
 const DEFAULT_EXPORT_OPTIONS: ExportOptions = {
@@ -37,6 +39,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   isAnalyzing: false,
   aiSuggestions: [],
   exportOptions: DEFAULT_EXPORT_OPTIONS,
+  snapToGrid: false,
 
   setTemplate: (template) => {
     set({ template, elements: [], selectedElementId: null, history: [[]], historyIndex: 0 });
@@ -116,4 +119,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
 
   setExportOptions: (options) =>
     set((state) => ({ exportOptions: { ...state.exportOptions, ...options } })),
+
+  setSnapToGrid: (snap) => set({ snapToGrid: snap }),
 }));

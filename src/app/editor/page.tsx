@@ -18,6 +18,7 @@ import { AlignTools } from "@/components/editor/align-tools";
 import { TextEffectsPanel } from "@/components/editor/text-effects-panel";
 import { HistoryPanel } from "@/components/editor/history-panel";
 import { ProjectsPanel } from "@/components/editor/projects-panel";
+import { ImageFiltersPanel } from "@/components/editor/image-filters-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -32,6 +33,7 @@ import {
   Type,
   Clock,
   FolderOpen,
+  Filter,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -166,15 +168,18 @@ export default function EditorPage() {
           </div>
         </main>
 
-        {/* Right sidebar — 6 abas */}
+        {/* Right sidebar — 7 abas */}
         <aside className="w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden">
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-6 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid grid-cols-7 m-2 flex-shrink-0 h-8">
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="text" title="Texto" className="px-0.5">
                 <Type className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="filters" title="Filtros de Imagem" className="px-0.5">
+                <Filter className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="layers" title="Camadas" className="px-0.5">
                 <Layers className="w-3 h-3" />
@@ -199,6 +204,12 @@ export default function EditorPage() {
             <TabsContent value="text" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextEffectsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="filters" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageFiltersPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
 

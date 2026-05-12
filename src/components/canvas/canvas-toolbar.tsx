@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useEditorStore } from "@/store/editor-store";
 import { GenerateImageDialog } from "@/components/editor/generate-image-dialog";
+import { ExportDialog } from "@/components/editor/export-dialog";
 import {
   Type,
   ImagePlus,
@@ -22,6 +23,7 @@ import {
   Clipboard,
   Scissors,
   CopyPlus,
+  Grid3X3,
 } from "lucide-react";
 
 interface CanvasToolbarProps {
@@ -32,6 +34,7 @@ interface CanvasToolbarProps {
 export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [generateOpen, setGenerateOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const clipboardRef = useRef<any>(null);
   const {
@@ -44,8 +47,9 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
     isAnalyzing,
     setIsAnalyzing,
     setAiSuggestions,
-    exportOptions,
     template,
+    snapToGrid,
+    setSnapToGrid,
   } = useEditorStore();
 
   const handleCopy = useCallback(() => {
@@ -151,18 +155,8 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
   );
 
   const handleExport = useCallback(() => {
-    if (!fabricCanvas || !template) return;
-    const dataURL = fabricCanvas.toDataURL({
-      format: exportOptions.format,
-      quality: exportOptions.quality / 100,
-      multiplier: exportOptions.scale,
-    });
-    const link = document.createElement("a");
-    link.download = `thumbnail-${template.id}.${exportOptions.format}`;
-    link.href = dataURL;
-    link.click();
-    toast.success("Imagem exportada com sucesso!");
-  }, [fabricCanvas, exportOptions, template]);
+    setExportOpen(true);
+  }, []);
 
   const handleAnalyze = useCallback(async () => {
     if (!fabricCanvas || !template) return;
@@ -197,8 +191,9 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
     }
   }, [fabricCanvas, selectedElementId, removeElement]);
 
-  const zoomIn = () => setZoom(Math.min(zoom + 0.1, 3));
-  const zoomOut = () => setZoom(Math.max(zoom - 0.1, 0.2));
+  const zoomIn = () => setZoom(Math.min(parseFloat((zoom + 0.1).toFixed(2)), 5));
+  const zoomOut = () => setZoom(Math.max(parseFloat((zoom - 0.1).toFixed(2)), 0.1));
+  const zoomReset = () => setZoom(1);
 
   return (
     <div className="flex items-center gap-1.5 px-4 py-2 border-b border-border bg-card/50 flex-wrap">
@@ -251,11 +246,28 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
       <Button variant="ghost" size="icon" onClick={zoomOut} title="Reduzir zoom">
         <ZoomOut className="w-4 h-4" />
       </Button>
-      <span className="text-xs text-muted-foreground w-12 text-center tabular-nums">
+      <button
+        onClick={zoomReset}
+        className="text-xs text-muted-foreground hover:text-foreground w-12 text-center tabular-nums hover:bg-accent rounded px-1 py-0.5 transition-colors"
+        title="Resetar zoom (100%)"
+      >
         {Math.round(zoom * 100)}%
-      </span>
+      </button>
       <Button variant="ghost" size="icon" onClick={zoomIn} title="Aumentar zoom">
         <ZoomIn className="w-4 h-4" />
+      </Button>
+
+      <Separator orientation="vertical" className="h-6" />
+
+      {/* Snap to grid */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setSnapToGrid(!snapToGrid)}
+        title={snapToGrid ? "Snap ativado (clique para desativar)" : "Snap desativado (clique para ativar)"}
+        className={snapToGrid ? "text-primary bg-primary/10" : ""}
+      >
+        <Grid3X3 className="w-4 h-4" />
       </Button>
 
       <Separator orientation="vertical" className="h-6" />
@@ -301,6 +313,12 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
       <GenerateImageDialog
         open={generateOpen}
         onClose={() => setGenerateOpen(false)}
+        fabricCanvas={fabricCanvas}
+      />
+
+      <ExportDialog
+        open={exportOpen}
+        onClose={() => setExportOpen(false)}
         fabricCanvas={fabricCanvas}
       />
     </div>
