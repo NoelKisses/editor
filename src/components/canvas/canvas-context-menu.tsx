@@ -16,7 +16,9 @@ import {
   FlipVertical2,
   Lock,
   Unlock,
+  Crop,
 } from "lucide-react";
+import { CropImageDialog } from "@/components/editor/crop-image-dialog";
 
 interface CanvasContextMenuProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,6 +33,7 @@ interface MenuPosition {
 export function CanvasContextMenu({ fabricCanvas }: CanvasContextMenuProps) {
   const [visible, setVisible] = useState(false);
   const [pos, setPos] = useState<MenuPosition>({ x: 0, y: 0 });
+  const [cropOpen, setCropOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const clipboardRef = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -188,59 +191,87 @@ export function CanvasContextMenu({ fabricCanvas }: CanvasContextMenuProps) {
       toast.success(locked ? "Objeto bloqueado" : "Objeto desbloqueado");
     });
 
-  if (!visible) return null;
+  const handleCrop = () => {
+    if (!targetObj || targetObj.type !== "image") return;
+    setVisible(false);
+    setCropOpen(true);
+  };
+
+  if (!visible && !cropOpen) return null;
 
   const hasObj = !!targetObj;
   const isLocked = hasObj && targetObj.lockMovementX;
+  const isImage = hasObj && targetObj.type === "image";
 
   return (
-    <div
-      className="fixed z-[9999] bg-card border border-border rounded-lg shadow-2xl py-1 min-w-[180px] text-sm"
-      style={{ left: pos.x, top: pos.y }}
-      onClick={(e) => e.stopPropagation()}
-    >
-      {/* Clipboard */}
-      <MenuItem icon={<Copy className="w-3.5 h-3.5" />} label="Copiar" shortcut="Ctrl+C" onClick={handleCopy} disabled={!hasObj} />
-      <MenuItem icon={<Scissors className="w-3.5 h-3.5" />} label="Recortar" shortcut="Ctrl+X" onClick={handleCut} disabled={!hasObj} />
-      <MenuItem icon={<Clipboard className="w-3.5 h-3.5" />} label="Colar" shortcut="Ctrl+V" onClick={handlePaste} />
-      <MenuItem icon={<CopyPlus className="w-3.5 h-3.5" />} label="Duplicar" shortcut="Ctrl+D" onClick={handleDuplicate} disabled={!hasObj} />
+    <>
+      {visible && (
+        <div
+          className="fixed z-[9999] bg-card border border-border rounded-lg shadow-2xl py-1 min-w-[180px] text-sm"
+          style={{ left: pos.x, top: pos.y }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Clipboard */}
+          <MenuItem icon={<Copy className="w-3.5 h-3.5" />} label="Copiar" shortcut="Ctrl+C" onClick={handleCopy} disabled={!hasObj} />
+          <MenuItem icon={<Scissors className="w-3.5 h-3.5" />} label="Recortar" shortcut="Ctrl+X" onClick={handleCut} disabled={!hasObj} />
+          <MenuItem icon={<Clipboard className="w-3.5 h-3.5" />} label="Colar" shortcut="Ctrl+V" onClick={handlePaste} />
+          <MenuItem icon={<CopyPlus className="w-3.5 h-3.5" />} label="Duplicar" shortcut="Ctrl+D" onClick={handleDuplicate} disabled={!hasObj} />
 
-      <Divider />
+          <Divider />
 
-      {/* Order */}
-      <MenuItem icon={<ChevronsUp className="w-3.5 h-3.5" />} label="Trazer para frente" onClick={handleBringToFront} disabled={!hasObj} />
-      <MenuItem icon={<ChevronUp className="w-3.5 h-3.5" />} label="Avançar camada" onClick={handleBringForward} disabled={!hasObj} />
-      <MenuItem icon={<ChevronDown className="w-3.5 h-3.5" />} label="Recuar camada" onClick={handleSendBackward} disabled={!hasObj} />
-      <MenuItem icon={<ChevronsDown className="w-3.5 h-3.5" />} label="Enviar para trás" onClick={handleSendToBack} disabled={!hasObj} />
+          {/* Image specific */}
+          {isImage && (
+            <>
+              <MenuItem icon={<Crop className="w-3.5 h-3.5" />} label="Recortar imagem" onClick={handleCrop} />
+              <Divider />
+            </>
+          )}
 
-      <Divider />
+          {/* Order */}
+          <MenuItem icon={<ChevronsUp className="w-3.5 h-3.5" />} label="Trazer para frente" onClick={handleBringToFront} disabled={!hasObj} />
+          <MenuItem icon={<ChevronUp className="w-3.5 h-3.5" />} label="Avançar camada" onClick={handleBringForward} disabled={!hasObj} />
+          <MenuItem icon={<ChevronDown className="w-3.5 h-3.5" />} label="Recuar camada" onClick={handleSendBackward} disabled={!hasObj} />
+          <MenuItem icon={<ChevronsDown className="w-3.5 h-3.5" />} label="Enviar para trás" onClick={handleSendToBack} disabled={!hasObj} />
 
-      {/* Flip */}
-      <MenuItem icon={<FlipHorizontal2 className="w-3.5 h-3.5" />} label="Espelhar Horizontal" onClick={handleFlipH} disabled={!hasObj} />
-      <MenuItem icon={<FlipVertical2 className="w-3.5 h-3.5" />} label="Espelhar Vertical" onClick={handleFlipV} disabled={!hasObj} />
+          <Divider />
 
-      <Divider />
+          {/* Flip */}
+          <MenuItem icon={<FlipHorizontal2 className="w-3.5 h-3.5" />} label="Espelhar Horizontal" onClick={handleFlipH} disabled={!hasObj} />
+          <MenuItem icon={<FlipVertical2 className="w-3.5 h-3.5" />} label="Espelhar Vertical" onClick={handleFlipV} disabled={!hasObj} />
 
-      {/* Lock */}
-      <MenuItem
-        icon={isLocked ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-        label={isLocked ? "Desbloquear" : "Bloquear"}
-        onClick={handleLock}
-        disabled={!hasObj}
-      />
+          <Divider />
 
-      <Divider />
+          {/* Lock */}
+          <MenuItem
+            icon={isLocked ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+            label={isLocked ? "Desbloquear" : "Bloquear"}
+            onClick={handleLock}
+            disabled={!hasObj}
+          />
 
-      {/* Delete */}
-      <MenuItem
-        icon={<Trash2 className="w-3.5 h-3.5 text-destructive" />}
-        label="Deletar"
-        shortcut="Del"
-        onClick={handleDelete}
-        disabled={!hasObj}
-        danger
-      />
-    </div>
+          <Divider />
+
+          {/* Delete */}
+          <MenuItem
+            icon={<Trash2 className="w-3.5 h-3.5 text-destructive" />}
+            label="Deletar"
+            shortcut="Del"
+            onClick={handleDelete}
+            disabled={!hasObj}
+            danger
+          />
+        </div>
+      )}
+
+      {cropOpen && targetObj && (
+        <CropImageDialog
+          open={cropOpen}
+          onClose={() => setCropOpen(false)}
+          fabricCanvas={fabricCanvas}
+          imageObject={targetObj}
+        />
+      )}
+    </>
   );
 }
 

@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { useEditorStore } from "@/store/editor-store";
 import { GenerateImageDialog } from "@/components/editor/generate-image-dialog";
 import { ExportDialog } from "@/components/editor/export-dialog";
+import { CropImageDialog } from "@/components/editor/crop-image-dialog";
 import {
   Type,
   ImagePlus,
@@ -25,17 +26,20 @@ import {
   CopyPlus,
   Grid3X3,
   AlignLeft,
+  Crop,
 } from "lucide-react";
 
 interface CanvasToolbarProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fabricCanvas: any;
+  selectionVersion?: number;
 }
 
-export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
+export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [generateOpen, setGenerateOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const [cropOpen, setCropOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const clipboardRef = useRef<any>(null);
   const {
@@ -223,6 +227,10 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
   const zoomOut = () => setZoom(Math.max(parseFloat((zoom - 0.1).toFixed(2)), 0.1));
   const zoomReset = () => setZoom(1);
 
+  // selectionVersion causes re-render so this stays fresh
+  void selectionVersion;
+  const activeIsImage = fabricCanvas?.getActiveObject()?.type === "image";
+
   return (
     <div className="flex items-center gap-1.5 px-4 py-2 border-b border-border bg-card/50 flex-wrap">
       {/* Texto e Imagem */}
@@ -238,6 +246,17 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
         <ImagePlus className="w-4 h-4 mr-1.5" />
         Imagem
       </Button>
+      {activeIsImage && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setCropOpen(true)}
+          title="Recortar imagem selecionada"
+        >
+          <Crop className="w-4 h-4 mr-1.5" />
+          Recortar
+        </Button>
+      )}
       <input
         ref={fileInputRef}
         type="file"
@@ -354,6 +373,15 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
         onClose={() => setExportOpen(false)}
         fabricCanvas={fabricCanvas}
       />
+
+      {cropOpen && activeIsImage && (
+        <CropImageDialog
+          open={cropOpen}
+          onClose={() => setCropOpen(false)}
+          fabricCanvas={fabricCanvas}
+          imageObject={fabricCanvas.getActiveObject()}
+        />
+      )}
     </div>
   );
 }

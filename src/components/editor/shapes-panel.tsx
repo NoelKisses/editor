@@ -94,6 +94,69 @@ const SHAPES = [
     ),
   },
   {
+    id: "pentagon",
+    label: "Pentágono",
+    svg: (
+      <svg viewBox="0 0 30 30" className="w-full h-full">
+        <polygon points="15,2 27,10.5 22.5,25 7.5,25 3,10.5" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
+    id: "octagon",
+    label: "Octógono",
+    svg: (
+      <svg viewBox="0 0 30 30" className="w-full h-full">
+        <polygon points="10,2 20,2 28,10 28,20 20,28 10,28 2,20 2,10" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
+    id: "cross",
+    label: "Cruz",
+    svg: (
+      <svg viewBox="0 0 30 30" className="w-full h-full">
+        <path d="M11,2 h8 v9 h9 v8 h-9 v9 h-8 v-9 h-9 v-8 h9 Z" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
+    id: "shield",
+    label: "Escudo",
+    svg: (
+      <svg viewBox="0 0 30 34" className="w-full h-full">
+        <path d="M15,2 L27,7 L27,18 C27,25 15,32 15,32 C15,32 3,25 3,18 L3,7 Z" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
+    id: "speech-bubble",
+    label: "Balão",
+    svg: (
+      <svg viewBox="0 0 36 32" className="w-full h-full">
+        <path d="M3,2 h30 a2,2 0 0 1 2,2 v18 a2,2 0 0 1 -2,2 h-18 l-8,6 l2,-6 h-6 a2,2 0 0 1 -2,-2 v-18 a2,2 0 0 1 2,-2 Z" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
+    id: "star-4",
+    label: "Estrela 4",
+    svg: (
+      <svg viewBox="0 0 30 30" className="w-full h-full">
+        <polygon points="15,2 17.5,12.5 28,15 17.5,17.5 15,28 12.5,17.5 2,15 12.5,12.5" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
+    id: "star-6",
+    label: "Estrela 6",
+    svg: (
+      <svg viewBox="0 0 30 30" className="w-full h-full">
+        <polygon points="15,2 17,10 24,5 20,12 28,15 20,18 24,25 17,20 15,28 13,20 6,25 10,18 2,15 10,12 6,5 13,10" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
     id: "line",
     label: "Linha",
     svg: (
@@ -187,6 +250,61 @@ export function ShapesPanel({ fabricCanvas }: ShapesPanelProps) {
             pts.push({ x: 70 + 70 * Math.cos(a), y: 70 + 70 * Math.sin(a) });
           }
           shape = new fabric.Polygon(pts, { left: cx - 70, top: cy - 70, fill });
+          break;
+        }
+        case "pentagon": {
+          const pts = [];
+          for (let i = 0; i < 5; i++) {
+            const a = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+            pts.push({ x: 70 + 70 * Math.cos(a), y: 70 + 70 * Math.sin(a) });
+          }
+          shape = new fabric.Polygon(pts, { left: cx - 70, top: cy - 70, fill });
+          break;
+        }
+        case "octagon": {
+          const pts = [];
+          for (let i = 0; i < 8; i++) {
+            const a = (i * Math.PI) / 4 - Math.PI / 8;
+            pts.push({ x: 70 + 70 * Math.cos(a), y: 70 + 70 * Math.sin(a) });
+          }
+          shape = new fabric.Polygon(pts, { left: cx - 70, top: cy - 70, fill });
+          break;
+        }
+        case "cross": {
+          const t = 22, s = 70;
+          const pts = [
+            { x: s - t, y: 0 }, { x: s + t, y: 0 }, { x: s + t, y: s - t },
+            { x: s * 2, y: s - t }, { x: s * 2, y: s + t }, { x: s + t, y: s + t },
+            { x: s + t, y: s * 2 }, { x: s - t, y: s * 2 }, { x: s - t, y: s + t },
+            { x: 0, y: s + t }, { x: 0, y: s - t }, { x: s - t, y: s - t },
+          ];
+          shape = new fabric.Polygon(pts, { left: cx - 70, top: cy - 70, fill });
+          break;
+        }
+        case "shield":
+          shape = new fabric.Path(
+            "M 70 0 L 140 25 L 140 80 C 140 115 70 140 70 140 C 70 140 0 115 0 80 L 0 25 Z",
+            { left: cx - 70, top: cy - 70, fill }
+          );
+          break;
+        case "speech-bubble":
+          shape = new fabric.Path(
+            "M 10 0 L 140 0 Q 150 0 150 10 L 150 90 Q 150 100 140 100 L 70 100 L 40 125 L 48 100 L 10 100 Q 0 100 0 90 L 0 10 Q 0 0 10 0 Z",
+            { left: cx - 75, top: cy - 62, fill }
+          );
+          break;
+        case "star-4": {
+          const starPts4 = STAR_POINTS(0, 0, 70, 28, 4);
+          const pts4 = [];
+          for (let i = 0; i < starPts4.length; i += 2) pts4.push({ x: starPts4[i], y: starPts4[i + 1] });
+          shape = new fabric.Polygon(pts4, { left: cx - 70, top: cy - 70, fill });
+          break;
+        }
+        case "star-6": {
+          const starPts6 = STAR_POINTS(0, 0, 70, 35, 6);
+          const pts6 = [];
+          for (let i = 0; i < starPts6.length; i += 2) pts6.push({ x: starPts6[i], y: starPts6[i + 1] });
+          shape = new fabric.Polygon(pts6, { left: cx - 70, top: cy - 70, fill });
           break;
         }
         case "line":

@@ -22,6 +22,7 @@ import { ProjectsPanel } from "@/components/editor/projects-panel";
 import { ImageFiltersPanel } from "@/components/editor/image-filters-panel";
 import { GradientPanel } from "@/components/editor/gradient-panel";
 import { FramesPanel } from "@/components/editor/frames-panel";
+import { IconsPanel } from "@/components/editor/icons-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -39,6 +40,7 @@ import {
   Filter,
   Palette,
   Frame,
+  LayoutGrid,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -95,7 +97,7 @@ export default function EditorPage() {
         {/* Left sidebar — 6 abas */}
         <aside className="w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden">
           <Tabs defaultValue="templates" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-6 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid grid-cols-7 m-2 flex-shrink-0 h-8">
               <TabsTrigger value="templates" className="text-[9px] px-0.5 gap-0.5" title="Templates">
                 <Layers className="w-3 h-3" />
               </TabsTrigger>
@@ -104,6 +106,9 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="elements" className="text-[9px] px-0.5 gap-0.5" title="Elementos">
                 <Sticker className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="icons" className="text-[9px] px-0.5 gap-0.5" title="Ícones">
+                <LayoutGrid className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="frames" className="text-[9px] px-0.5 gap-0.5" title="Molduras">
                 <Frame className="w-3 h-3" />
@@ -134,6 +139,12 @@ export default function EditorPage() {
               </ScrollArea>
             </TabsContent>
 
+            <TabsContent value="icons" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <IconsPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
             <TabsContent value="frames" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <FramesPanel fabricCanvas={fabricCanvas} />
@@ -161,7 +172,7 @@ export default function EditorPage() {
 
         {/* Canvas area */}
         <main className="flex-1 flex flex-col overflow-hidden">
-          <CanvasToolbar fabricCanvas={fabricCanvas} />
+          <CanvasToolbar fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
           <CanvasContextMenu fabricCanvas={fabricCanvas} />
           <div className="flex-1 overflow-auto bg-[#1a1a1a] flex items-center justify-center p-8">
             {template ? (
