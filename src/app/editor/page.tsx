@@ -20,6 +20,8 @@ import { TextEffectsPanel } from "@/components/editor/text-effects-panel";
 import { HistoryPanel } from "@/components/editor/history-panel";
 import { ProjectsPanel } from "@/components/editor/projects-panel";
 import { ImageFiltersPanel } from "@/components/editor/image-filters-panel";
+import { GradientPanel } from "@/components/editor/gradient-panel";
+import { FramesPanel } from "@/components/editor/frames-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -35,6 +37,8 @@ import {
   Clock,
   FolderOpen,
   Filter,
+  Palette,
+  Frame,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -88,10 +92,10 @@ export default function EditorPage() {
 
       {/* Main layout */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left sidebar — 5 abas */}
+        {/* Left sidebar — 6 abas */}
         <aside className="w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden">
           <Tabs defaultValue="templates" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-5 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid grid-cols-6 m-2 flex-shrink-0 h-8">
               <TabsTrigger value="templates" className="text-[9px] px-0.5 gap-0.5" title="Templates">
                 <Layers className="w-3 h-3" />
               </TabsTrigger>
@@ -100,6 +104,9 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="elements" className="text-[9px] px-0.5 gap-0.5" title="Elementos">
                 <Sticker className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="frames" className="text-[9px] px-0.5 gap-0.5" title="Molduras">
+                <Frame className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="ai" className="text-[9px] px-0.5 gap-0.5" title="IA">
                 <Sparkles className="w-3 h-3" />
@@ -124,6 +131,12 @@ export default function EditorPage() {
             <TabsContent value="elements" className="flex-1 overflow-hidden m-0 px-3 pb-3">
               <ScrollArea className="h-full">
                 <ElementsPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="frames" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <FramesPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
 
@@ -170,15 +183,18 @@ export default function EditorPage() {
           </div>
         </main>
 
-        {/* Right sidebar — 7 abas */}
+        {/* Right sidebar — 8 abas */}
         <aside className="w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden">
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-7 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid grid-cols-8 m-2 flex-shrink-0 h-8">
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="text" title="Texto" className="px-0.5">
                 <Type className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="gradient" title="Gradiente" className="px-0.5">
+                <Palette className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="filters" title="Filtros de Imagem" className="px-0.5">
                 <Filter className="w-3 h-3" />
@@ -206,6 +222,12 @@ export default function EditorPage() {
             <TabsContent value="text" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextEffectsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="gradient" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <GradientPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
 
