@@ -12,6 +12,7 @@ import {
   Italic,
   Underline,
   FlipHorizontal2,
+  FlipVertical2,
   Crop,
   Layers,
   ChevronUp,
@@ -305,19 +306,34 @@ export function PropertiesPanel({ fabricCanvas, selectionVersion }: PropertiesPa
               <Crop className="w-3.5 h-3.5" />
               Recortar
             </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="gap-1.5 text-xs h-8"
-              onClick={() => {
-                active.set({ flipX: !active.flipX });
-                fabricCanvas.requestRenderAll();
-                forceRedraw((n) => n + 1);
-              }}
-            >
-              <FlipHorizontal2 className="w-3.5 h-3.5" />
-              Espelhar Horizontal
-            </Button>
+            <div className="flex gap-1.5">
+              <Button
+                size="sm"
+                variant="outline"
+                className="flex-1 gap-1.5 text-xs h-8"
+                onClick={() => {
+                  active.set({ flipX: !active.flipX });
+                  fabricCanvas.requestRenderAll();
+                  forceRedraw((n) => n + 1);
+                }}
+              >
+                <FlipHorizontal2 className="w-3.5 h-3.5" />
+                Horizontal
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="flex-1 gap-1.5 text-xs h-8"
+                onClick={() => {
+                  active.set({ flipY: !active.flipY });
+                  fabricCanvas.requestRenderAll();
+                  forceRedraw((n) => n + 1);
+                }}
+              >
+                <FlipVertical2 className="w-3.5 h-3.5" />
+                Vertical
+              </Button>
+            </div>
           </Section>
 
           <Separator />

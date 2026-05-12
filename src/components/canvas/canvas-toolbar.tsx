@@ -151,25 +151,32 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
 
   const handleImageUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file || !fabricCanvas) return;
+      const files = Array.from(e.target.files ?? []);
+      if (!files.length || !fabricCanvas) return;
 
-      const reader = new FileReader();
-      reader.onload = async (ev) => {
-        const src = ev.target?.result as string;
-        const fabric = await import("fabric").then((m) => m.fabric);
+      const fabric = await import("fabric").then((m) => m.fabric);
+      let offset = 0;
+
+      for (const file of files) {
+        const src = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (ev) => resolve(ev.target?.result as string);
+          reader.readAsDataURL(file);
+        });
+
         fabric.Image.fromURL(src, (img) => {
           const maxW = fabricCanvas.getWidth() * 0.6;
           const maxH = fabricCanvas.getHeight() * 0.6;
           const scale = Math.min(maxW / (img.width || 1), maxH / (img.height || 1));
-          img.set({ left: 50, top: 50, scaleX: scale, scaleY: scale });
+          img.set({ left: 50 + offset, top: 50 + offset, scaleX: scale, scaleY: scale });
           fabricCanvas.add(img);
           fabricCanvas.setActiveObject(img);
           fabricCanvas.renderAll();
-          toast.success("Imagem adicionada");
+          offset += 20;
         });
-      };
-      reader.readAsDataURL(file);
+      }
+
+      toast.success(files.length > 1 ? `${files.length} imagens adicionadas` : "Imagem adicionada");
       e.target.value = "";
     },
     [fabricCanvas]
@@ -235,6 +242,7 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
         ref={fileInputRef}
         type="file"
         accept="image/*"
+        multiple
         className="hidden"
         onChange={handleImageUpload}
       />

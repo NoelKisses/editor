@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FolderOpen, Save, Trash2, FolderPlus, Clock } from "lucide-react";
+import { FolderOpen, Save, Trash2, FolderPlus, Clock, RefreshCw } from "lucide-react";
 import { useEditorStore } from "@/store/editor-store";
 import { toast } from "sonner";
 
@@ -31,6 +31,9 @@ function saveProjects(projects: SavedProject[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
 }
 
+const AUTOSAVE_KEY = "editor_autosave";
+const AUTOSAVE_DELAY = 30000; // 30s
+
 interface ProjectsPanelProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fabricCanvas: any;
@@ -39,12 +42,50 @@ interface ProjectsPanelProps {
 export function ProjectsPanel({ fabricCanvas }: ProjectsPanelProps) {
   const [projects, setProjects] = useState<SavedProject[]>([]);
   const [saveName, setSaveName] = useState("");
+  const [autosaveEnabled, setAutosaveEnabled] = useState(true);
+  const [lastAutosave, setLastAutosave] = useState<number | null>(null);
+  const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { template } = useEditorStore();
 
   useEffect(() => {
     const saved = loadProjects();
     queueMicrotask(() => setProjects(saved));
   }, []);
+
+  // Autosave with debounce
+  useEffect(() => {
+    if (!autosaveEnabled || !fabricCanvas || !template) return;
+
+    const scheduleAutosave = () => {
+      if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+      autosaveTimerRef.current = setTimeout(() => {
+        try {
+          const canvasJson = JSON.stringify(fabricCanvas.toJSON());
+          const thumbnail = fabricCanvas.toDataURL({
+            format: "jpeg",
+            quality: 0.4,
+            multiplier: Math.min(200 / fabricCanvas.getWidth(), 112 / fabricCanvas.getHeight()),
+          });
+          const autosaveData = { templateId: template.id, templateName: template.name, canvasJson, thumbnail, savedAt: Date.now() };
+          localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(autosaveData));
+          setLastAutosave(Date.now());
+        } catch {
+          // silently ignore autosave errors
+        }
+      }, AUTOSAVE_DELAY);
+    };
+
+    fabricCanvas.on("object:modified", scheduleAutosave);
+    fabricCanvas.on("object:added", scheduleAutosave);
+    fabricCanvas.on("object:removed", scheduleAutosave);
+
+    return () => {
+      fabricCanvas.off("object:modified", scheduleAutosave);
+      fabricCanvas.off("object:added", scheduleAutosave);
+      fabricCanvas.off("object:removed", scheduleAutosave);
+      if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+    };
+  }, [fabricCanvas, template, autosaveEnabled]);
 
   const handleSave = useCallback(() => {
     if (!fabricCanvas || !template) {
@@ -108,6 +149,26 @@ export function ProjectsPanel({ fabricCanvas }: ProjectsPanelProps) {
       <div className="flex items-center gap-2">
         <FolderOpen className="w-4 h-4 text-muted-foreground" />
         <h3 className="text-sm font-semibold text-foreground">Projetos</h3>
+      </div>
+
+      {/* Autosave indicator */}
+      <div className="flex items-center justify-between px-0.5">
+        <div className="flex items-center gap-1.5">
+          <RefreshCw className={`w-3 h-3 ${autosaveEnabled ? "text-green-500" : "text-muted-foreground"}`} />
+          <span className="text-[10px] text-muted-foreground">
+            {autosaveEnabled
+              ? lastAutosave
+                ? `Salvo às ${new Date(lastAutosave).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`
+                : "Autosave ativado"
+              : "Autosave desativado"}
+          </span>
+        </div>
+        <button
+          onClick={() => setAutosaveEnabled((v) => !v)}
+          className={`w-8 h-4 rounded-full transition-colors relative ${autosaveEnabled ? "bg-green-500/70" : "bg-muted"}`}
+        >
+          <span className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform ${autosaveEnabled ? "translate-x-4" : "translate-x-0.5"}`} />
+        </button>
       </div>
 
       {/* Save form */}

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CanvasToolbar } from "@/components/canvas/canvas-toolbar";
+import { CanvasContextMenu } from "@/components/canvas/canvas-context-menu";
 import { TemplatePicker } from "@/components/editor/template-picker";
 import { AiSuggestionsPanel } from "@/components/editor/ai-suggestions-panel";
 import { AiTemplateGenerator } from "@/components/editor/ai-template-generator";
@@ -148,6 +149,7 @@ export default function EditorPage() {
         {/* Canvas area */}
         <main className="flex-1 flex flex-col overflow-hidden">
           <CanvasToolbar fabricCanvas={fabricCanvas} />
+          <CanvasContextMenu fabricCanvas={fabricCanvas} />
           <div className="flex-1 overflow-auto bg-[#1a1a1a] flex items-center justify-center p-8">
             {template ? (
               <FabricCanvas
