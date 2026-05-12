@@ -8,6 +8,7 @@ import { useEditorStore } from "@/store/editor-store";
 import { GenerateImageDialog } from "@/components/editor/generate-image-dialog";
 import { ExportDialog } from "@/components/editor/export-dialog";
 import { CropImageDialog } from "@/components/editor/crop-image-dialog";
+import { ResizeCanvasDialog } from "@/components/editor/resize-canvas-dialog";
 import {
   Type,
   ImagePlus,
@@ -27,6 +28,7 @@ import {
   Grid3X3,
   AlignLeft,
   Crop,
+  Maximize2,
 } from "lucide-react";
 
 interface CanvasToolbarProps {
@@ -40,6 +42,7 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
   const [generateOpen, setGenerateOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [cropOpen, setCropOpen] = useState(false);
+  const [resizeOpen, setResizeOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const clipboardRef = useRef<any>(null);
   const {
@@ -329,6 +332,19 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
         <Trash2 className="w-4 h-4 text-destructive" />
       </Button>
 
+      <Separator orientation="vertical" className="h-6" />
+
+      {/* Resize canvas */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setResizeOpen(true)}
+        title="Redimensionar canvas"
+      >
+        <Maximize2 className="w-4 h-4 mr-1.5" />
+        Formato
+      </Button>
+
       <div className="flex-1" />
 
       {/* Gerar, Analisar e Export */}
@@ -382,6 +398,12 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
           imageObject={fabricCanvas.getActiveObject()}
         />
       )}
+
+      <ResizeCanvasDialog
+        open={resizeOpen}
+        onClose={() => setResizeOpen(false)}
+        fabricCanvas={fabricCanvas}
+      />
     </div>
   );
 }
