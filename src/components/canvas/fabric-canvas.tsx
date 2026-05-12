@@ -5,15 +5,17 @@ import { useEditorStore } from "@/store/editor-store";
 
 interface FabricCanvasProps {
   onCanvasReady?: (canvas: unknown) => void;
+  onSelectionChange?: () => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FabricInstance = any;
 
-export function FabricCanvas({ onCanvasReady }: FabricCanvasProps) {
+export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<FabricInstance>(null);
   const { template, zoom } = useEditorStore();
+
 
   const initCanvas = useCallback(async () => {
     if (!canvasRef.current || !template) return;
@@ -34,6 +36,12 @@ export function FabricCanvas({ onCanvasReady }: FabricCanvasProps) {
 
     fabricRef.current = canvas;
 
+    if (onSelectionChange) {
+      canvas.on("selection:created", onSelectionChange);
+      canvas.on("selection:updated", onSelectionChange);
+      canvas.on("selection:cleared", onSelectionChange);
+    }
+
     if (onCanvasReady) {
       onCanvasReady(canvas);
     }
@@ -41,7 +49,7 @@ export function FabricCanvas({ onCanvasReady }: FabricCanvasProps) {
     return () => {
       canvas.dispose();
     };
-  }, [template, onCanvasReady]);
+  }, [template, onCanvasReady, onSelectionChange]);
 
   useEffect(() => {
     initCanvas();

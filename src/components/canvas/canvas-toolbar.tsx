@@ -18,6 +18,10 @@ import {
   Wand2,
   Loader2,
   Sparkles,
+  Copy,
+  Clipboard,
+  Scissors,
+  CopyPlus,
 } from "lucide-react";
 
 interface CanvasToolbarProps {
@@ -28,6 +32,8 @@ interface CanvasToolbarProps {
 export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [generateOpen, setGenerateOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const clipboardRef = useRef<any>(null);
   const {
     undo,
     redo,
@@ -41,6 +47,60 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
     exportOptions,
     template,
   } = useEditorStore();
+
+  const handleCopy = useCallback(() => {
+    if (!fabricCanvas) return;
+    const active = fabricCanvas.getActiveObject();
+    if (!active) return;
+    active.clone((cloned: unknown) => {
+      clipboardRef.current = cloned;
+      toast.success("Copiado");
+    });
+  }, [fabricCanvas]);
+
+  const handlePaste = useCallback(() => {
+    if (!fabricCanvas || !clipboardRef.current) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    clipboardRef.current.clone((newObj: any) => {
+      fabricCanvas.discardActiveObject();
+      newObj.set({
+        left: (clipboardRef.current.left ?? 0) + 15,
+        top: (clipboardRef.current.top ?? 0) + 15,
+        evented: true,
+      });
+      fabricCanvas.add(newObj);
+      clipboardRef.current.left += 15;
+      clipboardRef.current.top += 15;
+      fabricCanvas.setActiveObject(newObj);
+      fabricCanvas.requestRenderAll();
+      toast.success("Colado");
+    });
+  }, [fabricCanvas]);
+
+  const handleCut = useCallback(() => {
+    if (!fabricCanvas) return;
+    const active = fabricCanvas.getActiveObject();
+    if (!active) return;
+    active.clone((cloned: unknown) => { clipboardRef.current = cloned; });
+    fabricCanvas.remove(active);
+    fabricCanvas.requestRenderAll();
+    if (selectedElementId) removeElement(selectedElementId);
+    toast.success("Recortado");
+  }, [fabricCanvas, selectedElementId, removeElement]);
+
+  const handleDuplicate = useCallback(() => {
+    if (!fabricCanvas) return;
+    const active = fabricCanvas.getActiveObject();
+    if (!active) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    active.clone((cloned: any) => {
+      cloned.set({ left: (active.left ?? 0) + 20, top: (active.top ?? 0) + 20 });
+      fabricCanvas.add(cloned);
+      fabricCanvas.setActiveObject(cloned);
+      fabricCanvas.requestRenderAll();
+      toast.success("Duplicado");
+    });
+  }, [fabricCanvas]);
 
   const addText = useCallback(async () => {
     if (!fabricCanvas) return;
@@ -158,6 +218,22 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
         className="hidden"
         onChange={handleImageUpload}
       />
+
+      <Separator orientation="vertical" className="h-6" />
+
+      {/* Clipboard */}
+      <Button variant="ghost" size="icon" onClick={handleCopy} title="Copiar (Ctrl+C)">
+        <Copy className="w-4 h-4" />
+      </Button>
+      <Button variant="ghost" size="icon" onClick={handlePaste} title="Colar (Ctrl+V)">
+        <Clipboard className="w-4 h-4" />
+      </Button>
+      <Button variant="ghost" size="icon" onClick={handleCut} title="Recortar (Ctrl+X)">
+        <Scissors className="w-4 h-4" />
+      </Button>
+      <Button variant="ghost" size="icon" onClick={handleDuplicate} title="Duplicar (Ctrl+D)">
+        <CopyPlus className="w-4 h-4" />
+      </Button>
 
       <Separator orientation="vertical" className="h-6" />
 
