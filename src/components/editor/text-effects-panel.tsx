@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
@@ -60,6 +60,9 @@ export function TextEffectsPanel({ fabricCanvas, selectionVersion }: TextEffects
   const [, forceRedraw] = useState(0);
   const [currentEffect, setCurrentEffect] = useState<TextEffect>("none");
   const [fontSearch, setFontSearch] = useState("");
+  const [arcRadius, setArcRadius] = useState(200);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const arcGroupRef = useRef<any>(null);
 
   useEffect(() => {
     if (!fabricCanvas) return;
@@ -129,6 +132,71 @@ export function TextEffectsPanel({ fabricCanvas, selectionVersion }: TextEffects
       }, 300);
     },
     [set]
+  );
+
+  const applyArcText = useCallback(
+    async (radius: number) => {
+      if (!fabricCanvas) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const obj: any = fabricCanvas.getActiveObject();
+      if (!obj || (obj.type !== "i-text" && obj.type !== "text" && obj.type !== "textbox")) return;
+
+      const { fabric } = await import("fabric");
+      const text: string = obj.text ?? "";
+      const fontSize: number = obj.fontSize ?? 36;
+      const fill: string = obj.fill ?? "#ffffff";
+      const fontFamily: string = obj.fontFamily ?? "Arial";
+      const fontWeight: string = obj.fontWeight ?? "normal";
+
+      if (!text.trim()) {
+        toast.error("Nenhum texto para curvar");
+        return;
+      }
+
+      // Remove previous arc group if any
+      if (arcGroupRef.current && fabricCanvas.contains(arcGroupRef.current)) {
+        fabricCanvas.remove(arcGroupRef.current);
+      }
+
+      const chars = text.split("");
+      // Measure total angle needed
+      const charWidth = fontSize * 0.6;
+      const totalAngle = (charWidth * chars.length) / Math.abs(radius);
+      const startAngle = -Math.PI / 2 - totalAngle / 2;
+
+      const textObjects = chars.map((char, i) => {
+        const angle = startAngle + (i + 0.5) * (totalAngle / chars.length);
+        const x = Math.cos(angle) * Math.abs(radius);
+        const y = Math.sin(angle) * Math.abs(radius) * (radius < 0 ? -1 : 1);
+        const rotation = (angle + (radius < 0 ? -Math.PI / 2 : Math.PI / 2)) * (180 / Math.PI);
+
+        return new fabric.Text(char, {
+          left: x,
+          top: y,
+          fontSize,
+          fill,
+          fontFamily,
+          fontWeight,
+          originX: "center",
+          originY: "center",
+          angle: rotation,
+          selectable: false,
+        });
+      });
+
+      const group = new fabric.Group(textObjects, {
+        left: obj.left ?? 100,
+        top: obj.top ?? 100,
+        selectable: true,
+      });
+
+      arcGroupRef.current = group;
+      fabricCanvas.add(group);
+      fabricCanvas.setActiveObject(group);
+      fabricCanvas.requestRenderAll();
+      toast.success("Texto em arco aplicado");
+    },
+    [fabricCanvas]
   );
 
   const filteredFonts = fontSearch
@@ -285,6 +353,52 @@ export function TextEffectsPanel({ fabricCanvas, selectionVersion }: TextEffects
         >
           <span style={{ textDecoration: "overline" }}>Overline</span>
         </Button>
+      </div>
+
+      <Separator />
+
+      {/* Arc text */}
+      <div className="flex flex-col gap-2">
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Texto em Arco</span>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              {arcRadius > 0 ? "Arco Superior" : "Arco Inferior"}
+            </span>
+            <span className="text-xs tabular-nums w-12 text-right">{arcRadius}px</span>
+          </div>
+          <Slider
+            value={[arcRadius]}
+            min={-600}
+            max={600}
+            step={10}
+            onValueChange={(vals) => setArcRadius((vals as number[])[0])}
+            className="w-full"
+          />
+          <div className="flex gap-1.5 mt-1">
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1 text-xs h-7"
+              onClick={() => applyArcText(arcRadius)}
+              disabled={arcRadius === 0}
+            >
+              Aplicar Arco
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="text-xs h-7 px-2"
+              onClick={() => setArcRadius(200)}
+              title="Resetar raio"
+            >
+              Reset
+            </Button>
+          </div>
+          <p className="text-[10px] text-muted-foreground leading-tight">
+            Valores positivos = arco para cima. Negativos = arco para baixo.
+          </p>
+        </div>
       </div>
     </div>
   );

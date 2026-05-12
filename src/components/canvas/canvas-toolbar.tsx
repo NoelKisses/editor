@@ -24,6 +24,7 @@ import {
   Scissors,
   CopyPlus,
   Grid3X3,
+  AlignLeft,
 } from "lucide-react";
 
 interface CanvasToolbarProps {
@@ -124,6 +125,26 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
     toast.success("Texto adicionado");
   }, [fabricCanvas]);
 
+  const addTextbox = useCallback(async () => {
+    if (!fabricCanvas) return;
+    const fabric = await import("fabric").then((m) => m.fabric);
+    const textbox = new fabric.Textbox("Texto com\nquebra de linha", {
+      left: 80,
+      top: 80,
+      width: 400,
+      fontSize: 36,
+      fontFamily: "Arial",
+      fill: "#ffffff",
+      fontWeight: "bold",
+      textAlign: "center",
+      shadow: "rgba(0,0,0,0.5) 2px 2px 8px",
+    });
+    fabricCanvas.add(textbox);
+    fabricCanvas.setActiveObject(textbox);
+    fabricCanvas.renderAll();
+    toast.success("Textbox adicionado");
+  }, [fabricCanvas]);
+
   const addImage = useCallback(() => {
     fileInputRef.current?.click();
   }, []);
@@ -198,9 +219,13 @@ export function CanvasToolbar({ fabricCanvas }: CanvasToolbarProps) {
   return (
     <div className="flex items-center gap-1.5 px-4 py-2 border-b border-border bg-card/50 flex-wrap">
       {/* Texto e Imagem */}
-      <Button variant="ghost" size="sm" onClick={addText} title="Adicionar texto">
+      <Button variant="ghost" size="sm" onClick={addText} title="Adicionar texto editável (IText)">
         <Type className="w-4 h-4 mr-1.5" />
         Texto
+      </Button>
+      <Button variant="ghost" size="sm" onClick={addTextbox} title="Adicionar caixa de texto com quebra de linha">
+        <AlignLeft className="w-4 h-4 mr-1.5" />
+        Caixa
       </Button>
       <Button variant="ghost" size="sm" onClick={addImage} title="Adicionar imagem">
         <ImagePlus className="w-4 h-4 mr-1.5" />
