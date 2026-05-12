@@ -13,6 +13,8 @@ import {
   AlignHorizontalSpaceAround,
   AlignVerticalJustifyCenter,
   AlignHorizontalJustifyCenter,
+  Group,
+  Ungroup,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -111,6 +113,38 @@ export function AlignTools({ fabricCanvas }: AlignToolsProps) {
     [fabricCanvas]
   );
 
+  const groupObjects = useCallback(async () => {
+    if (!fabricCanvas) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const active: any = fabricCanvas.getActiveObject();
+    if (!active || active.type !== "activeSelection") {
+      toast.error("Selecione múltiplos elementos para agrupar");
+      return;
+    }
+    const { fabric } = await import("fabric");
+    const group = active.toGroup();
+    fabricCanvas.setActiveObject(group);
+    fabricCanvas.requestRenderAll();
+    toast.success(`${group._objects?.length ?? "?"} elementos agrupados`);
+    void fabric;
+  }, [fabricCanvas]);
+
+  const ungroupObjects = useCallback(async () => {
+    if (!fabricCanvas) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const active: any = fabricCanvas.getActiveObject();
+    if (!active || active.type !== "group") {
+      toast.error("Selecione um grupo para desagrupar");
+      return;
+    }
+    const { fabric } = await import("fabric");
+    const items = active.toActiveSelection();
+    fabricCanvas.setActiveObject(items);
+    fabricCanvas.requestRenderAll();
+    toast.success("Grupo desfeito");
+    void fabric;
+  }, [fabricCanvas]);
+
   const BTN = "h-7 w-7 p-0";
 
   return (
@@ -161,6 +195,32 @@ export function AlignTools({ fabricCanvas }: AlignToolsProps) {
           </Button>
           <Button size="icon" variant="outline" className={BTN} onClick={() => align("center-h")} title="Centralizar horizontalmente no canvas">
             <AlignHorizontalJustifyCenter className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Agrupamento</span>
+        <div className="flex gap-1.5">
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex-1 text-xs h-7 gap-1.5"
+            onClick={groupObjects}
+            title="Agrupar elementos selecionados (Ctrl+G)"
+          >
+            <Group className="w-3.5 h-3.5" />
+            Agrupar
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex-1 text-xs h-7 gap-1.5"
+            onClick={ungroupObjects}
+            title="Desagrupar (Ctrl+Shift+G)"
+          >
+            <Ungroup className="w-3.5 h-3.5" />
+            Desagrupar
           </Button>
         </div>
       </div>

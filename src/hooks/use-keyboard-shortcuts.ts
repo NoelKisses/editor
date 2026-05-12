@@ -148,6 +148,32 @@ export function useKeyboardShortcuts(fabricRef: RefObject<any>) {
       // --- Seleção ---
       if (mod && key === "a") { e.preventDefault(); selectAll(); return; }
 
+      // --- Agrupamento ---
+      if (mod && !shift && key === "g") {
+        e.preventDefault();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const active: any = fabricCanvas.getActiveObject();
+        if (active?.type === "activeSelection") {
+          const group = active.toGroup();
+          fabricCanvas.setActiveObject(group);
+          fabricCanvas.requestRenderAll();
+          toast.success("Elementos agrupados");
+        }
+        return;
+      }
+      if (mod && shift && key === "G") {
+        e.preventDefault();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const active: any = fabricCanvas.getActiveObject();
+        if (active?.type === "group") {
+          const items = active.toActiveSelection();
+          fabricCanvas.setActiveObject(items);
+          fabricCanvas.requestRenderAll();
+          toast.success("Grupo desfeito");
+        }
+        return;
+      }
+
       // --- Delete ---
       if ((key === "Delete" || key === "Backspace") && !mod) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
