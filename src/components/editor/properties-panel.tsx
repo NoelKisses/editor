@@ -75,7 +75,8 @@ export function PropertiesPanel({ fabricCanvas, selectionVersion }: PropertiesPa
 
   useEffect(() => {
     if (!fabricCanvas) return;
-    setActive(fabricCanvas.getActiveObject() ?? null);
+    const obj = fabricCanvas.getActiveObject() ?? null;
+    queueMicrotask(() => setActive(obj));
   }, [fabricCanvas, selectionVersion]);
 
   const set = useCallback(
@@ -348,7 +349,6 @@ export function PropertiesPanel({ fabricCanvas, selectionVersion }: PropertiesPa
                       import("fabric").then(({ fabric }) => {
                         const filters = [...((active.filters as unknown[]) ?? [])];
                         const idx = (filters as { type?: string }[]).findIndex((f) => f?.type?.toLowerCase() === key);
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         const FilterClass = (fabric.Image.filters as unknown as Record<string, new (opts: Record<string, unknown>) => unknown>)[
                           key.charAt(0).toUpperCase() + key.slice(1)
                         ];
@@ -369,6 +369,7 @@ export function PropertiesPanel({ fabricCanvas, selectionVersion }: PropertiesPa
               <span className="text-xs text-muted-foreground">Escala de cinza</span>
               <button
                 role="switch"
+                aria-checked={(active.filters as { type?: string }[] | undefined)?.some((f) => f?.type?.toLowerCase() === "grayscale") ? "true" : "false"}
                 onClick={() => {
                   import("fabric").then(({ fabric }) => {
                     const filters = [...((active.filters as unknown[]) ?? [])];

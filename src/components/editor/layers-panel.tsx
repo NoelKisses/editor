@@ -65,7 +65,7 @@ export function LayersPanel({ fabricCanvas, selectionVersion }: LayersPanelProps
   }, [fabricCanvas]);
 
   useEffect(() => {
-    syncLayers();
+    queueMicrotask(syncLayers);
   }, [syncLayers, selectionVersion]);
 
   useEffect(() => {

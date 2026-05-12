@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CanvasToolbar } from "@/components/canvas/canvas-toolbar";
 import { TemplatePicker } from "@/components/editor/template-picker";
 import { AiSuggestionsPanel } from "@/components/editor/ai-suggestions-panel";
+import { AiTemplateGenerator } from "@/components/editor/ai-template-generator";
 import { RemoveBgButton } from "@/components/editor/remove-bg-button";
 import { PropertiesPanel } from "@/components/editor/properties-panel";
 import { LayersPanel } from "@/components/editor/layers-panel";
@@ -14,18 +15,23 @@ import { ShapesPanel } from "@/components/editor/shapes-panel";
 import { ElementsPanel } from "@/components/editor/elements-panel";
 import { BackgroundPanel } from "@/components/editor/background-panel";
 import { AlignTools } from "@/components/editor/align-tools";
+import { TextEffectsPanel } from "@/components/editor/text-effects-panel";
+import { HistoryPanel } from "@/components/editor/history-panel";
+import { ProjectsPanel } from "@/components/editor/projects-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
   Home,
   Layers,
   Sparkles,
-  Settings2,
   SlidersHorizontal,
   Shapes,
   Sticker,
   ImageIcon,
   AlignCenter,
+  Type,
+  Clock,
+  FolderOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -39,20 +45,21 @@ const FabricCanvas = dynamic(
 export default function EditorPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fabricRef = useRef<any>(null);
-  const [, forceUpdate] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [fabricCanvas, setFabricCanvas] = useState<any>(null);
   const [selectionVersion, setSelectionVersion] = useState(0);
   const { template } = useEditorStore();
 
   const handleCanvasReady = useCallback((canvas: unknown) => {
     fabricRef.current = canvas;
-    forceUpdate((n) => n + 1);
+    setFabricCanvas(canvas);
   }, []);
 
   const handleSelectionChange = useCallback(() => {
     setSelectionVersion((n) => n + 1);
   }, []);
 
-  useKeyboardShortcuts(fabricRef.current);
+  useKeyboardShortcuts(fabricRef);
 
   return (
     <div className="flex flex-col h-screen bg-background overflow-hidden">
@@ -78,25 +85,24 @@ export default function EditorPage() {
 
       {/* Main layout */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left sidebar */}
+        {/* Left sidebar — 5 abas */}
         <aside className="w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden">
           <Tabs defaultValue="templates" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-4 m-2 flex-shrink-0 h-8">
-              <TabsTrigger value="templates" className="text-[10px] px-1 gap-0.5">
+            <TabsList className="grid grid-cols-5 m-2 flex-shrink-0 h-8">
+              <TabsTrigger value="templates" className="text-[9px] px-0.5 gap-0.5" title="Templates">
                 <Layers className="w-3 h-3" />
-                <span className="hidden sm:inline">Templates</span>
               </TabsTrigger>
-              <TabsTrigger value="shapes" className="text-[10px] px-1 gap-0.5">
+              <TabsTrigger value="shapes" className="text-[9px] px-0.5 gap-0.5" title="Formas">
                 <Shapes className="w-3 h-3" />
-                <span className="hidden sm:inline">Formas</span>
               </TabsTrigger>
-              <TabsTrigger value="elements" className="text-[10px] px-1 gap-0.5">
+              <TabsTrigger value="elements" className="text-[9px] px-0.5 gap-0.5" title="Elementos">
                 <Sticker className="w-3 h-3" />
-                <span className="hidden sm:inline">Elementos</span>
               </TabsTrigger>
-              <TabsTrigger value="ai" className="text-[10px] px-1 gap-0.5">
+              <TabsTrigger value="ai" className="text-[9px] px-0.5 gap-0.5" title="IA">
                 <Sparkles className="w-3 h-3" />
-                <span className="hidden sm:inline">IA</span>
+              </TabsTrigger>
+              <TabsTrigger value="projects" className="text-[9px] px-0.5 gap-0.5" title="Projetos">
+                <FolderOpen className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -108,19 +114,30 @@ export default function EditorPage() {
 
             <TabsContent value="shapes" className="flex-1 overflow-hidden m-0 px-3 pb-3">
               <ScrollArea className="h-full">
-                <ShapesPanel fabricCanvas={fabricRef.current} />
+                <ShapesPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
 
             <TabsContent value="elements" className="flex-1 overflow-hidden m-0 px-3 pb-3">
               <ScrollArea className="h-full">
-                <ElementsPanel fabricCanvas={fabricRef.current} />
+                <ElementsPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
 
             <TabsContent value="ai" className="flex-1 overflow-hidden m-0 px-3 pb-3">
               <ScrollArea className="h-full">
-                <AiSuggestionsPanel />
+                <div className="flex flex-col gap-4">
+                  <AiTemplateGenerator fabricCanvas={fabricCanvas} />
+                  <div className="border-t border-border pt-4">
+                    <AiSuggestionsPanel />
+                  </div>
+                </div>
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="projects" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ProjectsPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
@@ -128,7 +145,7 @@ export default function EditorPage() {
 
         {/* Canvas area */}
         <main className="flex-1 flex flex-col overflow-hidden">
-          <CanvasToolbar fabricCanvas={fabricRef.current} />
+          <CanvasToolbar fabricCanvas={fabricCanvas} />
           <div className="flex-1 overflow-auto bg-[#1a1a1a] flex items-center justify-center p-8">
             {template ? (
               <FabricCanvas
@@ -149,48 +166,54 @@ export default function EditorPage() {
           </div>
         </main>
 
-        {/* Right sidebar */}
+        {/* Right sidebar — 6 abas */}
         <aside className="w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden">
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-4 m-2 flex-shrink-0 h-8">
-              <TabsTrigger value="properties" className="text-[10px] px-1 gap-0.5" title="Propriedades">
+            <TabsList className="grid grid-cols-6 m-2 flex-shrink-0 h-8">
+              <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
-              <TabsTrigger value="layers" className="text-[10px] px-1 gap-0.5" title="Camadas">
+              <TabsTrigger value="text" title="Texto" className="px-0.5">
+                <Type className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="layers" title="Camadas" className="px-0.5">
                 <Layers className="w-3 h-3" />
               </TabsTrigger>
-              <TabsTrigger value="align" className="text-[10px] px-1 gap-0.5" title="Alinhar">
+              <TabsTrigger value="align" title="Alinhar" className="px-0.5">
                 <AlignCenter className="w-3 h-3" />
               </TabsTrigger>
-              <TabsTrigger value="background" className="text-[10px] px-1 gap-0.5" title="Fundo">
+              <TabsTrigger value="background" title="Fundo" className="px-0.5">
                 <ImageIcon className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="history" title="Histórico" className="px-0.5">
+                <Clock className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="properties" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
-                <PropertiesPanel
-                  fabricCanvas={fabricRef.current}
-                  selectionVersion={selectionVersion}
-                />
+                <PropertiesPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="text" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextEffectsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
 
             <TabsContent value="layers" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
-                <LayersPanel
-                  fabricCanvas={fabricRef.current}
-                  selectionVersion={selectionVersion}
-                />
+                <LayersPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
 
             <TabsContent value="align" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <div className="px-3 pb-3">
-                  <AlignTools fabricCanvas={fabricRef.current} />
+                  <AlignTools fabricCanvas={fabricCanvas} />
                   <div className="mt-4">
-                    <RemoveBgButton fabricCanvas={fabricRef.current} />
+                    <RemoveBgButton fabricCanvas={fabricCanvas} />
                   </div>
                 </div>
               </ScrollArea>
@@ -199,8 +222,14 @@ export default function EditorPage() {
             <TabsContent value="background" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <div className="px-3 pb-3">
-                  <BackgroundPanel fabricCanvas={fabricRef.current} />
+                  <BackgroundPanel fabricCanvas={fabricCanvas} />
                 </div>
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="history" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <HistoryPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>

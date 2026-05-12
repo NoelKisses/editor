@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import { useEditorStore } from "@/store/editor-store";
 import { toast } from "sonner";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function useKeyboardShortcuts(fabricCanvas: any) {
+export function useKeyboardShortcuts(fabricRef: RefObject<any>) {
   const { undo, redo } = useEditorStore();
   // clipboard interno — clona o objeto Fabric sem usar window.clipboard
   const clipboardRef = useRef<unknown>(null);
 
   useEffect(() => {
+    const fabricCanvas = fabricRef.current;
     if (!fabricCanvas) return;
 
     const isMac = typeof navigator !== "undefined" && /Mac/i.test(navigator.platform);
@@ -175,11 +176,11 @@ export function useKeyboardShortcuts(fabricCanvas: any) {
       if (key === "ArrowDown")  { e.preventDefault(); moveSelected(0, step); return; }
 
       // --- Z-order ---
-      if (mod && key === "]") { e.preventDefault(); shift ? bringToFront() : bringForward(); return; }
-      if (mod && key === "[") { e.preventDefault(); shift ? sendToBack() : sendBackward(); return; }
+      if (mod && key === "]") { e.preventDefault(); if (shift) { bringToFront(); } else { bringForward(); } return; }
+      if (mod && key === "[") { e.preventDefault(); if (shift) { sendToBack(); } else { sendBackward(); } return; }
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [fabricCanvas, undo, redo]);
+  }, [fabricRef, undo, redo]);
 }
