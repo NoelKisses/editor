@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Download, FileImage, FileType2, Image } from "lucide-react";
+import { Download, FileImage, FileType2, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
 interface AdvancedExportPanelProps {
@@ -13,7 +13,7 @@ type ExportFormat = "png" | "jpg" | "webp" | "svg";
 
 const FORMATS: { value: ExportFormat; label: string; icon: React.ReactNode; desc: string }[] = [
   { value: "png", label: "PNG", icon: <FileImage className="w-4 h-4" />, desc: "Transparência, alta qualidade" },
-  { value: "jpg", label: "JPG", icon: <Image className="w-4 h-4" />, desc: "Menor arquivo, sem transparência" },
+  { value: "jpg", label: "JPG", icon: <ImageIcon className="w-4 h-4" />, desc: "Menor arquivo, sem transparência" },
   { value: "webp", label: "WebP", icon: <FileImage className="w-4 h-4" />, desc: "Melhor compressão web" },
   { value: "svg", label: "SVG", icon: <FileType2 className="w-4 h-4" />, desc: "Vetorial, escalável" },
 ];

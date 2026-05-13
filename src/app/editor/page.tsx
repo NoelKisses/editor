@@ -62,6 +62,9 @@ import { AdvancedExportPanel } from "@/components/editor/advanced-export-panel";
 import { VectorElementsPanel } from "@/components/editor/vector-elements-panel";
 import { SmartResizePanel } from "@/components/editor/smart-resize-panel";
 import { SmartGuidesPanel } from "@/components/editor/smart-guides-panel";
+import { TextOnPathPanel } from "@/components/editor/text-on-path-panel";
+import { PatternsPanel } from "@/components/editor/patterns-panel";
+import { QuickStylesPanel } from "@/components/editor/quick-styles-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -102,6 +105,8 @@ import {
   Download,
   Spline,
   Crosshair,
+  Wand2,
+  SquareStack,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -244,7 +249,7 @@ export default function EditorPage() {
         {/* Left sidebar */}
         <aside className={`w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="templates" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(15, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(18, minmax(0, 1fr))" }}>
               <TabsTrigger value="templates" className="text-[9px] px-0.5 gap-0.5" title="Templates">
                 <Layers className="w-3 h-3" />
               </TabsTrigger>
@@ -274,6 +279,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="table" className="text-[9px] px-0.5 gap-0.5" title="Tabela">
                 <Table className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textpath" className="text-[9px] px-0.5 gap-0.5" title="Texto em Caminho">
+                <Spline className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="patterns" className="text-[9px] px-0.5 gap-0.5" title="Padrões e Texturas">
+                <SquareStack className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="quickstyles" className="text-[9px] px-0.5 gap-0.5" title="Estilos Rápidos">
+                <Wand2 className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="qrcode" className="text-[9px] px-0.5 gap-0.5" title="QR Code">
                 <QrCode className="w-3 h-3" />
@@ -349,6 +363,24 @@ export default function EditorPage() {
             <TabsContent value="table" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TablePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="textpath" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextOnPathPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="patterns" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <PatternsPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="quickstyles" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <QuickStylesPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
 
