@@ -136,6 +136,9 @@ import { CanvasGuidesPanel } from "@/components/editor/canvas-guides-panel";
 import { ObjectPositionAnimationPanel } from "@/components/editor/object-position-animation-panel";
 import { CanvasRulerSettingsPanel } from "@/components/editor/canvas-ruler-settings-panel";
 import { TextHighlightPanel } from "@/components/editor/text-highlight-panel";
+import { ObjectReflectionPanel } from "@/components/editor/object-reflection-panel";
+import { CanvasExportBatchPanel } from "@/components/editor/canvas-export-batch-panel";
+import { TextCounterPanel } from "@/components/editor/text-counter-panel";
 import { ObjectStrokePanel } from "@/components/editor/object-stroke-panel";
 import { ProjectColorPalettePanel } from "@/components/editor/project-color-palette-panel";
 import { ObjectClipMaskPanel } from "@/components/editor/object-clip-mask-panel";
@@ -226,6 +229,9 @@ import {
   Undo2,
   Clapperboard,
   RulerIcon,
+  FlipVertical2,
+  PackagePlus,
+  Hash,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -584,7 +590,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(93, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(96, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -863,6 +869,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="texthighlight" title="Marcador de Texto" className="px-0.5">
                 <Highlighter className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="reflection" title="Reflexo do Objeto" className="px-0.5">
+                <FlipVertical2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="exportbatch" title="Exportação em Lote" className="px-0.5">
+                <PackagePlus className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textcounter" title="Contador de Texto" className="px-0.5">
+                <Hash className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1395,6 +1410,21 @@ export default function EditorPage() {
             <TabsContent value="texthighlight" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextHighlightPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="reflection" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectReflectionPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="exportbatch" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasExportBatchPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textcounter" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextCounterPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
