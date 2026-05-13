@@ -70,6 +70,9 @@ import { TextEffectsAdvancedPanel } from "@/components/editor/text-effects-advan
 import { ImageAdjustmentsPanel } from "@/components/editor/image-adjustments-panel";
 import { ObjectLockPanel } from "@/components/editor/object-lock-panel";
 import { TextSpacingPanel } from "@/components/editor/text-spacing-panel";
+import { DropShadowAdvancedPanel } from "@/components/editor/drop-shadow-advanced-panel";
+import { ColorHarmonyPanel } from "@/components/editor/color-harmony-panel";
+import { TransformPanel } from "@/components/editor/transform-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -115,6 +118,7 @@ import {
   Sliders,
   Lock,
   MoveHorizontal,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -473,7 +477,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(27, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -545,6 +549,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="textspacing" title="Espaçamento de Texto" className="px-0.5">
                 <MoveHorizontal className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="dropshadow" title="Sombra Avançada" className="px-0.5">
+                <Eclipse className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="colorharmony" title="Harmonia de Cores" className="px-0.5">
+                <Palette className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="transform" title="Transformações" className="px-0.5">
+                <RefreshCw className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -729,6 +742,24 @@ export default function EditorPage() {
             <TabsContent value="textspacing" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextSpacingPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="dropshadow" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <DropShadowAdvancedPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="colorharmony" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ColorHarmonyPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="transform" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TransformPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
