@@ -25,6 +25,7 @@ import { FramesPanel } from "@/components/editor/frames-panel";
 import { IconsPanel } from "@/components/editor/icons-panel";
 import { ColorPalettePanel } from "@/components/editor/color-palette-panel";
 import { EffectsPanel } from "@/components/editor/effects-panel";
+import { DrawPanel } from "@/components/editor/draw-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -43,6 +44,7 @@ import {
   Palette,
   Droplets,
   Zap,
+  PenLine,
   Frame,
   LayoutGrid,
 } from "lucide-react";
@@ -98,10 +100,10 @@ export default function EditorPage() {
 
       {/* Main layout */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left sidebar — 6 abas */}
+        {/* Left sidebar */}
         <aside className="w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden">
           <Tabs defaultValue="templates" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-7 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid grid-cols-8 m-2 flex-shrink-0 h-8">
               <TabsTrigger value="templates" className="text-[9px] px-0.5 gap-0.5" title="Templates">
                 <Layers className="w-3 h-3" />
               </TabsTrigger>
@@ -119,6 +121,9 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="ai" className="text-[9px] px-0.5 gap-0.5" title="IA">
                 <Sparkles className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="draw" className="text-[9px] px-0.5 gap-0.5" title="Desenho Livre">
+                <PenLine className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="projects" className="text-[9px] px-0.5 gap-0.5" title="Projetos">
                 <FolderOpen className="w-3 h-3" />
@@ -163,6 +168,12 @@ export default function EditorPage() {
                     <AiSuggestionsPanel />
                   </div>
                 </div>
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="draw" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <DrawPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
 
