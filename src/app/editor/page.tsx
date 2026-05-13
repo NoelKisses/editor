@@ -100,6 +100,9 @@ import { SmartAlignDistributePanel } from "@/components/editor/smart-align-distr
 import { TextOutlinePanel } from "@/components/editor/text-outline-panel";
 import { CanvasGridOverlayPanel } from "@/components/editor/canvas-grid-overlay-panel";
 import { ObjectRenamePanel } from "@/components/editor/object-rename-panel";
+import { ClipboardPanel } from "@/components/editor/clipboard-panel";
+import { SnapSettingsPanel } from "@/components/editor/snap-settings-panel";
+import { ZoomControlsPanel } from "@/components/editor/zoom-controls-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -165,6 +168,9 @@ import {
   PackageOpen,
   StretchHorizontal,
   Tag,
+  Magnet,
+  ZoomIn,
+  Clipboard,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -523,7 +529,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(54, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(57, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -685,6 +691,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="rename" title="Renomear Objetos" className="px-0.5">
                 <Tag className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="clipboard" title="Área de Transferência" className="px-0.5">
+                <Clipboard className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="snap" title="Snap e Guias" className="px-0.5">
+                <Magnet className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="zoom" title="Controle de Zoom" className="px-0.5">
+                <ZoomIn className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1022,6 +1037,21 @@ export default function EditorPage() {
             <TabsContent value="rename" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectRenamePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="clipboard" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ClipboardPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="snap" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <SnapSettingsPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="zoom" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ZoomControlsPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
