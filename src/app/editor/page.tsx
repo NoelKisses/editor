@@ -151,6 +151,9 @@ import { ObjectClipMaskPanel } from "@/components/editor/object-clip-mask-panel"
 import { ObjectGlitchEffectPanel } from "@/components/editor/object-glitch-effect-panel";
 import { CanvasSnapshotPanel } from "@/components/editor/canvas-snapshot-panel";
 import { TextVariablePanel } from "@/components/editor/text-variable-panel";
+import { TextAnimationPanel } from "@/components/editor/text-animation-panel";
+import { ObjectPatternFillPanel } from "@/components/editor/object-pattern-fill-panel";
+import { CanvasMultiPagePanel } from "@/components/editor/canvas-multi-page-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -248,6 +251,9 @@ import {
   ArrowLeftRight,
   Camera,
   Variable,
+  Activity,
+  Shuffle,
+  Layers2,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -606,7 +612,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(105, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(108, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -921,6 +927,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="textvariable" title="Variáveis de Texto" className="px-0.5">
                 <Variable className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textanimation" title="Animação de Texto" className="px-0.5">
+                <Activity className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="patternfill" title="Preenchimento com Padrão" className="px-0.5">
+                <Shuffle className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="multipage" title="Múltiplas Páginas" className="px-0.5">
+                <Layers2 className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1513,6 +1528,21 @@ export default function EditorPage() {
             <TabsContent value="textvariable" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextVariablePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textanimation" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextAnimationPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="patternfill" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectPatternFillPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="multipage" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasMultiPagePanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
