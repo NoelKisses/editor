@@ -133,6 +133,9 @@ import { CanvasHistoryPanel } from "@/components/editor/canvas-history-panel";
 import { TextArcPanel } from "@/components/editor/text-arc-panel";
 import { CanvasPatternPanel } from "@/components/editor/canvas-pattern-panel";
 import { CanvasGuidesPanel } from "@/components/editor/canvas-guides-panel";
+import { ObjectPositionAnimationPanel } from "@/components/editor/object-position-animation-panel";
+import { CanvasRulerSettingsPanel } from "@/components/editor/canvas-ruler-settings-panel";
+import { TextHighlightPanel } from "@/components/editor/text-highlight-panel";
 import { ObjectStrokePanel } from "@/components/editor/object-stroke-panel";
 import { ProjectColorPalettePanel } from "@/components/editor/project-color-palette-panel";
 import { ObjectClipMaskPanel } from "@/components/editor/object-clip-mask-panel";
@@ -221,6 +224,8 @@ import {
   AlignCenterHorizontal,
   SwatchBook,
   Undo2,
+  Clapperboard,
+  RulerIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -579,7 +584,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(90, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(93, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -849,6 +854,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="clipmask" title="Máscara de Recorte" className="px-0.5">
                 <Scissors className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="keyframes" title="Animação por Keyframes" className="px-0.5">
+                <Clapperboard className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="rulersettings" title="Configurações das Réguas" className="px-0.5">
+                <RulerIcon className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="texthighlight" title="Marcador de Texto" className="px-0.5">
+                <Highlighter className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1366,6 +1380,21 @@ export default function EditorPage() {
             <TabsContent value="clipmask" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectClipMaskPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="keyframes" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectPositionAnimationPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="rulersettings" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasRulerSettingsPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="texthighlight" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextHighlightPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
