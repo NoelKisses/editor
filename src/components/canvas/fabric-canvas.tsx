@@ -1,13 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useCallback, useState } from "react";
+import { Copy, Trash2, Lock, Unlock, FlipHorizontal2 } from "lucide-react";
 import { useEditorStore } from "@/store/editor-store";
 
 const RULER_SIZE = 20;
+const SNAP_THRESHOLD = 8; // pixels
 
 interface FabricCanvasProps {
   onCanvasReady?: (canvas: unknown) => void;
   onSelectionChange?: () => void;
+}
+
+interface SnapLine {
+  type: "v" | "h";
+  pos: number; // in canvas units (pre-zoom)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,11 +29,17 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
   const spaceDownRef = useRef(false);
   const [showGrid, setShowGrid] = useState(false);
   const [showRulers, setShowRulers] = useState(false);
+  const [showSmartGuides, setShowSmartGuides] = useState(true);
   const [canvasReady, setCanvasReady] = useState(0);
   const [guides, setGuides] = useState<{ type: "h" | "v"; pos: number }[]>([]);
+  const [snapLines, setSnapLines] = useState<SnapLine[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [selectedObj, setSelectedObj] = useState<any>(null);
+  const [selectionBounds, setSelectionBounds] = useState<{ left: number; top: number; width: number } | null>(null);
   const draggingGuideRef = useRef<number | null>(null);
   const rulerHRef = useRef<HTMLCanvasElement>(null);
   const rulerVRef = useRef<HTMLCanvasElement>(null);
+  const showSmartGuidesRef = useRef(true);
   const { template, zoom, setZoom, snapToGrid } = useEditorStore();
 
   const initCanvas = useCallback(async () => {
@@ -68,6 +81,40 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
   useEffect(() => {
     initCanvas();
   }, [initCanvas]);
+
+  // Track selection for floating toolbar
+  useEffect(() => {
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+
+    const updateSelection = () => {
+      const obj = canvas.getActiveObject();
+      if (!obj || obj.type === "activeSelection") {
+        setSelectedObj(null);
+        setSelectionBounds(null);
+        return;
+      }
+      setSelectedObj(obj);
+      const br = obj.getBoundingRect(true);
+      setSelectionBounds({ left: br.left * zoom, top: br.top * zoom, width: br.width * zoom });
+    };
+
+    const clearSelection = () => { setSelectedObj(null); setSelectionBounds(null); };
+
+    canvas.on("selection:created", updateSelection);
+    canvas.on("selection:updated", updateSelection);
+    canvas.on("selection:cleared", clearSelection);
+    canvas.on("object:moving", updateSelection);
+    canvas.on("object:scaling", updateSelection);
+
+    return () => {
+      canvas.off("selection:created", updateSelection);
+      canvas.off("selection:updated", updateSelection);
+      canvas.off("selection:cleared", clearSelection);
+      canvas.off("object:moving", updateSelection);
+      canvas.off("object:scaling", updateSelection);
+    };
+  }, [canvasReady, zoom]);
 
   useEffect(() => {
     if (!fabricRef.current) return;
@@ -166,24 +213,136 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
     };
   }, [canvasReady]);
 
-  // Snap to grid
+  // Keep showSmartGuidesRef in sync
+  useEffect(() => {
+    showSmartGuidesRef.current = showSmartGuides;
+  }, [showSmartGuides]);
+
+  // Smart snap guides + grid snap
   useEffect(() => {
     const canvas = fabricRef.current;
-    if (!canvas) return;
+    if (!canvas || !template) return;
     const GRID = 20;
+    const CW = template.width;
+    const CH = template.height;
 
-    const onMoving = (opt: { target: FabricInstance }) => {
-      if (!snapToGrid) return;
-      const obj = opt.target;
-      obj.set({
-        left: Math.round((obj.left ?? 0) / GRID) * GRID,
-        top: Math.round((obj.top ?? 0) / GRID) * GRID,
-      });
+    const getKeyPoints = (obj: FabricInstance) => {
+      const l = obj.left ?? 0;
+      const t = obj.top ?? 0;
+      const w = (obj.getScaledWidth?.() ?? obj.width ?? 0);
+      const h = (obj.getScaledHeight?.() ?? obj.height ?? 0);
+      return {
+        // vertical snap points (x positions)
+        vSnaps: [l, l + w / 2, l + w],
+        // horizontal snap points (y positions)
+        hSnaps: [t, t + h / 2, t + h],
+        l, t, w, h,
+      };
     };
 
+    const onMoving = (opt: { target: FabricInstance }) => {
+      const obj = opt.target;
+      const lines: SnapLine[] = [];
+
+      if (snapToGrid) {
+        obj.set({
+          left: Math.round((obj.left ?? 0) / GRID) * GRID,
+          top: Math.round((obj.top ?? 0) / GRID) * GRID,
+        });
+        setSnapLines([]);
+        return;
+      }
+
+      if (!showSmartGuidesRef.current) {
+        setSnapLines([]);
+        return;
+      }
+
+      const { vSnaps, hSnaps, l, t } = getKeyPoints(obj);
+
+      // Canvas boundary + center snap targets
+      const canvasVTargets = [0, CW / 2, CW];
+      const canvasHTargets = [0, CH / 2, CH];
+
+      let newLeft = l;
+      let newTop = t;
+
+      // Check vertical (x) snap against canvas targets
+      for (const snap of vSnaps) {
+        for (const target of canvasVTargets) {
+          if (Math.abs(snap - target) < SNAP_THRESHOLD / zoom) {
+            const offset = snap - l;
+            newLeft = target - offset;
+            lines.push({ type: "v", pos: target });
+          }
+        }
+      }
+
+      // Check horizontal (y) snap against canvas targets
+      for (const snap of hSnaps) {
+        for (const target of canvasHTargets) {
+          if (Math.abs(snap - target) < SNAP_THRESHOLD / zoom) {
+            const offset = snap - t;
+            newTop = target - offset;
+            lines.push({ type: "h", pos: target });
+          }
+        }
+      }
+
+      // Check snap against other objects
+      const others = canvas.getObjects().filter((o: FabricInstance) => o !== obj && o.visible !== false);
+      for (const other of others) {
+        const oPoints = getKeyPoints(other);
+
+        for (const snap of vSnaps) {
+          for (const target of oPoints.vSnaps) {
+            if (Math.abs(snap - target) < SNAP_THRESHOLD / zoom) {
+              const offset = snap - l;
+              newLeft = target - offset;
+              lines.push({ type: "v", pos: target });
+            }
+          }
+        }
+
+        for (const snap of hSnaps) {
+          for (const target of oPoints.hSnaps) {
+            if (Math.abs(snap - target) < SNAP_THRESHOLD / zoom) {
+              const offset = snap - t;
+              newTop = target - offset;
+              lines.push({ type: "h", pos: target });
+            }
+          }
+        }
+      }
+
+      if (lines.length > 0) {
+        obj.set({ left: newLeft, top: newTop });
+      }
+
+      // Deduplicate lines
+      const seen = new Set<string>();
+      const unique = lines.filter((ln) => {
+        const key = `${ln.type}:${ln.pos}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+
+      setSnapLines(unique);
+    };
+
+    const onModified = () => setSnapLines([]);
+
     canvas.on("object:moving", onMoving);
-    return () => canvas.off("object:moving", onMoving);
-  }, [snapToGrid, canvasReady]);
+    canvas.on("object:modified", onModified);
+    canvas.on("mouse:up", onModified);
+
+    return () => {
+      canvas.off("object:moving", onMoving);
+      canvas.off("object:modified", onModified);
+      canvas.off("mouse:up", onModified);
+    };
+  }, [snapToGrid, canvasReady, template, zoom]);
 
   // Draw ruler ticks on a canvas element
   const drawRuler = useCallback((
@@ -349,7 +508,7 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
         )}
         <canvas ref={canvasRef} />
 
-        {/* Guide lines */}
+        {/* Guide lines (manual, from rulers) */}
         {showRulers && guides.map((g, i) => (
           <div
             key={i}
@@ -361,6 +520,118 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
             onMouseDown={() => handleGuideMouseDown(i)}
           />
         ))}
+
+        {/* Smart snap lines (auto-appear while dragging) */}
+        {snapLines.map((ln, i) => (
+          <div
+            key={`snap-${i}`}
+            className="absolute pointer-events-none z-25"
+            style={ln.type === "v"
+              ? {
+                  left: ln.pos * zoom - 0.5,
+                  top: 0,
+                  width: 1,
+                  height: ch,
+                  background: "rgba(255, 80, 80, 0.9)",
+                  boxShadow: "0 0 3px rgba(255,80,80,0.6)",
+                }
+              : {
+                  top: ln.pos * zoom - 0.5,
+                  left: 0,
+                  height: 1,
+                  width: cw,
+                  background: "rgba(255, 80, 80, 0.9)",
+                  boxShadow: "0 0 3px rgba(255,80,80,0.6)",
+                }
+            }
+          />
+        ))}
+
+        {/* Floating quick-action toolbar above selected object */}
+        {selectedObj && selectionBounds && (
+          <div
+            className="absolute z-40 flex items-center gap-0.5 bg-card/95 border border-border rounded-lg shadow-xl px-1 py-0.5 pointer-events-auto"
+            style={{
+              left: Math.max(0, selectionBounds.left + selectionBounds.width / 2),
+              top: Math.max(0, selectionBounds.top - 38),
+              transform: "translateX(-50%)",
+            }}
+          >
+            {/* Duplicate */}
+            <button
+              className="p-1.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+              title="Duplicar"
+              onClick={() => {
+                const canvas = fabricRef.current;
+                if (!canvas || !selectedObj) return;
+                selectedObj.clone((cloned: FabricInstance) => {
+                  cloned.set({ left: (selectedObj.left ?? 0) + 20, top: (selectedObj.top ?? 0) + 20 });
+                  canvas.add(cloned);
+                  canvas.setActiveObject(cloned);
+                  canvas.requestRenderAll();
+                });
+              }}
+            >
+              <Copy className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Flip horizontal */}
+            <button
+              className="p-1.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+              title="Espelhar horizontalmente"
+              onClick={() => {
+                if (!selectedObj) return;
+                selectedObj.set({ flipX: !selectedObj.flipX });
+                fabricRef.current?.requestRenderAll();
+              }}
+            >
+              <FlipHorizontal2 className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Lock / Unlock */}
+            <button
+              className={`p-1.5 rounded hover:bg-accent transition-colors ${!selectedObj.selectable ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+              title={!selectedObj.selectable ? "Desbloquear" : "Bloquear"}
+              onClick={() => {
+                if (!selectedObj) return;
+                const locked = !selectedObj.selectable;
+                selectedObj.set({
+                  selectable: locked,
+                  evented: locked,
+                  lockMovementX: !locked,
+                  lockMovementY: !locked,
+                  lockScalingX: !locked,
+                  lockScalingY: !locked,
+                  lockRotation: !locked,
+                });
+                fabricRef.current?.discardActiveObject();
+                fabricRef.current?.requestRenderAll();
+                setSelectedObj(null);
+                setSelectionBounds(null);
+              }}
+            >
+              {!selectedObj.selectable ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+            </button>
+
+            <div className="w-px h-4 bg-border mx-0.5" />
+
+            {/* Delete */}
+            <button
+              className="p-1.5 rounded hover:bg-red-500/20 text-muted-foreground hover:text-red-400 transition-colors"
+              title="Excluir"
+              onClick={() => {
+                const canvas = fabricRef.current;
+                if (!canvas || !selectedObj) return;
+                canvas.remove(selectedObj);
+                canvas.requestRenderAll();
+                setSelectedObj(null);
+                setSelectionBounds(null);
+              }}
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Bottom-right controls */}
@@ -386,6 +657,15 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
             ✕ Guias
           </button>
         )}
+        <button
+          onClick={() => setShowSmartGuides((v) => !v)}
+          className={`text-[10px] px-2 py-1 rounded border transition-colors ${
+            showSmartGuides ? "bg-red-500/20 border-red-500/40 text-red-400" : "bg-black/40 border-white/10 text-white/50 hover:text-white/80"
+          }`}
+          title="Guias automáticas de alinhamento (snap)"
+        >
+          Snap
+        </button>
         <button
           onClick={() => setShowGrid((v) => !v)}
           className={`text-[10px] px-2 py-1 rounded border transition-colors ${

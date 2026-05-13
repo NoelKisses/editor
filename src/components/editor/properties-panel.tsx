@@ -19,6 +19,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { CropImageDialog } from "./crop-image-dialog";
+import { FontPicker } from "./font-picker";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FabricObj = any;
@@ -29,11 +30,6 @@ interface PropertiesPanelProps {
   // Force re-render from parent when selection changes
   selectionVersion: number;
 }
-
-const FONT_FAMILIES = [
-  "Arial", "Georgia", "Times New Roman", "Courier New", "Verdana",
-  "Trebuchet MS", "Impact", "Comic Sans MS", "Helvetica", "Tahoma",
-];
 
 const FONT_SIZES = [8, 10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 60, 72, 96, 120];
 
@@ -179,19 +175,40 @@ export function PropertiesPanel({ fabricCanvas, selectionVersion }: PropertiesPa
 
       <Separator />
 
+      {/* --- Espelhar --- */}
+      <Section title="Espelhar">
+        <div className="flex gap-1.5">
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex-1 gap-1.5 text-xs h-8"
+            onClick={() => { active.set({ flipX: !active.flipX }); fabricCanvas.requestRenderAll(); forceRedraw((n) => n + 1); }}
+          >
+            <FlipHorizontal2 className="w-3.5 h-3.5" />
+            Horizontal
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex-1 gap-1.5 text-xs h-8"
+            onClick={() => { active.set({ flipY: !active.flipY }); fabricCanvas.requestRenderAll(); forceRedraw((n) => n + 1); }}
+          >
+            <FlipVertical2 className="w-3.5 h-3.5" />
+            Vertical
+          </Button>
+        </div>
+      </Section>
+
+      <Separator />
+
       {/* ---- TEXT PROPERTIES ---- */}
       {isText && (
         <>
           <Section title="Fonte">
-            <select
+            <FontPicker
               value={active.fontFamily ?? "Arial"}
-              onChange={(e) => set({ fontFamily: e.target.value })}
-              className="text-xs bg-background border border-border rounded px-2 py-1 text-foreground"
-            >
-              {FONT_FAMILIES.map((f) => (
-                <option key={f} value={f} style={{ fontFamily: f }}>{f}</option>
-              ))}
-            </select>
+              onChange={(font) => set({ fontFamily: font })}
+            />
             <div className="flex gap-1.5">
               <select
                 value={active.fontSize ?? 48}
@@ -293,6 +310,24 @@ export function PropertiesPanel({ fabricCanvas, selectionVersion }: PropertiesPa
         </>
       )}
 
+      {/* ---- SHAPE CORNER RADIUS ---- */}
+      {type === "rect" && (
+        <>
+          <Section title="Bordas Arredondadas">
+            <div className="flex items-center gap-2">
+              <Slider
+                min={0} max={100} step={1}
+                value={[active.rx ?? 0]}
+                onValueChange={(vals) => set({ rx: (vals as number[])[0], ry: (vals as number[])[0] })}
+                className="flex-1"
+              />
+              <span className="text-xs w-8 text-right tabular-nums">{Math.round(active.rx ?? 0)}px</span>
+            </div>
+          </Section>
+          <Separator />
+        </>
+      )}
+
       {/* ---- IMAGE PROPERTIES ---- */}
       {isImage && (
         <>
@@ -304,36 +339,8 @@ export function PropertiesPanel({ fabricCanvas, selectionVersion }: PropertiesPa
               onClick={() => setCropOpen(true)}
             >
               <Crop className="w-3.5 h-3.5" />
-              Recortar
+              Recortar imagem
             </Button>
-            <div className="flex gap-1.5">
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1 gap-1.5 text-xs h-8"
-                onClick={() => {
-                  active.set({ flipX: !active.flipX });
-                  fabricCanvas.requestRenderAll();
-                  forceRedraw((n) => n + 1);
-                }}
-              >
-                <FlipHorizontal2 className="w-3.5 h-3.5" />
-                Horizontal
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1 gap-1.5 text-xs h-8"
-                onClick={() => {
-                  active.set({ flipY: !active.flipY });
-                  fabricCanvas.requestRenderAll();
-                  forceRedraw((n) => n + 1);
-                }}
-              >
-                <FlipVertical2 className="w-3.5 h-3.5" />
-                Vertical
-              </Button>
-            </div>
           </Section>
 
           <Separator />
