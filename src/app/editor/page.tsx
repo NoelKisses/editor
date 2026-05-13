@@ -136,6 +136,9 @@ import { CanvasGuidesPanel } from "@/components/editor/canvas-guides-panel";
 import { ObjectPositionAnimationPanel } from "@/components/editor/object-position-animation-panel";
 import { CanvasRulerSettingsPanel } from "@/components/editor/canvas-ruler-settings-panel";
 import { TextHighlightPanel } from "@/components/editor/text-highlight-panel";
+import { ObjectMosaicPanel } from "@/components/editor/object-mosaic-panel";
+import { CanvasPrintSafePanel } from "@/components/editor/canvas-print-safe-panel";
+import { TextAutofitPanel } from "@/components/editor/text-autofit-panel";
 import { ObjectNeonGlowPanel } from "@/components/editor/object-neon-glow-panel";
 import { CanvasCollaborationPanel } from "@/components/editor/canvas-collaboration-panel";
 import { ImageSaturationPanel } from "@/components/editor/image-saturation-panel";
@@ -237,6 +240,9 @@ import {
   Hash,
   MessageSquare,
   Sun,
+  Grid2X2,
+  Printer,
+  ArrowLeftRight,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -595,7 +601,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(99, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(102, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -892,6 +898,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="imgsaturation" title="Cor e Saturação" className="px-0.5">
                 <Sun className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="mosaic" title="Mosaico e Pixelação" className="px-0.5">
+                <Grid2X2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="printsafe" title="Área Segura para Impressão" className="px-0.5">
+                <Printer className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textautofit" title="Ajuste Automático de Texto" className="px-0.5">
+                <ArrowLeftRight className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1454,6 +1469,21 @@ export default function EditorPage() {
             <TabsContent value="imgsaturation" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ImageSaturationPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="mosaic" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectMosaicPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="printsafe" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasPrintSafePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textautofit" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextAutofitPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
