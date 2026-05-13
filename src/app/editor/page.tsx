@@ -36,6 +36,8 @@ import { CustomFontPanel } from "@/components/editor/custom-font-panel";
 import { PresentationMode } from "@/components/editor/presentation-mode";
 import { ResizeCanvasDialog } from "@/components/editor/resize-canvas-dialog";
 import { OpacityBlendPanel } from "@/components/editor/opacity-blend-panel";
+import { CurvedTextPanel } from "@/components/editor/curved-text-panel";
+import { ColorPickerEyedropper } from "@/components/editor/color-picker-eyedropper";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -347,6 +349,9 @@ export default function EditorPage() {
             <TabsContent value="text" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextEffectsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                <div className="border-t border-border mt-2">
+                  <CurvedTextPanel fabricCanvas={fabricCanvas} />
+                </div>
               </ScrollArea>
             </TabsContent>
 
@@ -399,6 +404,9 @@ export default function EditorPage() {
             <TabsContent value="palette" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ColorPalettePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                <div className="border-t border-border mt-2">
+                  <ColorPickerEyedropper fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                </div>
                 <div className="border-t border-border mt-2">
                   <ColorReplacePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
                 </div>

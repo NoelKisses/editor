@@ -18,14 +18,36 @@ interface ColorStop {
 }
 
 const PRESET_GRADIENTS: { label: string; stops: ColorStop[]; angle: number }[] = [
-  { label: "Pôr do Sol", stops: [{ offset: 0, color: "#ff6b35" }, { offset: 1, color: "#f7c59f" }], angle: 135 },
-  { label: "Oceano",    stops: [{ offset: 0, color: "#0575e6" }, { offset: 1, color: "#021b79" }], angle: 135 },
-  { label: "Aurora",    stops: [{ offset: 0, color: "#00c6ff" }, { offset: 0.5, color: "#a855f7" }, { offset: 1, color: "#ec4899" }], angle: 135 },
-  { label: "Floresta",  stops: [{ offset: 0, color: "#11998e" }, { offset: 1, color: "#38ef7d" }], angle: 135 },
-  { label: "Fogo",      stops: [{ offset: 0, color: "#f12711" }, { offset: 1, color: "#f5af19" }], angle: 90 },
-  { label: "Noite",     stops: [{ offset: 0, color: "#0f0c29" }, { offset: 0.5, color: "#302b63" }, { offset: 1, color: "#24243e" }], angle: 135 },
-  { label: "Rosa",      stops: [{ offset: 0, color: "#f953c6" }, { offset: 1, color: "#b91d73" }], angle: 135 },
-  { label: "Prata",     stops: [{ offset: 0, color: "#bdc3c7" }, { offset: 1, color: "#2c3e50" }], angle: 135 },
+  // Natureza
+  { label: "Pôr do Sol",  stops: [{ offset: 0, color: "#ff6b35" }, { offset: 1, color: "#f7c59f" }], angle: 135 },
+  { label: "Oceano",      stops: [{ offset: 0, color: "#0575e6" }, { offset: 1, color: "#021b79" }], angle: 135 },
+  { label: "Aurora",      stops: [{ offset: 0, color: "#00c6ff" }, { offset: 0.5, color: "#a855f7" }, { offset: 1, color: "#ec4899" }], angle: 135 },
+  { label: "Floresta",    stops: [{ offset: 0, color: "#11998e" }, { offset: 1, color: "#38ef7d" }], angle: 135 },
+  // Intensos
+  { label: "Fogo",        stops: [{ offset: 0, color: "#f12711" }, { offset: 1, color: "#f5af19" }], angle: 90 },
+  { label: "Neon",        stops: [{ offset: 0, color: "#00f260" }, { offset: 1, color: "#0575e6" }], angle: 135 },
+  { label: "Elétrico",    stops: [{ offset: 0, color: "#ff0099" }, { offset: 1, color: "#493240" }], angle: 135 },
+  { label: "Plasma",      stops: [{ offset: 0, color: "#9b27af" }, { offset: 0.5, color: "#e91e63" }, { offset: 1, color: "#ff5722" }], angle: 90 },
+  // Escuros
+  { label: "Noite",       stops: [{ offset: 0, color: "#0f0c29" }, { offset: 0.5, color: "#302b63" }, { offset: 1, color: "#24243e" }], angle: 135 },
+  { label: "Obsidiana",   stops: [{ offset: 0, color: "#1a1a2e" }, { offset: 1, color: "#16213e" }], angle: 135 },
+  { label: "Carvão",      stops: [{ offset: 0, color: "#232526" }, { offset: 1, color: "#414345" }], angle: 135 },
+  { label: "Abismo",      stops: [{ offset: 0, color: "#000000" }, { offset: 1, color: "#434343" }], angle: 135 },
+  // Pastel
+  { label: "Rosa",        stops: [{ offset: 0, color: "#f953c6" }, { offset: 1, color: "#b91d73" }], angle: 135 },
+  { label: "Pêssego",     stops: [{ offset: 0, color: "#ffb347" }, { offset: 1, color: "#ffcc02" }], angle: 135 },
+  { label: "Lavanda",     stops: [{ offset: 0, color: "#c471f5" }, { offset: 1, color: "#fa71cd" }], angle: 135 },
+  { label: "Menta",       stops: [{ offset: 0, color: "#a8edea" }, { offset: 1, color: "#fed6e3" }], angle: 135 },
+  // Metálicos
+  { label: "Prata",       stops: [{ offset: 0, color: "#bdc3c7" }, { offset: 1, color: "#2c3e50" }], angle: 135 },
+  { label: "Ouro",        stops: [{ offset: 0, color: "#f7971e" }, { offset: 1, color: "#ffd200" }], angle: 135 },
+  { label: "Bronze",      stops: [{ offset: 0, color: "#c97b3c" }, { offset: 0.5, color: "#e8a951" }, { offset: 1, color: "#c97b3c" }], angle: 135 },
+  { label: "Titânio",     stops: [{ offset: 0, color: "#283048" }, { offset: 1, color: "#859398" }], angle: 135 },
+  // YouTube
+  { label: "YT Vermelho", stops: [{ offset: 0, color: "#ff0000" }, { offset: 1, color: "#cc0000" }], angle: 135 },
+  { label: "YT Dark",     stops: [{ offset: 0, color: "#1a1a1a" }, { offset: 1, color: "#ff0000" }], angle: 135 },
+  { label: "Viral",       stops: [{ offset: 0, color: "#fc466b" }, { offset: 1, color: "#3f5efb" }], angle: 135 },
+  { label: "Trending",    stops: [{ offset: 0, color: "#11998e" }, { offset: 1, color: "#38ef7d" }], angle: 45 },
 ];
 
 function angleToCoords(angle: number): { x1: number; y1: number; x2: number; y2: number } {

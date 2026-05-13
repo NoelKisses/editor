@@ -17,6 +17,8 @@ import {
   Layers,
   ChevronUp,
   ChevronDown,
+  Lock,
+  Unlock,
 } from "lucide-react";
 import { CropImageDialog } from "./crop-image-dialog";
 import { FontPicker } from "./font-picker";
@@ -67,6 +69,7 @@ function ColorInput({ value, onChange }: { value: string; onChange: (v: string) 
 export function PropertiesPanel({ fabricCanvas, selectionVersion }: PropertiesPanelProps) {
   const [active, setActive] = useState<FabricObj>(null);
   const [cropOpen, setCropOpen] = useState(false);
+  const [lockAspect, setLockAspect] = useState(false);
   // Local UI state (mirrors fabric object properties)
   const [, forceRedraw] = useState(0);
 
@@ -107,30 +110,60 @@ export function PropertiesPanel({ fabricCanvas, selectionVersion }: PropertiesPa
       {/* --- Posição e Tamanho --- */}
       <Section title="Posição &amp; Tamanho">
         <div className="grid grid-cols-2 gap-1.5">
-          {(["left", "top", "width", "height"] as const).map((prop) => (
+          {(["left", "top"] as const).map((prop) => (
             <label key={prop} className="flex flex-col gap-0.5">
-              <span className="text-[10px] text-muted-foreground uppercase">{prop === "left" ? "X" : prop === "top" ? "Y" : prop === "width" ? "W" : "H"}</span>
+              <span className="text-[10px] text-muted-foreground uppercase">{prop === "left" ? "X" : "Y"}</span>
               <input
                 type="number"
-                value={Math.round(
-                  prop === "width" ? active.getScaledWidth() :
-                  prop === "height" ? active.getScaledHeight() :
-                  active[prop] ?? 0
-                )}
-                onChange={(e) => {
-                  const v = Number(e.target.value);
-                  if (prop === "width") {
-                    set({ scaleX: v / (active.width ?? 1) });
-                  } else if (prop === "height") {
-                    set({ scaleY: v / (active.height ?? 1) });
-                  } else {
-                    set({ [prop]: v });
-                  }
-                }}
+                value={Math.round(active[prop] ?? 0)}
+                onChange={(e) => set({ [prop]: Number(e.target.value) })}
                 className="text-xs bg-background border border-border rounded px-2 py-1 text-foreground w-full"
               />
             </label>
           ))}
+        </div>
+        <div className="flex items-end gap-1.5">
+          <label className="flex flex-col gap-0.5 flex-1">
+            <span className="text-[10px] text-muted-foreground uppercase">W</span>
+            <input
+              type="number"
+              value={Math.round(active.getScaledWidth())}
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                if (lockAspect) {
+                  const ratio = active.getScaledHeight() / active.getScaledWidth();
+                  set({ scaleX: v / (active.width ?? 1), scaleY: (v * ratio) / (active.height ?? 1) });
+                } else {
+                  set({ scaleX: v / (active.width ?? 1) });
+                }
+              }}
+              className="text-xs bg-background border border-border rounded px-2 py-1 text-foreground w-full"
+            />
+          </label>
+          <button
+            onClick={() => setLockAspect((v) => !v)}
+            className={`mb-0.5 p-1.5 rounded border transition-colors flex-shrink-0 ${lockAspect ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}
+            title={lockAspect ? "Proporção travada" : "Travar proporção"}
+          >
+            {lockAspect ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
+          </button>
+          <label className="flex flex-col gap-0.5 flex-1">
+            <span className="text-[10px] text-muted-foreground uppercase">H</span>
+            <input
+              type="number"
+              value={Math.round(active.getScaledHeight())}
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                if (lockAspect) {
+                  const ratio = active.getScaledWidth() / active.getScaledHeight();
+                  set({ scaleY: v / (active.height ?? 1), scaleX: (v * ratio) / (active.width ?? 1) });
+                } else {
+                  set({ scaleY: v / (active.height ?? 1) });
+                }
+              }}
+              className="text-xs bg-background border border-border rounded px-2 py-1 text-foreground w-full"
+            />
+          </label>
         </div>
         {/* Rotation */}
         <label className="flex flex-col gap-0.5">
