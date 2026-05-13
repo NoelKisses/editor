@@ -58,6 +58,10 @@ import { AnimationsPanel } from "@/components/editor/animations-panel";
 import { GridSettingsPanel } from "@/components/editor/grid-settings-panel";
 import { TablePanel } from "@/components/editor/table-panel";
 import { MultiSelectPanel } from "@/components/editor/multi-select-panel";
+import { AdvancedExportPanel } from "@/components/editor/advanced-export-panel";
+import { VectorElementsPanel } from "@/components/editor/vector-elements-panel";
+import { SmartResizePanel } from "@/components/editor/smart-resize-panel";
+import { SmartGuidesPanel } from "@/components/editor/smart-guides-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -95,6 +99,9 @@ import {
   Table,
   Grid3X3,
   Wind,
+  Download,
+  Spline,
+  Crosshair,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -187,6 +194,22 @@ export default function EditorPage() {
             <Maximize2 className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{focusMode ? "Foco" : "Foco"}</span>
           </button>
+          {fabricCanvas && (
+            <button
+              onClick={() => {
+                const dataUrl = fabricCanvas.toDataURL({ format: "png", multiplier: 1 });
+                const link = document.createElement("a");
+                link.download = "design.png";
+                link.href = dataUrl;
+                link.click();
+              }}
+              className="flex items-center gap-1.5 text-[11px] bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-3 py-1.5 rounded-md font-medium"
+              title="Exportar PNG"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Exportar</span>
+            </button>
+          )}
           <button
             onClick={() => setShortcutsOpen(true)}
             className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded hover:bg-accent"
@@ -221,7 +244,7 @@ export default function EditorPage() {
         {/* Left sidebar */}
         <aside className={`w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="templates" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(15, minmax(0, 1fr))" }}>
               <TabsTrigger value="templates" className="text-[9px] px-0.5 gap-0.5" title="Templates">
                 <Layers className="w-3 h-3" />
               </TabsTrigger>
@@ -230,6 +253,9 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="elements" className="text-[9px] px-0.5 gap-0.5" title="Elementos">
                 <Sticker className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="vector" className="text-[9px] px-0.5 gap-0.5" title="Vetores (Linhas, Polígonos, Estrelas)">
+                <Spline className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="icons" className="text-[9px] px-0.5 gap-0.5" title="Ícones">
                 <LayoutGrid className="w-3 h-3" />
@@ -281,6 +307,12 @@ export default function EditorPage() {
             <TabsContent value="elements" className="flex-1 overflow-hidden m-0 px-3 pb-3">
               <ScrollArea className="h-full">
                 <ElementsPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="vector" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <VectorElementsPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
 
@@ -392,7 +424,7 @@ export default function EditorPage() {
         {/* Right sidebar — 17 abas */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(17, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(20, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -443,6 +475,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="notes" title="Notas do Design" className="px-0.5">
                 <StickyNote className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="export" title="Exportar" className="px-0.5">
+                <Download className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="smartresize" title="Smart Resize" className="px-0.5">
+                <Maximize2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="guides" title="Guias e Snap" className="px-0.5">
+                <Crosshair className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -585,6 +626,24 @@ export default function EditorPage() {
             <TabsContent value="notes" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasNotesPanel />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="export" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <AdvancedExportPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="smartresize" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <SmartResizePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="guides" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <SmartGuidesPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
