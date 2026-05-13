@@ -109,6 +109,9 @@ import { ContextualToolbarPanel } from "@/components/editor/contextual-toolbar-p
 import { ObjectGroupPanel } from "@/components/editor/object-group-panel";
 import { TextBackgroundPanel } from "@/components/editor/text-background-panel";
 import { ImagePlaceholderPanel } from "@/components/editor/image-placeholder-panel";
+import { CropInteractivePanel } from "@/components/editor/crop-interactive-panel";
+import { TextLetterSpacingPanel } from "@/components/editor/text-letter-spacing-panel";
+import { ObjectTransparencyPanel } from "@/components/editor/object-transparency-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -180,6 +183,7 @@ import {
   Group,
   Highlighter,
   Replace,
+  ALargeSmall,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -538,7 +542,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(63, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(66, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -727,6 +731,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="imgplaceholder" title="Placeholder de Imagem" className="px-0.5">
                 <Replace className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="cropinteractive" title="Recorte Interativo" className="px-0.5">
+                <Scissors className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="letterspacing" title="Espaçamento de Letras" className="px-0.5">
+                <ALargeSmall className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="objtransparency" title="Transparência e Blend" className="px-0.5">
+                <Blend className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1109,6 +1122,21 @@ export default function EditorPage() {
             <TabsContent value="imgplaceholder" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ImagePlaceholderPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="cropinteractive" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CropInteractivePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="letterspacing" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextLetterSpacingPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="objtransparency" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectTransparencyPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
