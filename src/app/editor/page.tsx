@@ -31,6 +31,11 @@ import { StockPhotosPanel } from "@/components/editor/stock-photos-panel";
 import { KeyboardShortcutsModal } from "@/components/editor/keyboard-shortcuts-modal";
 import { ClipMaskPanel } from "@/components/editor/clip-mask-panel";
 import { ColorReplacePanel } from "@/components/editor/color-replace-panel";
+import { QRCodePanel } from "@/components/editor/qrcode-panel";
+import { CustomFontPanel } from "@/components/editor/custom-font-panel";
+import { PresentationMode } from "@/components/editor/presentation-mode";
+import { ResizeCanvasDialog } from "@/components/editor/resize-canvas-dialog";
+import { OpacityBlendPanel } from "@/components/editor/opacity-blend-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -55,6 +60,9 @@ import {
   Images,
   Keyboard,
   CheckCircle2,
+  QrCode,
+  Play,
+  Maximize2,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -72,6 +80,8 @@ export default function EditorPage() {
   const [fabricCanvas, setFabricCanvas] = useState<any>(null);
   const [selectionVersion, setSelectionVersion] = useState(0);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [presentationOpen, setPresentationOpen] = useState(false);
+  const [resizeOpen, setResizeOpen] = useState(false);
   const { template, lastSavedAt } = useEditorStore();
 
   const handleCanvasReady = useCallback((canvas: unknown) => {
@@ -114,6 +124,26 @@ export default function EditorPage() {
               <span className="hidden sm:inline">Salvo</span>
             </span>
           )}
+          {template && (
+            <button
+              onClick={() => setResizeOpen(true)}
+              className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded hover:bg-accent"
+              title="Redimensionar canvas"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Redimensionar</span>
+            </button>
+          )}
+          {template && (
+            <button
+              onClick={() => setPresentationOpen(true)}
+              className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded hover:bg-accent"
+              title="Modo Apresentação"
+            >
+              <Play className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Apresentar</span>
+            </button>
+          )}
           <button
             onClick={() => setShortcutsOpen(true)}
             className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded hover:bg-accent"
@@ -138,7 +168,7 @@ export default function EditorPage() {
         {/* Left sidebar */}
         <aside className="w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden">
           <Tabs defaultValue="templates" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-9 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid grid-cols-11 m-2 flex-shrink-0 h-8">
               <TabsTrigger value="templates" className="text-[9px] px-0.5 gap-0.5" title="Templates">
                 <Layers className="w-3 h-3" />
               </TabsTrigger>
@@ -156,6 +186,12 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="photos" className="text-[9px] px-0.5 gap-0.5" title="Fotos Stock">
                 <Images className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="qrcode" className="text-[9px] px-0.5 gap-0.5" title="QR Code">
+                <QrCode className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="fonts" className="text-[9px] px-0.5 gap-0.5" title="Fontes">
+                <Type className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="ai" className="text-[9px] px-0.5 gap-0.5" title="IA">
                 <Sparkles className="w-3 h-3" />
@@ -201,6 +237,18 @@ export default function EditorPage() {
             <TabsContent value="photos" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <StockPhotosPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="qrcode" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <QRCodePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="fonts" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CustomFontPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
 
@@ -360,12 +408,19 @@ export default function EditorPage() {
             <TabsContent value="effects" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <EffectsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                <div className="border-t border-border mt-2">
+                  <OpacityBlendPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                </div>
               </ScrollArea>
             </TabsContent>
           </Tabs>
         </aside>
       </div>
       <KeyboardShortcutsModal open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
+      {presentationOpen && fabricCanvas && (
+        <PresentationMode fabricCanvas={fabricCanvas} onClose={() => setPresentationOpen(false)} />
+      )}
+      <ResizeCanvasDialog open={resizeOpen} onClose={() => setResizeOpen(false)} fabricCanvas={fabricCanvas} />
     </div>
   );
 }

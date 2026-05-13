@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useCallback, useState } from "react";
-import { Copy, Trash2, Lock, Unlock, FlipHorizontal2, Bold, Italic, Underline } from "lucide-react";
+import { Copy, Trash2, Lock, Unlock, FlipHorizontal2, Bold, Italic, Underline, ZoomIn, ZoomOut, Maximize } from "lucide-react";
 import { useEditorStore } from "@/store/editor-store";
 
 const RULER_SIZE = 20;
@@ -729,6 +729,37 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
           {cursorPos.x}, {cursorPos.y}px
         </div>
       )}
+
+      {/* Zoom controls (bottom-left) */}
+      <div
+        className="absolute z-30 flex items-center gap-1"
+        style={{ bottom: 8, left: showRulers ? RULER_SIZE + 8 : 8 }}
+      >
+        <button
+          onClick={() => setZoom(Math.max(0.1, parseFloat((zoom - 0.1).toFixed(2))))}
+          className="w-6 h-6 flex items-center justify-center rounded border bg-black/40 border-white/10 text-white/60 hover:text-white hover:bg-black/70 transition-colors"
+          title="Diminuir zoom"
+        >
+          <ZoomOut className="w-3 h-3" />
+        </button>
+        <span className="text-[10px] text-white/60 tabular-nums w-10 text-center select-none">
+          {Math.round(zoom * 100)}%
+        </span>
+        <button
+          onClick={() => setZoom(Math.min(5, parseFloat((zoom + 0.1).toFixed(2))))}
+          className="w-6 h-6 flex items-center justify-center rounded border bg-black/40 border-white/10 text-white/60 hover:text-white hover:bg-black/70 transition-colors"
+          title="Aumentar zoom"
+        >
+          <ZoomIn className="w-3 h-3" />
+        </button>
+        <button
+          onClick={() => setZoom(1)}
+          className="w-6 h-6 flex items-center justify-center rounded border bg-black/40 border-white/10 text-white/60 hover:text-white hover:bg-black/70 transition-colors"
+          title="Zoom 100%"
+        >
+          <Maximize className="w-3 h-3" />
+        </button>
+      </div>
 
       {/* Bottom-right controls */}
       <div

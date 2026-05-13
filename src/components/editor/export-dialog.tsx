@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, X, Image as ImageIcon, Copy, FileCode, Images } from "lucide-react";
+import { Download, X, Image as ImageIcon, Copy, FileCode, Images, FileText, Archive } from "lucide-react";
 import { useEditorStore } from "@/store/editor-store";
 import { toast } from "sonner";
 
@@ -34,6 +34,8 @@ export function ExportDialog({ open, onClose, fabricCanvas }: ExportDialogProps)
   const [loading, setLoading] = useState(false);
   const [copying, setCopying] = useState(false);
   const [exportingAll, setExportingAll] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const [exportingZip, setExportingZip] = useState(false);
 
   const buildDataURL = useCallback(async (): Promise<{ dataURL: string; ext: string } | null> => {
     if (!fabricCanvas || !template) return null;
@@ -160,6 +162,121 @@ export function ExportDialog({ open, onClose, fabricCanvas }: ExportDialogProps)
     }
   }, [fabricCanvas, template]);
 
+  const handleExportPDF = useCallback(async () => {
+    if (!fabricCanvas || !template) return;
+    setExportingPdf(true);
+    try {
+      const { jsPDF } = await import("jspdf");
+      const pdfW = template.width;
+      const pdfH = template.height;
+      const pdf = new jsPDF({
+        orientation: pdfW >= pdfH ? "landscape" : "portrait",
+        unit: "px",
+        format: [pdfW, pdfH],
+        hotfixes: ["px_scaling"],
+      });
+
+      const currentJSON = JSON.stringify(fabricCanvas.toJSON());
+      const currentThumb = fabricCanvas.toDataURL({ format: "jpeg", quality: 0.3, multiplier: 0.15 });
+      savePageState(currentPageIndex, currentJSON, currentThumb);
+
+      const allPages = [...pages];
+      allPages[currentPageIndex] = { ...allPages[currentPageIndex], fabricJSON: currentJSON };
+
+      for (let i = 0; i < allPages.length; i++) {
+        const page = allPages[i];
+        if (i !== currentPageIndex && page.fabricJSON) {
+          await new Promise<void>((resolve) => {
+            fabricCanvas.loadFromJSON(page.fabricJSON, () => {
+              fabricCanvas.requestRenderAll();
+              resolve();
+            });
+          });
+          await new Promise((r) => setTimeout(r, 50));
+        }
+
+        const imgData = fabricCanvas.toDataURL({ format: "jpeg", quality: 0.95, multiplier: 1 });
+        if (i > 0) pdf.addPage([pdfW, pdfH], pdfW >= pdfH ? "landscape" : "portrait");
+        pdf.addImage(imgData, "JPEG", 0, 0, pdfW, pdfH);
+      }
+
+      // Restore current page
+      if (pages[currentPageIndex].fabricJSON) {
+        await new Promise<void>((resolve) => {
+          fabricCanvas.loadFromJSON(pages[currentPageIndex].fabricJSON, () => {
+            fabricCanvas.requestRenderAll();
+            resolve();
+          });
+        });
+      }
+
+      pdf.save(`${template.id}-${allPages.length > 1 ? `${allPages.length}-paginas` : "pagina-1"}.pdf`);
+      toast.success(`PDF exportado com ${allPages.length} página(s)`);
+      onClose();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao exportar PDF");
+    } finally {
+      setExportingPdf(false);
+    }
+  }, [fabricCanvas, template, pages, currentPageIndex, savePageState, onClose]);
+
+  const handleExportZip = useCallback(async () => {
+    if (!fabricCanvas || !template || pages.length < 1) return;
+    setExportingZip(true);
+    try {
+      const JSZip = (await import("jszip")).default;
+      const zip = new JSZip();
+
+      const currentJSON = JSON.stringify(fabricCanvas.toJSON());
+      const currentThumb = fabricCanvas.toDataURL({ format: "jpeg", quality: 0.3, multiplier: 0.15 });
+      savePageState(currentPageIndex, currentJSON, currentThumb);
+
+      const allPages = [...pages];
+      allPages[currentPageIndex] = { ...allPages[currentPageIndex], fabricJSON: currentJSON };
+      const ext = format === "jpeg" ? "jpg" : format === "svg" ? "png" : format;
+
+      for (let i = 0; i < allPages.length; i++) {
+        const page = allPages[i];
+        if (i !== currentPageIndex && page.fabricJSON) {
+          await new Promise<void>((resolve) => {
+            fabricCanvas.loadFromJSON(page.fabricJSON, () => {
+              fabricCanvas.requestRenderAll();
+              resolve();
+            });
+          });
+          await new Promise((r) => setTimeout(r, 80));
+        }
+        const dataURL = fabricCanvas.toDataURL({ format: format === "svg" ? "png" : format, quality: quality / 100, multiplier: scale });
+        const base64 = dataURL.split(",")[1];
+        zip.file(`pagina-${i + 1}.${ext}`, base64, { base64: true });
+      }
+
+      // Restore current page
+      if (pages[currentPageIndex].fabricJSON) {
+        await new Promise<void>((resolve) => {
+          fabricCanvas.loadFromJSON(pages[currentPageIndex].fabricJSON, () => {
+            fabricCanvas.requestRenderAll();
+            resolve();
+          });
+        });
+      }
+
+      const blob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${template.id}-${allPages.length}-paginas.zip`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success(`ZIP com ${allPages.length} página(s) exportado`);
+      onClose();
+    } catch {
+      toast.error("Erro ao gerar ZIP");
+    } finally {
+      setExportingZip(false);
+    }
+  }, [fabricCanvas, template, pages, currentPageIndex, format, scale, quality, savePageState, onClose]);
+
   if (!open) return null;
 
   const w = template ? template.width * scale : 0;
@@ -251,7 +368,7 @@ export function ExportDialog({ open, onClose, fabricCanvas }: ExportDialogProps)
 
         {/* Actions */}
         <div className="flex gap-2">
-          <Button onClick={handleExport} disabled={loading || exportingAll} className="flex-1 gap-2">
+          <Button onClick={handleExport} disabled={loading || exportingAll || exportingZip} className="flex-1 gap-2">
             {format === "svg" ? <FileCode className="w-4 h-4" /> : <Download className="w-4 h-4" />}
             {loading ? "Exportando..." : `Exportar ${format.toUpperCase()}`}
           </Button>
@@ -260,7 +377,7 @@ export function ExportDialog({ open, onClose, fabricCanvas }: ExportDialogProps)
               variant="outline"
               size="icon"
               onClick={handleCopyToClipboard}
-              disabled={copying || exportingAll}
+              disabled={copying || exportingAll || exportingZip}
               title="Copiar para área de transferência"
             >
               <Copy className="w-4 h-4" />
@@ -273,13 +390,37 @@ export function ExportDialog({ open, onClose, fabricCanvas }: ExportDialogProps)
           <Button
             variant="outline"
             onClick={handleExportAll}
-            disabled={loading || exportingAll}
+            disabled={loading || exportingAll || exportingPdf || exportingZip}
             className="w-full gap-2 text-xs"
           >
             <Images className="w-3.5 h-3.5" />
             {exportingAll ? "Exportando páginas..." : `Exportar todas as ${pages.length} páginas`}
           </Button>
         )}
+
+        {/* Export ZIP */}
+        {pages.length > 1 && format !== "svg" && (
+          <Button
+            variant="outline"
+            onClick={handleExportZip}
+            disabled={loading || exportingAll || exportingPdf || exportingZip}
+            className="w-full gap-2 text-xs border-blue-500/30 text-blue-400 hover:bg-blue-500/10"
+          >
+            <Archive className="w-3.5 h-3.5" />
+            {exportingZip ? "Gerando ZIP..." : `Exportar ZIP (${pages.length} páginas)`}
+          </Button>
+        )}
+
+        {/* Export PDF */}
+        <Button
+          variant="outline"
+          onClick={handleExportPDF}
+          disabled={loading || exportingAll || exportingPdf || exportingZip}
+          className="w-full gap-2 text-xs border-red-500/30 text-red-400 hover:bg-red-500/10"
+        >
+          <FileText className="w-3.5 h-3.5" />
+          {exportingPdf ? "Gerando PDF..." : pages.length > 1 ? `Exportar PDF (${pages.length} páginas)` : "Exportar como PDF"}
+        </Button>
       </div>
     </div>
   );
