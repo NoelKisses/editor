@@ -65,6 +65,8 @@ import { SmartGuidesPanel } from "@/components/editor/smart-guides-panel";
 import { TextOnPathPanel } from "@/components/editor/text-on-path-panel";
 import { PatternsPanel } from "@/components/editor/patterns-panel";
 import { QuickStylesPanel } from "@/components/editor/quick-styles-panel";
+import { PhotoFramesPanel } from "@/components/editor/photo-frames-panel";
+import { TextEffectsAdvancedPanel } from "@/components/editor/text-effects-advanced-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -249,7 +251,7 @@ export default function EditorPage() {
         {/* Left sidebar */}
         <aside className={`w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="templates" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(18, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(20, minmax(0, 1fr))" }}>
               <TabsTrigger value="templates" className="text-[9px] px-0.5 gap-0.5" title="Templates">
                 <Layers className="w-3 h-3" />
               </TabsTrigger>
@@ -300,6 +302,9 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="draw" className="text-[9px] px-0.5 gap-0.5" title="Desenho Livre">
                 <PenLine className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="photoframes" className="text-[9px] px-0.5 gap-0.5" title="Molduras para Fotos">
+                <SquareStack className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="projects" className="text-[9px] px-0.5 gap-0.5" title="Projetos">
                 <FolderOpen className="w-3 h-3" />
@@ -384,6 +389,12 @@ export default function EditorPage() {
               </ScrollArea>
             </TabsContent>
 
+            <TabsContent value="photoframes" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <PhotoFramesPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
             <TabsContent value="qrcode" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <QRCodePanel fabricCanvas={fabricCanvas} />
@@ -453,10 +464,10 @@ export default function EditorPage() {
           {template && <PageStrip fabricCanvas={fabricCanvas} />}
         </main>
 
-        {/* Right sidebar — 17 abas */}
+        {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(20, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(21, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -516,6 +527,9 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="guides" title="Guias e Snap" className="px-0.5">
                 <Crosshair className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textfx" title="Efeitos de Texto Avançados" className="px-0.5">
+                <Sparkles className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -676,6 +690,12 @@ export default function EditorPage() {
             <TabsContent value="guides" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <SmartGuidesPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="textfx" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextEffectsAdvancedPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
