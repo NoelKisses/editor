@@ -136,6 +136,9 @@ import { CanvasGuidesPanel } from "@/components/editor/canvas-guides-panel";
 import { ObjectPositionAnimationPanel } from "@/components/editor/object-position-animation-panel";
 import { CanvasRulerSettingsPanel } from "@/components/editor/canvas-ruler-settings-panel";
 import { TextHighlightPanel } from "@/components/editor/text-highlight-panel";
+import { ObjectNeonGlowPanel } from "@/components/editor/object-neon-glow-panel";
+import { CanvasCollaborationPanel } from "@/components/editor/canvas-collaboration-panel";
+import { ImageSaturationPanel } from "@/components/editor/image-saturation-panel";
 import { ObjectReflectionPanel } from "@/components/editor/object-reflection-panel";
 import { CanvasExportBatchPanel } from "@/components/editor/canvas-export-batch-panel";
 import { TextCounterPanel } from "@/components/editor/text-counter-panel";
@@ -232,6 +235,8 @@ import {
   FlipVertical2,
   PackagePlus,
   Hash,
+  MessageSquare,
+  Sun,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -590,7 +595,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(96, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(99, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -878,6 +883,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="textcounter" title="Contador de Texto" className="px-0.5">
                 <Hash className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="neonglow" title="Efeito Neon / Glow" className="px-0.5">
+                <Sparkles className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="collaboration" title="Colaboração e Comentários" className="px-0.5">
+                <MessageSquare className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="imgsaturation" title="Cor e Saturação" className="px-0.5">
+                <Sun className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1425,6 +1439,21 @@ export default function EditorPage() {
             <TabsContent value="textcounter" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextCounterPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="neonglow" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectNeonGlowPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="collaboration" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasCollaborationPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="imgsaturation" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageSaturationPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
