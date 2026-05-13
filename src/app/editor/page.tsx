@@ -29,6 +29,8 @@ import { DrawPanel } from "@/components/editor/draw-panel";
 import { PageStrip } from "@/components/editor/page-strip";
 import { StockPhotosPanel } from "@/components/editor/stock-photos-panel";
 import { KeyboardShortcutsModal } from "@/components/editor/keyboard-shortcuts-modal";
+import { ClipMaskPanel } from "@/components/editor/clip-mask-panel";
+import { ColorReplacePanel } from "@/components/editor/color-replace-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -325,6 +327,9 @@ export default function EditorPage() {
                   <div className="mt-4">
                     <RemoveBgButton fabricCanvas={fabricCanvas} />
                   </div>
+                  <div className="mt-4 border-t border-border pt-4">
+                    <ClipMaskPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                  </div>
                 </div>
               </ScrollArea>
             </TabsContent>
@@ -346,6 +351,9 @@ export default function EditorPage() {
             <TabsContent value="palette" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ColorPalettePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                <div className="border-t border-border mt-2">
+                  <ColorReplacePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                </div>
               </ScrollArea>
             </TabsContent>
 

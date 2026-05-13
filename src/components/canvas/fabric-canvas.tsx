@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useCallback, useState } from "react";
-import { Copy, Trash2, Lock, Unlock, FlipHorizontal2 } from "lucide-react";
+import { Copy, Trash2, Lock, Unlock, FlipHorizontal2, Bold, Italic, Underline } from "lucide-react";
 import { useEditorStore } from "@/store/editor-store";
 
 const RULER_SIZE = 20;
@@ -621,6 +621,60 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
             >
               {!selectedObj.selectable ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
             </button>
+
+            {/* Text formatting (only for text objects) */}
+            {(selectedObj.type === "i-text" || selectedObj.type === "textbox" || selectedObj.type === "text") && (
+              <>
+                <div className="w-px h-4 bg-border mx-0.5" />
+                <button
+                  className={`p-1.5 rounded hover:bg-accent transition-colors ${selectedObj.fontWeight === "bold" ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground"}`}
+                  title="Negrito (Ctrl+B)"
+                  onClick={() => {
+                    const isBold = selectedObj.fontWeight === "bold";
+                    selectedObj.set({ fontWeight: isBold ? "normal" : "bold" });
+                    fabricRef.current?.requestRenderAll();
+                  }}
+                >
+                  <Bold className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  className={`p-1.5 rounded hover:bg-accent transition-colors ${selectedObj.fontStyle === "italic" ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground"}`}
+                  title="Itálico (Ctrl+I)"
+                  onClick={() => {
+                    const isItalic = selectedObj.fontStyle === "italic";
+                    selectedObj.set({ fontStyle: isItalic ? "normal" : "italic" });
+                    fabricRef.current?.requestRenderAll();
+                  }}
+                >
+                  <Italic className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  className={`p-1.5 rounded hover:bg-accent transition-colors ${selectedObj.underline ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground"}`}
+                  title="Sublinhado (Ctrl+U)"
+                  onClick={() => {
+                    selectedObj.set({ underline: !selectedObj.underline });
+                    fabricRef.current?.requestRenderAll();
+                  }}
+                >
+                  <Underline className="w-3.5 h-3.5" />
+                </button>
+                <div className="relative" title="Cor do texto">
+                  <div
+                    className="w-5 h-5 rounded border border-border cursor-pointer"
+                    style={{ backgroundColor: typeof selectedObj.fill === "string" ? selectedObj.fill : "#ffffff" }}
+                  />
+                  <input
+                    type="color"
+                    value={typeof selectedObj.fill === "string" && selectedObj.fill.startsWith("#") ? selectedObj.fill : "#ffffff"}
+                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    onChange={(e) => {
+                      selectedObj.set({ fill: e.target.value });
+                      fabricRef.current?.requestRenderAll();
+                    }}
+                  />
+                </div>
+              </>
+            )}
 
             <div className="w-px h-4 bg-border mx-0.5" />
 

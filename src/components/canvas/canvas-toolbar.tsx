@@ -36,6 +36,10 @@ import {
   FlipVertical2,
   Lock,
   Unlock,
+  BringToFront,
+  SendToBack,
+  Group,
+  Ungroup,
 } from "lucide-react";
 
 interface CanvasToolbarProps {
@@ -328,6 +332,62 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
     toast.success(lock ? "Objeto bloqueado" : "Objeto desbloqueado");
   }, [fabricCanvas]);
 
+  const handleBringToFront = useCallback(() => {
+    const active = fabricCanvas?.getActiveObject();
+    if (!active) return;
+    fabricCanvas.bringToFront(active);
+    fabricCanvas.requestRenderAll();
+    toast.success("Movido para frente");
+  }, [fabricCanvas]);
+
+  const handleSendToBack = useCallback(() => {
+    const active = fabricCanvas?.getActiveObject();
+    if (!active) return;
+    fabricCanvas.sendToBack(active);
+    fabricCanvas.requestRenderAll();
+    toast.success("Movido para trás");
+  }, [fabricCanvas]);
+
+  const handleBringForward = useCallback(() => {
+    const active = fabricCanvas?.getActiveObject();
+    if (!active) return;
+    fabricCanvas.bringForward(active);
+    fabricCanvas.requestRenderAll();
+  }, [fabricCanvas]);
+
+  const handleSendBackward = useCallback(() => {
+    const active = fabricCanvas?.getActiveObject();
+    if (!active) return;
+    fabricCanvas.sendBackwards(active);
+    fabricCanvas.requestRenderAll();
+  }, [fabricCanvas]);
+
+  const handleGroup = useCallback(() => {
+    if (!fabricCanvas) return;
+    const active = fabricCanvas.getActiveObject();
+    if (!active || active.type !== "activeSelection") {
+      toast.error("Selecione múltiplos objetos para agrupar");
+      return;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (active as any).toGroup();
+    fabricCanvas.requestRenderAll();
+    toast.success("Agrupado");
+  }, [fabricCanvas]);
+
+  const handleUngroup = useCallback(() => {
+    if (!fabricCanvas) return;
+    const active = fabricCanvas.getActiveObject();
+    if (!active || active.type !== "group") {
+      toast.error("Selecione um grupo para desagrupar");
+      return;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (active as any).toActiveSelection();
+    fabricCanvas.requestRenderAll();
+    toast.success("Desagrupado");
+  }, [fabricCanvas]);
+
   return (
     <div className="flex items-center gap-1.5 px-4 py-2 border-b border-border bg-card/50 flex-wrap">
       {/* Texto e Imagem */}
@@ -406,6 +466,29 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
           >
             {isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
           </Button>
+          <Separator orientation="vertical" className="h-4" />
+          <Button variant="ghost" size="icon" onClick={handleBringToFront} title="Trazer para frente (topo)">
+            <BringToFront className="w-4 h-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleBringForward} title="Avançar uma camada">
+            <BringToFront className="w-3.5 h-3.5 opacity-60" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleSendBackward} title="Recuar uma camada">
+            <SendToBack className="w-3.5 h-3.5 opacity-60" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleSendToBack} title="Enviar para trás (fundo)">
+            <SendToBack className="w-4 h-4" />
+          </Button>
+          {activeObj.type === "activeSelection" && (
+            <Button variant="ghost" size="icon" onClick={handleGroup} title="Agrupar seleção (Ctrl+G)">
+              <Group className="w-4 h-4" />
+            </Button>
+          )}
+          {activeObj.type === "group" && (
+            <Button variant="ghost" size="icon" onClick={handleUngroup} title="Desagrupar (Ctrl+Shift+G)">
+              <Ungroup className="w-4 h-4" />
+            </Button>
+          )}
         </>
       )}
       <input

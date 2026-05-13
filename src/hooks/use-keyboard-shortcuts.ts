@@ -148,6 +148,38 @@ export function useKeyboardShortcuts(fabricRef: RefObject<any>) {
       // --- Seleção ---
       if (mod && key === "a") { e.preventDefault(); selectAll(); return; }
 
+      // --- Formatação de texto ---
+      if (mod && key === "b") {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const active: any = fabricCanvas.getActiveObject();
+        if (active && ["i-text", "textbox", "text"].includes(active.type)) {
+          e.preventDefault();
+          active.set({ fontWeight: active.fontWeight === "bold" ? "normal" : "bold" });
+          fabricCanvas.requestRenderAll();
+        }
+        return;
+      }
+      if (mod && key === "i") {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const active: any = fabricCanvas.getActiveObject();
+        if (active && ["i-text", "textbox", "text"].includes(active.type)) {
+          e.preventDefault();
+          active.set({ fontStyle: active.fontStyle === "italic" ? "normal" : "italic" });
+          fabricCanvas.requestRenderAll();
+        }
+        return;
+      }
+      if (mod && key === "u") {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const active: any = fabricCanvas.getActiveObject();
+        if (active && ["i-text", "textbox", "text"].includes(active.type)) {
+          e.preventDefault();
+          active.set({ underline: !active.underline });
+          fabricCanvas.requestRenderAll();
+        }
+        return;
+      }
+
       // --- Agrupamento ---
       if (mod && !shift && key === "g") {
         e.preventDefault();
