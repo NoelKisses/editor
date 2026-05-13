@@ -88,6 +88,9 @@ import { ObjectBlendPanel } from "@/components/editor/object-blend-panel";
 import { MarginBleedPanel } from "@/components/editor/margin-bleed-panel";
 import { PatternTilePanel } from "@/components/editor/pattern-tile-panel";
 import { DesignStatsPanel } from "@/components/editor/design-stats-panel";
+import { ImageCropAdvancedPanel } from "@/components/editor/image-crop-advanced-panel";
+import { CanvasBackgroundAdvancedPanel } from "@/components/editor/canvas-background-advanced-panel";
+import { ObjectPropertiesInspectorPanel } from "@/components/editor/object-properties-inspector-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -144,6 +147,9 @@ import {
   Blend,
   BarChart3,
   Repeat,
+  Scissors,
+  Wallpaper,
+  FlaskConical,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -502,7 +508,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(42, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(45, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -628,6 +634,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="designstats" title="Estatísticas do Design" className="px-0.5">
                 <BarChart3 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="cropadv" title="Recorte Avançado de Imagem" className="px-0.5">
+                <Scissors className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="bgadv" title="Fundo Avançado (Gradiente/Padrão)" className="px-0.5">
+                <Wallpaper className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="inspector" title="Inspetor de Propriedades" className="px-0.5">
+                <FlaskConical className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -905,6 +920,21 @@ export default function EditorPage() {
             <TabsContent value="designstats" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <DesignStatsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="cropadv" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageCropAdvancedPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="bgadv" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasBackgroundAdvancedPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="inspector" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectPropertiesInspectorPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
