@@ -79,6 +79,9 @@ import { PreciseCoordsPanel } from "@/components/editor/precise-coords-panel";
 import { AutosaveProjectPanel } from "@/components/editor/autosave-project-panel";
 import { ImageColorExtractorPanel } from "@/components/editor/image-color-extractor-panel";
 import { SmartMeasurementPanel } from "@/components/editor/smart-measurement-panel";
+import { FavoritesPanel } from "@/components/editor/favorites-panel";
+import { VisualHistoryPanel } from "@/components/editor/visual-history-panel";
+import { ElementSearchPanel } from "@/components/editor/element-search-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -129,6 +132,9 @@ import {
   Ruler,
   Save,
   Pipette,
+  Heart,
+  History,
+  SearchCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -487,7 +493,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(33, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(36, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -586,6 +592,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="measurement" title="Medidas do Objeto" className="px-0.5">
                 <Ruler className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="favorites" title="Favoritos" className="px-0.5">
+                <Heart className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="visualhistory" title="Histórico Visual" className="px-0.5">
+                <History className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="elementsearch" title="Buscar Elementos" className="px-0.5">
+                <SearchCheck className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -818,6 +833,21 @@ export default function EditorPage() {
             <TabsContent value="measurement" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <SmartMeasurementPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="favorites" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <FavoritesPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="visualhistory" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <VisualHistoryPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="elementsearch" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ElementSearchPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
