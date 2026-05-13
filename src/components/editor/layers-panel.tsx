@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Eye, EyeOff, Lock, Unlock, Trash2, GripVertical, Layers } from "lucide-react";
+import { Eye, EyeOff, Lock, Unlock, Trash2, GripVertical, Layers, Pencil, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,6 +24,7 @@ interface LayersPanelProps {
 }
 
 function getLabel(obj: FabricObj, index: number): string {
+  if (obj.__customLabel) return obj.__customLabel;
   if (obj.type === "i-text" || obj.type === "text" || obj.type === "textbox") {
     const text: string = obj.text ?? "";
     return text.length > 18 ? text.slice(0, 18) + "…" : text || `Texto ${index + 1}`;
@@ -45,6 +46,9 @@ function getLabel(obj: FabricObj, index: number): string {
 export function LayersPanel({ fabricCanvas, selectionVersion }: LayersPanelProps) {
   const [layers, setLayers] = useState<Layer[]>([]);
   const dragIndexRef = useRef<number | null>(null);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
+  const renameInputRef = useRef<HTMLInputElement>(null);
 
   const syncLayers = useCallback(() => {
     if (!fabricCanvas) return;
@@ -162,6 +166,25 @@ export function LayersPanel({ fabricCanvas, selectionVersion }: LayersPanelProps
     dragIndexRef.current = null;
   };
 
+  const startRename = useCallback((layer: Layer, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setRenamingId(layer.id);
+    setRenameValue(layer.label);
+    setTimeout(() => renameInputRef.current?.select(), 20);
+  }, []);
+
+  const commitRename = useCallback((layer: Layer) => {
+    if (renameValue.trim()) {
+      layer.obj.__customLabel = renameValue.trim();
+      syncLayers();
+    }
+    setRenamingId(null);
+  }, [renameValue, syncLayers]);
+
+  const cancelRename = useCallback(() => {
+    setRenamingId(null);
+  }, []);
+
   const activeObj = fabricCanvas?.getActiveObject();
 
   if (!fabricCanvas) {
@@ -190,14 +213,15 @@ export function LayersPanel({ fabricCanvas, selectionVersion }: LayersPanelProps
       <div className="flex flex-col gap-0.5">
         {layers.map((layer, index) => {
           const isActive = activeObj === layer.obj;
+          const isRenaming = renamingId === layer.id;
           return (
             <div
               key={layer.id}
-              draggable
+              draggable={!isRenaming}
               onDragStart={() => onDragStart(index)}
               onDragOver={(e) => onDragOver(e, index)}
               onDragEnd={onDragEnd}
-              onClick={() => selectLayer(layer.obj)}
+              onClick={() => !isRenaming && selectLayer(layer.obj)}
               className={cn(
                 "flex items-center gap-1.5 px-1.5 py-1.5 rounded-md cursor-pointer select-none group transition-colors",
                 isActive
@@ -219,48 +243,81 @@ export function LayersPanel({ fabricCanvas, selectionVersion }: LayersPanelProps
                   : "◼"}
               </span>
 
-              {/* Label */}
-              <span
-                className={cn(
-                  "flex-1 text-xs truncate",
-                  isActive ? "text-foreground font-medium" : "text-foreground/80"
-                )}
-              >
-                {layer.label}
-              </span>
+              {/* Label or rename input */}
+              {isRenaming ? (
+                <div className="flex items-center gap-0.5 flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
+                  <input
+                    ref={renameInputRef}
+                    value={renameValue}
+                    onChange={(e) => setRenameValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") commitRename(layer);
+                      if (e.key === "Escape") cancelRename();
+                    }}
+                    className="flex-1 text-xs bg-background border border-primary rounded px-1 py-0.5 outline-none text-foreground min-w-0"
+                    autoFocus
+                  />
+                  <button onClick={() => commitRename(layer)} className="p-0.5 rounded hover:bg-accent text-green-400" title="Confirmar">
+                    <Check className="w-3 h-3" />
+                  </button>
+                  <button onClick={cancelRename} className="p-0.5 rounded hover:bg-accent text-muted-foreground" title="Cancelar">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ) : (
+                <span
+                  className={cn(
+                    "flex-1 text-xs truncate",
+                    isActive ? "text-foreground font-medium" : "text-foreground/80"
+                  )}
+                  onDoubleClick={(e) => startRename(layer, e)}
+                  title="Duplo clique para renomear"
+                >
+                  {layer.label}
+                </span>
+              )}
 
-              {/* Actions (show on hover or active) */}
-              <div className={cn("flex items-center gap-0.5 transition-opacity", isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100")}>
-                <button
-                  onClick={(e) => toggleVisibility(layer.obj, e)}
-                  className="p-0.5 rounded hover:bg-accent"
-                  title={layer.visible ? "Ocultar" : "Mostrar"}
-                >
-                  {layer.visible ? (
-                    <Eye className="w-3 h-3 text-muted-foreground" />
-                  ) : (
-                    <EyeOff className="w-3 h-3 text-muted-foreground/40" />
-                  )}
-                </button>
-                <button
-                  onClick={(e) => toggleLock(layer.obj, e)}
-                  className="p-0.5 rounded hover:bg-accent"
-                  title={layer.locked ? "Desbloquear" : "Bloquear"}
-                >
-                  {layer.locked ? (
-                    <Lock className="w-3 h-3 text-amber-400" />
-                  ) : (
-                    <Unlock className="w-3 h-3 text-muted-foreground" />
-                  )}
-                </button>
-                <button
-                  onClick={(e) => deleteLayer(layer.obj, e)}
-                  className="p-0.5 rounded hover:bg-destructive/20"
-                  title="Remover"
-                >
-                  <Trash2 className="w-3 h-3 text-destructive/60 hover:text-destructive" />
-                </button>
-              </div>
+              {/* Actions (show on hover or active, hidden while renaming) */}
+              {!isRenaming && (
+                <div className={cn("flex items-center gap-0.5 transition-opacity", isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100")}>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); startRename(layer, e); }}
+                    className="p-0.5 rounded hover:bg-accent"
+                    title="Renomear camada"
+                  >
+                    <Pencil className="w-3 h-3 text-muted-foreground/70" />
+                  </button>
+                  <button
+                    onClick={(e) => toggleVisibility(layer.obj, e)}
+                    className="p-0.5 rounded hover:bg-accent"
+                    title={layer.visible ? "Ocultar" : "Mostrar"}
+                  >
+                    {layer.visible ? (
+                      <Eye className="w-3 h-3 text-muted-foreground" />
+                    ) : (
+                      <EyeOff className="w-3 h-3 text-muted-foreground/40" />
+                    )}
+                  </button>
+                  <button
+                    onClick={(e) => toggleLock(layer.obj, e)}
+                    className="p-0.5 rounded hover:bg-accent"
+                    title={layer.locked ? "Desbloquear" : "Bloquear"}
+                  >
+                    {layer.locked ? (
+                      <Lock className="w-3 h-3 text-amber-400" />
+                    ) : (
+                      <Unlock className="w-3 h-3 text-muted-foreground" />
+                    )}
+                  </button>
+                  <button
+                    onClick={(e) => deleteLayer(layer.obj, e)}
+                    className="p-0.5 rounded hover:bg-destructive/20"
+                    title="Remover"
+                  >
+                    <Trash2 className="w-3 h-3 text-destructive/60 hover:text-destructive" />
+                  </button>
+                </div>
+              )}
             </div>
           );
         })}

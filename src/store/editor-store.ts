@@ -3,6 +3,13 @@
 import { create } from "zustand";
 import { Template, CanvasElement, EditorState, ExportOptions } from "@/types/editor";
 
+interface Page {
+  id: string;
+  label: string;
+  fabricJSON: string; // JSON.stringify of fabric canvas state
+  thumbnail?: string; // data URL preview
+}
+
 interface EditorStore extends EditorState {
   setTemplate: (template: Template) => void;
   addElement: (element: CanvasElement) => void;
@@ -21,6 +28,15 @@ interface EditorStore extends EditorState {
   setExportOptions: (options: Partial<ExportOptions>) => void;
   snapToGrid: boolean;
   setSnapToGrid: (snap: boolean) => void;
+  // Multi-page
+  pages: Page[];
+  currentPageIndex: number;
+  addPage: () => void;
+  removePage: (index: number) => void;
+  setCurrentPage: (index: number) => void;
+  savePageState: (index: number, fabricJSON: string, thumbnail?: string) => void;
+  reorderPages: (fromIndex: number, toIndex: number) => void;
+  duplicatePage: (index: number) => void;
 }
 
 const DEFAULT_EXPORT_OPTIONS: ExportOptions = {
@@ -40,6 +56,8 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   aiSuggestions: [],
   exportOptions: DEFAULT_EXPORT_OPTIONS,
   snapToGrid: false,
+  pages: [{ id: "page-1", label: "Página 1", fabricJSON: "" }],
+  currentPageIndex: 0,
 
   setTemplate: (template) => {
     set({ template, elements: [], selectedElementId: null, history: [[]], historyIndex: 0 });
@@ -121,4 +139,53 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     set((state) => ({ exportOptions: { ...state.exportOptions, ...options } })),
 
   setSnapToGrid: (snap) => set({ snapToGrid: snap }),
+
+  addPage: () => {
+    const { pages } = get();
+    const newPage: Page = {
+      id: `page-${Date.now()}`,
+      label: `Página ${pages.length + 1}`,
+      fabricJSON: "",
+    };
+    set({ pages: [...pages, newPage], currentPageIndex: pages.length });
+  },
+
+  removePage: (index) => {
+    const { pages, currentPageIndex } = get();
+    if (pages.length <= 1) return;
+    const newPages = pages.filter((_, i) => i !== index);
+    const newIndex = Math.min(currentPageIndex, newPages.length - 1);
+    set({ pages: newPages, currentPageIndex: newIndex });
+  },
+
+  setCurrentPage: (index) => set({ currentPageIndex: index }),
+
+  savePageState: (index, fabricJSON, thumbnail) => {
+    const { pages } = get();
+    const newPages = pages.map((p, i) =>
+      i === index ? { ...p, fabricJSON, thumbnail: thumbnail ?? p.thumbnail } : p
+    );
+    set({ pages: newPages });
+  },
+
+  reorderPages: (fromIndex, toIndex) => {
+    const { pages } = get();
+    const newPages = [...pages];
+    const [moved] = newPages.splice(fromIndex, 1);
+    newPages.splice(toIndex, 0, moved);
+    set({ pages: newPages, currentPageIndex: toIndex });
+  },
+
+  duplicatePage: (index) => {
+    const { pages } = get();
+    const source = pages[index];
+    const newPage: Page = {
+      id: `page-${Date.now()}`,
+      label: `${source.label} (cópia)`,
+      fabricJSON: source.fabricJSON,
+      thumbnail: source.thumbnail,
+    };
+    const newPages = [...pages.slice(0, index + 1), newPage, ...pages.slice(index + 1)];
+    set({ pages: newPages, currentPageIndex: index + 1 });
+  },
 }));

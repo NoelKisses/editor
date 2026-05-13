@@ -26,6 +26,7 @@ import { IconsPanel } from "@/components/editor/icons-panel";
 import { ColorPalettePanel } from "@/components/editor/color-palette-panel";
 import { EffectsPanel } from "@/components/editor/effects-panel";
 import { DrawPanel } from "@/components/editor/draw-panel";
+import { PageStrip } from "@/components/editor/page-strip";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -207,6 +208,7 @@ export default function EditorPage() {
               </div>
             )}
           </div>
+          {template && <PageStrip fabricCanvas={fabricCanvas} />}
         </main>
 
         {/* Right sidebar — 10 abas */}

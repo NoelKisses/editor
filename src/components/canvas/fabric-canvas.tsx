@@ -40,6 +40,7 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
   const rulerHRef = useRef<HTMLCanvasElement>(null);
   const rulerVRef = useRef<HTMLCanvasElement>(null);
   const showSmartGuidesRef = useRef(true);
+  const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
   const { template, zoom, setZoom, snapToGrid } = useEditorStore();
 
   const initCanvas = useCallback(async () => {
@@ -453,7 +454,15 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
       ref={wrapperRef}
       className="relative"
       style={{ width: cw + (showRulers ? RULER_SIZE : 0), height: ch + (showRulers ? RULER_SIZE : 0) }}
-      onMouseMove={handleGuideMouseMove}
+      onMouseMove={(e) => {
+        handleGuideMouseMove(e);
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        const rulerOffset = showRulers ? RULER_SIZE : 0;
+        const x = Math.round((e.clientX - rect.left - rulerOffset) / zoom);
+        const y = Math.round((e.clientY - rect.top - rulerOffset) / zoom);
+        setCursorPos({ x, y });
+      }}
+      onMouseLeave={() => setCursorPos(null)}
       onMouseUp={handleGuideMouseUp}
     >
       {/* Corner square */}
@@ -553,14 +562,14 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
             className="absolute z-40 flex items-center gap-0.5 bg-card/95 border border-border rounded-lg shadow-xl px-1 py-0.5 pointer-events-auto"
             style={{
               left: Math.max(0, selectionBounds.left + selectionBounds.width / 2),
-              top: Math.max(0, selectionBounds.top - 38),
+              top: Math.max(0, selectionBounds.top - 44),
               transform: "translateX(-50%)",
             }}
           >
             {/* Duplicate */}
             <button
               className="p-1.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
-              title="Duplicar"
+              title="Duplicar (Ctrl+D)"
               onClick={() => {
                 const canvas = fabricRef.current;
                 if (!canvas || !selectedObj) return;
@@ -615,10 +624,33 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
 
             <div className="w-px h-4 bg-border mx-0.5" />
 
+            {/* Opacity slider */}
+            <div className="flex items-center gap-1.5 px-1" title="Opacidade">
+              <span className="text-[10px] text-muted-foreground select-none">Op</span>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.01}
+                value={selectedObj.opacity ?? 1}
+                className="w-16 h-1 accent-primary cursor-pointer"
+                onChange={(e) => {
+                  if (!selectedObj) return;
+                  selectedObj.set({ opacity: parseFloat(e.target.value) });
+                  fabricRef.current?.requestRenderAll();
+                }}
+              />
+              <span className="text-[10px] text-muted-foreground tabular-nums w-6 text-right">
+                {Math.round((selectedObj.opacity ?? 1) * 100)}
+              </span>
+            </div>
+
+            <div className="w-px h-4 bg-border mx-0.5" />
+
             {/* Delete */}
             <button
               className="p-1.5 rounded hover:bg-red-500/20 text-muted-foreground hover:text-red-400 transition-colors"
-              title="Excluir"
+              title="Excluir (Del)"
               onClick={() => {
                 const canvas = fabricRef.current;
                 if (!canvas || !selectedObj) return;
@@ -633,6 +665,16 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
           </div>
         )}
       </div>
+
+      {/* Cursor position indicator */}
+      {cursorPos && (
+        <div
+          className="absolute z-30 text-[10px] text-white/50 tabular-nums pointer-events-none select-none"
+          style={{ bottom: 10, left: showRulers ? RULER_SIZE + 6 : 6 }}
+        >
+          {cursorPos.x}, {cursorPos.y}px
+        </div>
+      )}
 
       {/* Bottom-right controls */}
       <div

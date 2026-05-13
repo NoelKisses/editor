@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -29,6 +29,7 @@ import {
   AlignLeft,
   Crop,
   Maximize2,
+  ChevronDown,
 } from "lucide-react";
 
 interface CanvasToolbarProps {
@@ -37,12 +38,20 @@ interface CanvasToolbarProps {
   selectionVersion?: number;
 }
 
+const TEXT_STYLES = [
+  { label: "Título", fontSize: 72, fontWeight: "bold", fontFamily: "Arial", fill: "#ffffff", shadow: "rgba(0,0,0,0.6) 3px 3px 10px" },
+  { label: "Subtítulo", fontSize: 48, fontWeight: "bold", fontFamily: "Arial", fill: "#eeeeee", shadow: "rgba(0,0,0,0.4) 2px 2px 6px" },
+  { label: "Corpo", fontSize: 28, fontWeight: "normal", fontFamily: "Arial", fill: "#dddddd", shadow: "rgba(0,0,0,0.3) 1px 1px 4px" },
+  { label: "Legenda", fontSize: 18, fontWeight: "normal", fontFamily: "Arial", fill: "#aaaaaa", shadow: "" },
+] as const;
+
 export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [generateOpen, setGenerateOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [cropOpen, setCropOpen] = useState(false);
   const [resizeOpen, setResizeOpen] = useState(false);
+  const [textStylesOpen, setTextStylesOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const clipboardRef = useRef<any>(null);
   const {
@@ -112,6 +121,25 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
       fabricCanvas.requestRenderAll();
       toast.success("Duplicado");
     });
+  }, [fabricCanvas]);
+
+  const addTextWithStyle = useCallback(async (style: typeof TEXT_STYLES[number]) => {
+    if (!fabricCanvas) return;
+    const fabric = await import("fabric").then((m) => m.fabric);
+    const text = new fabric.IText(style.label, {
+      left: 100,
+      top: 100,
+      fontSize: style.fontSize,
+      fontFamily: style.fontFamily,
+      fill: style.fill,
+      fontWeight: style.fontWeight,
+      shadow: style.shadow || undefined,
+    });
+    fabricCanvas.add(text);
+    fabricCanvas.setActiveObject(text);
+    fabricCanvas.renderAll();
+    toast.success(`${style.label} adicionado`);
+    setTextStylesOpen(false);
   }, [fabricCanvas]);
 
   const addText = useCallback(async () => {
@@ -226,6 +254,13 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
     }
   }, [fabricCanvas, selectedElementId, removeElement]);
 
+  useEffect(() => {
+    if (!textStylesOpen) return;
+    const close = () => setTextStylesOpen(false);
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [textStylesOpen]);
+
   const zoomIn = () => setZoom(Math.min(parseFloat((zoom + 0.1).toFixed(2)), 5));
   const zoomOut = () => setZoom(Math.max(parseFloat((zoom - 0.1).toFixed(2)), 0.1));
   const zoomReset = () => setZoom(1);
@@ -237,10 +272,45 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
   return (
     <div className="flex items-center gap-1.5 px-4 py-2 border-b border-border bg-card/50 flex-wrap">
       {/* Texto e Imagem */}
-      <Button variant="ghost" size="sm" onClick={addText} title="Adicionar texto editável (IText)">
-        <Type className="w-4 h-4 mr-1.5" />
-        Texto
-      </Button>
+      <div className="relative flex">
+        <Button variant="ghost" size="sm" onClick={addText} title="Adicionar texto editável (IText)" className="rounded-r-none pr-2">
+          <Type className="w-4 h-4 mr-1.5" />
+          Texto
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="rounded-l-none pl-1 pr-1.5 border-l border-border/50"
+          onClick={() => setTextStylesOpen((v) => !v)}
+          title="Estilos de texto"
+        >
+          <ChevronDown className="w-3.5 h-3.5" />
+        </Button>
+        {textStylesOpen && (
+          <div className="absolute top-full left-0 mt-1 z-50 bg-card border border-border rounded-lg shadow-xl overflow-hidden min-w-[180px]" onClick={(e) => e.stopPropagation()}>
+            {TEXT_STYLES.map((style) => (
+              <button
+                key={style.label}
+                onClick={() => addTextWithStyle(style)}
+                className="w-full text-left px-3 py-2 hover:bg-accent transition-colors flex items-center justify-between gap-3"
+              >
+                <span className="text-foreground" style={{ fontSize: Math.min(style.fontSize * 0.22, 15), fontWeight: style.fontWeight, fontFamily: style.fontFamily }}>
+                  {style.label}
+                </span>
+                <span className="text-[10px] text-muted-foreground tabular-nums">{style.fontSize}px</span>
+              </button>
+            ))}
+            <div className="border-t border-border">
+              <button
+                onClick={addTextbox}
+                className="w-full text-left px-3 py-2 hover:bg-accent transition-colors text-xs text-muted-foreground"
+              >
+                Caixa de texto multi-linha
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
       <Button variant="ghost" size="sm" onClick={addTextbox} title="Adicionar caixa de texto com quebra de linha">
         <AlignLeft className="w-4 h-4 mr-1.5" />
         Caixa
