@@ -17,6 +17,10 @@ import {
   Lock,
   Unlock,
   Crop,
+  Group,
+  Ungroup,
+  AlignCenter,
+  MousePointer2,
 } from "lucide-react";
 import { CropImageDialog } from "@/components/editor/crop-image-dialog";
 
@@ -197,11 +201,95 @@ export function CanvasContextMenu({ fabricCanvas }: CanvasContextMenuProps) {
     setCropOpen(true);
   };
 
+  const handleCenterOnCanvas = () =>
+    act(async () => {
+      if (!targetObj || !fabricCanvas) return;
+      const { fabric } = await import("fabric");
+      void fabric;
+      const cw = fabricCanvas.getWidth() / fabricCanvas.getZoom();
+      const ch = fabricCanvas.getHeight() / fabricCanvas.getZoom();
+      const ow = targetObj.getScaledWidth?.() ?? targetObj.width ?? 0;
+      const oh = targetObj.getScaledHeight?.() ?? targetObj.height ?? 0;
+      targetObj.set({ left: (cw - ow) / 2, top: (ch - oh) / 2 });
+      fabricCanvas.requestRenderAll();
+      toast.success("Centralizado no canvas");
+    });
+
+  const handleSelectAll = () =>
+    act(() => {
+      if (!fabricCanvas) return;
+      fabricCanvas.discardActiveObject();
+      const objs = fabricCanvas.getObjects().filter((o: { selectable?: boolean }) => o.selectable !== false);
+      if (!objs.length) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { fabric } = { fabric: (window as any).__fabric };
+      if (fabric) {
+        const sel = new fabric.ActiveSelection(objs, { canvas: fabricCanvas });
+        fabricCanvas.setActiveObject(sel);
+      } else {
+        import("fabric").then(({ fabric: f }) => {
+          const sel = new f.ActiveSelection(objs, { canvas: fabricCanvas });
+          fabricCanvas.setActiveObject(sel);
+          fabricCanvas.requestRenderAll();
+        });
+      }
+      fabricCanvas.requestRenderAll();
+    });
+
+  const handleGroup = () =>
+    act(async () => {
+      if (!fabricCanvas) return;
+      const active = fabricCanvas.getActiveObject();
+      if (!active || active.type !== "activeSelection") {
+        toast.error("Selecione múltiplos objetos para agrupar (Shift+clique)");
+        return;
+      }
+      const { fabric } = await import("fabric");
+      const items = active.getObjects();
+      const group = new fabric.Group(items, {
+        left: active.left,
+        top: active.top,
+        originX: "left",
+        originY: "top",
+      });
+      fabricCanvas.discardActiveObject();
+      items.forEach((obj: object) => fabricCanvas.remove(obj));
+      fabricCanvas.add(group);
+      fabricCanvas.setActiveObject(group);
+      fabricCanvas.requestRenderAll();
+      toast.success("Agrupado");
+    });
+
+  const handleUngroup = () =>
+    act(async () => {
+      if (!targetObj || !fabricCanvas) return;
+      if (targetObj.type !== "group") {
+        toast.error("Selecione um grupo para desagrupar");
+        return;
+      }
+      const { fabric } = await import("fabric");
+      void fabric;
+      const items = targetObj.getObjects();
+      targetObj.forEachObject((obj: object) => {
+        targetObj.removeWithUpdate(obj);
+        fabricCanvas.add(obj);
+      });
+      fabricCanvas.remove(targetObj);
+      fabricCanvas.discardActiveObject();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sel = new (await import("fabric")).fabric.ActiveSelection(items as any[], { canvas: fabricCanvas });
+      fabricCanvas.setActiveObject(sel);
+      fabricCanvas.requestRenderAll();
+      toast.success("Desagrupado");
+    });
+
   if (!visible && !cropOpen) return null;
 
   const hasObj = !!targetObj;
   const isLocked = hasObj && targetObj.lockMovementX;
   const isImage = hasObj && targetObj.type === "image";
+  const isGroup = hasObj && targetObj.type === "group";
+  const isMultiSelection = hasObj && targetObj.type === "activeSelection";
 
   return (
     <>
@@ -211,6 +299,11 @@ export function CanvasContextMenu({ fabricCanvas }: CanvasContextMenuProps) {
           style={{ left: pos.x, top: pos.y }}
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Global actions (no object needed) */}
+          <MenuItem icon={<MousePointer2 className="w-3.5 h-3.5" />} label="Selecionar tudo" shortcut="Ctrl+A" onClick={handleSelectAll} />
+
+          <Divider />
+
           {/* Clipboard */}
           <MenuItem icon={<Copy className="w-3.5 h-3.5" />} label="Copiar" shortcut="Ctrl+C" onClick={handleCopy} disabled={!hasObj} />
           <MenuItem icon={<Scissors className="w-3.5 h-3.5" />} label="Recortar" shortcut="Ctrl+X" onClick={handleCut} disabled={!hasObj} />
@@ -240,6 +333,20 @@ export function CanvasContextMenu({ fabricCanvas }: CanvasContextMenuProps) {
           <MenuItem icon={<FlipVertical2 className="w-3.5 h-3.5" />} label="Espelhar Vertical" onClick={handleFlipV} disabled={!hasObj} />
 
           <Divider />
+
+          {/* Center on canvas */}
+          <MenuItem icon={<AlignCenter className="w-3.5 h-3.5" />} label="Centralizar no canvas" onClick={handleCenterOnCanvas} disabled={!hasObj} />
+
+          <Divider />
+
+          {/* Group / Ungroup */}
+          {isMultiSelection && (
+            <MenuItem icon={<Group className="w-3.5 h-3.5" />} label="Agrupar" shortcut="Ctrl+G" onClick={handleGroup} />
+          )}
+          {isGroup && (
+            <MenuItem icon={<Ungroup className="w-3.5 h-3.5" />} label="Desagrupar" shortcut="Ctrl+Shift+G" onClick={handleUngroup} />
+          )}
+          {(isMultiSelection || isGroup) && <Divider />}
 
           {/* Lock */}
           <MenuItem

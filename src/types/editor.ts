@@ -1,4 +1,15 @@
-export type TemplateCategory = "youtube" | "instagram" | "stories" | "twitter" | "custom";
+export type TemplateCategory =
+  | "youtube"
+  | "instagram"
+  | "stories"
+  | "twitter"
+  | "linkedin"
+  | "tiktok"
+  | "facebook"
+  | "pinterest"
+  | "presentation"
+  | "banner"
+  | "custom";
 
 export interface Template {
   id: string;
@@ -8,7 +19,10 @@ export interface Template {
   height: number;
   thumbnail?: string;
   backgroundColor: string;
+  /** CSS gradient string for visual preview (optional) */
+  previewGradient?: string;
   description: string;
+  tags?: string[];
 }
 
 export interface CanvasElement {

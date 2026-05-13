@@ -204,6 +204,36 @@ export function useKeyboardShortcuts(fabricRef: RefObject<any>) {
       // --- Z-order ---
       if (mod && key === "]") { e.preventDefault(); if (shift) { bringToFront(); } else { bringForward(); } return; }
       if (mod && key === "[") { e.preventDefault(); if (shift) { sendToBack(); } else { sendBackward(); } return; }
+
+      // --- Centralizar no canvas (Ctrl+M) ---
+      if (mod && key === "m") {
+        e.preventDefault();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const active: any = fabricCanvas.getActiveObject();
+        if (!active) return;
+        const cw = fabricCanvas.getWidth() / fabricCanvas.getZoom();
+        const ch = fabricCanvas.getHeight() / fabricCanvas.getZoom();
+        const ow = active.getScaledWidth?.() ?? active.width ?? 0;
+        const oh = active.getScaledHeight?.() ?? active.height ?? 0;
+        active.set({ left: (cw - ow) / 2, top: (ch - oh) / 2 });
+        active.setCoords();
+        fabricCanvas.requestRenderAll();
+        toast.success("Centralizado no canvas");
+        return;
+      }
+
+      // --- Esconder objeto (Ctrl+H) ---
+      if (mod && key === "h") {
+        e.preventDefault();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const active: any = fabricCanvas.getActiveObject();
+        if (!active) return;
+        active.set({ visible: !active.visible });
+        fabricCanvas.discardActiveObject();
+        fabricCanvas.requestRenderAll();
+        toast.success(active.visible ? "Objeto visível" : "Objeto oculto");
+        return;
+      }
     };
 
     window.addEventListener("keydown", onKeyDown);
