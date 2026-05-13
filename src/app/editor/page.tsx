@@ -130,6 +130,9 @@ import { CanvasGridSnapPanel } from "@/components/editor/canvas-grid-snap-panel"
 import { ObjectGradientPanel } from "@/components/editor/object-gradient-panel";
 import { CanvasLayerExportPanel } from "@/components/editor/canvas-layer-export-panel";
 import { CanvasHistoryPanel } from "@/components/editor/canvas-history-panel";
+import { TextArcPanel } from "@/components/editor/text-arc-panel";
+import { CanvasPatternPanel } from "@/components/editor/canvas-pattern-panel";
+import { CanvasGuidesPanel } from "@/components/editor/canvas-guides-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -215,6 +218,8 @@ import {
   AlignCenterHorizontal,
   SwatchBook,
   Undo2,
+  Spline,
+  Repeat,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -573,7 +578,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(84, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(87, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -825,6 +830,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="history" title="Histórico de Ações" className="px-0.5">
                 <Undo2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textarc" title="Texto em Arco" className="px-0.5">
+                <Spline className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="pattern" title="Padrões e Texturas" className="px-0.5">
+                <Repeat className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="guides" title="Guias Personalizadas" className="px-0.5">
+                <Ruler className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1312,6 +1326,21 @@ export default function EditorPage() {
             <TabsContent value="history" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasHistoryPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textarc" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextArcPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="pattern" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasPatternPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="guides" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasGuidesPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
