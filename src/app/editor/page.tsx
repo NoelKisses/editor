@@ -85,6 +85,9 @@ import { ElementSearchPanel } from "@/components/editor/element-search-panel";
 import { QuickActionsPanel } from "@/components/editor/quick-actions-panel";
 import { AutoDistributePanel } from "@/components/editor/auto-distribute-panel";
 import { ObjectBlendPanel } from "@/components/editor/object-blend-panel";
+import { MarginBleedPanel } from "@/components/editor/margin-bleed-panel";
+import { PatternTilePanel } from "@/components/editor/pattern-tile-panel";
+import { DesignStatsPanel } from "@/components/editor/design-stats-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -139,6 +142,8 @@ import {
   History,
   SearchCheck,
   Blend,
+  BarChart3,
+  Repeat,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -497,7 +502,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(39, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(42, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -614,6 +619,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="blend" title="Composição e Blend" className="px-0.5">
                 <Blend className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="margins" title="Margens e Sangria" className="px-0.5">
+                <Ruler className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="patterntile" title="Repetição de Padrão" className="px-0.5">
+                <Repeat className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="designstats" title="Estatísticas do Design" className="px-0.5">
+                <BarChart3 className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -876,6 +890,21 @@ export default function EditorPage() {
             <TabsContent value="blend" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectBlendPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="margins" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <MarginBleedPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="patterntile" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <PatternTilePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="designstats" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <DesignStatsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
