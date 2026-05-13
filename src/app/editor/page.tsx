@@ -112,6 +112,9 @@ import { ImagePlaceholderPanel } from "@/components/editor/image-placeholder-pan
 import { CropInteractivePanel } from "@/components/editor/crop-interactive-panel";
 import { TextLetterSpacingPanel } from "@/components/editor/text-letter-spacing-panel";
 import { ObjectTransparencyPanel } from "@/components/editor/object-transparency-panel";
+import { ShapeLibraryPanel } from "@/components/editor/shape-library-panel";
+import { TextPathEffectPanel } from "@/components/editor/text-path-effect-panel";
+import { CanvasExportPreviewPanel } from "@/components/editor/canvas-export-preview-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -184,6 +187,8 @@ import {
   Highlighter,
   Replace,
   ALargeSmall,
+  LibraryBig,
+  FileDown,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -542,7 +547,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(66, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(69, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -740,6 +745,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="objtransparency" title="Transparência e Blend" className="px-0.5">
                 <Blend className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="shapelibrary" title="Biblioteca de Formas" className="px-0.5">
+                <LibraryBig className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textpathfx" title="Texto em Caminho" className="px-0.5">
+                <Spline className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="exportpreview" title="Exportar com Prévia" className="px-0.5">
+                <FileDown className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1137,6 +1151,21 @@ export default function EditorPage() {
             <TabsContent value="objtransparency" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectTransparencyPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="shapelibrary" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ShapeLibraryPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textpathfx" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextPathEffectPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="exportpreview" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasExportPreviewPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
