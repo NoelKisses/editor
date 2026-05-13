@@ -39,6 +39,9 @@ import { OpacityBlendPanel } from "@/components/editor/opacity-blend-panel";
 import { CurvedTextPanel } from "@/components/editor/curved-text-panel";
 import { ColorPickerEyedropper } from "@/components/editor/color-picker-eyedropper";
 import { TextTemplatesPanel } from "@/components/editor/text-templates-panel";
+import { ImageCropPanel } from "@/components/editor/image-crop-panel";
+import { MyImagesPanel } from "@/components/editor/my-images-panel";
+import { CanvasStatusBar } from "@/components/editor/canvas-status-bar";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -66,6 +69,8 @@ import {
   QrCode,
   Play,
   Maximize2,
+  Crop,
+  ImagePlus,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -171,7 +176,7 @@ export default function EditorPage() {
         {/* Left sidebar */}
         <aside className="w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden">
           <Tabs defaultValue="templates" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-11 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid grid-cols-12 m-2 flex-shrink-0 h-8">
               <TabsTrigger value="templates" className="text-[9px] px-0.5 gap-0.5" title="Templates">
                 <Layers className="w-3 h-3" />
               </TabsTrigger>
@@ -189,6 +194,9 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="photos" className="text-[9px] px-0.5 gap-0.5" title="Fotos Stock">
                 <Images className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="myimages" className="text-[9px] px-0.5 gap-0.5" title="Minhas Imagens">
+                <ImagePlus className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="qrcode" className="text-[9px] px-0.5 gap-0.5" title="QR Code">
                 <QrCode className="w-3 h-3" />
@@ -240,6 +248,12 @@ export default function EditorPage() {
             <TabsContent value="photos" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <StockPhotosPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="myimages" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <MyImagesPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
 
@@ -308,7 +322,7 @@ export default function EditorPage() {
         {/* Right sidebar — 10 abas */}
         <aside className="w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden">
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-10 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid grid-cols-11 m-2 flex-shrink-0 h-8">
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -320,6 +334,9 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="filters" title="Filtros de Imagem" className="px-0.5">
                 <Filter className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="crop" title="Recortar Imagem" className="px-0.5">
+                <Crop className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="layers" title="Camadas" className="px-0.5">
                 <Layers className="w-3 h-3" />
@@ -371,6 +388,12 @@ export default function EditorPage() {
               </ScrollArea>
             </TabsContent>
 
+            <TabsContent value="crop" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageCropPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
             <TabsContent value="layers" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <LayersPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
@@ -383,6 +406,9 @@ export default function EditorPage() {
                   <AlignTools fabricCanvas={fabricCanvas} />
                   <div className="mt-4">
                     <RemoveBgButton fabricCanvas={fabricCanvas} />
+                  </div>
+                  <div className="mt-4 border-t border-border pt-4">
+                    <ImageCropPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
                   </div>
                   <div className="mt-4 border-t border-border pt-4">
                     <ClipMaskPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
@@ -428,6 +454,7 @@ export default function EditorPage() {
           </Tabs>
         </aside>
       </div>
+      <CanvasStatusBar fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
       <KeyboardShortcutsModal open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
       {presentationOpen && fabricCanvas && (
         <PresentationMode fabricCanvas={fabricCanvas} onClose={() => setPresentationOpen(false)} />
