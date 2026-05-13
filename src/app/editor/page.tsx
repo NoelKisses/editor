@@ -47,6 +47,13 @@ import { GoogleFontsPanel } from "@/components/editor/google-fonts-panel";
 import { BrandKitPanel } from "@/components/editor/brand-kit-panel";
 import { TextStylesPanel } from "@/components/editor/text-styles-panel";
 import { CanvasNotesPanel } from "@/components/editor/canvas-notes-panel";
+import { EmojiPanel } from "@/components/editor/emoji-panel";
+import { TypographyPanel } from "@/components/editor/typography-panel";
+import { ShadowPanel } from "@/components/editor/shadow-panel";
+import { BorderPanel } from "@/components/editor/border-panel";
+import { FloatingToolbar } from "@/components/canvas/floating-toolbar";
+import { PositionSizePanel } from "@/components/editor/position-size-panel";
+import { TextFormatBar } from "@/components/editor/text-format-bar";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -77,6 +84,10 @@ import {
   Crop,
   ImagePlus,
   StickyNote,
+  Smile,
+  Baseline,
+  Eclipse,
+  Square,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -203,7 +214,7 @@ export default function EditorPage() {
         {/* Left sidebar */}
         <aside className={`w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="templates" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-12 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid grid-cols-13 m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(13, minmax(0, 1fr))" }}>
               <TabsTrigger value="templates" className="text-[9px] px-0.5 gap-0.5" title="Templates">
                 <Layers className="w-3 h-3" />
               </TabsTrigger>
@@ -215,6 +226,9 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="icons" className="text-[9px] px-0.5 gap-0.5" title="Ícones">
                 <LayoutGrid className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="emoji" className="text-[9px] px-0.5 gap-0.5" title="Emojis">
+                <Smile className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="frames" className="text-[9px] px-0.5 gap-0.5" title="Molduras">
                 <Frame className="w-3 h-3" />
@@ -269,6 +283,12 @@ export default function EditorPage() {
             <TabsContent value="frames" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <FramesPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="emoji" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <EmojiPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
 
@@ -353,10 +373,10 @@ export default function EditorPage() {
           {template && <PageStrip fabricCanvas={fabricCanvas} />}
         </main>
 
-        {/* Right sidebar — 12 abas */}
+        {/* Right sidebar — 14 abas */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-12 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(15, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -390,6 +410,15 @@ export default function EditorPage() {
               <TabsTrigger value="effects" title="Efeitos (Sombra e Borda)" className="px-0.5">
                 <Zap className="w-3 h-3" />
               </TabsTrigger>
+              <TabsTrigger value="typography" title="Tipografia" className="px-0.5">
+                <Baseline className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="shadow" title="Sombra" className="px-0.5">
+                <Eclipse className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="border" title="Contorno" className="px-0.5">
+                <Square className="w-3 h-3" />
+              </TabsTrigger>
               <TabsTrigger value="notes" title="Notas do Design" className="px-0.5">
                 <StickyNote className="w-3 h-3" />
               </TabsTrigger>
@@ -397,13 +426,19 @@ export default function EditorPage() {
 
             <TabsContent value="properties" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
-                <PropertiesPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                <PositionSizePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                <div className="border-t border-border">
+                  <PropertiesPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                </div>
               </ScrollArea>
             </TabsContent>
 
             <TabsContent value="text" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
-                <TextStylesPanel fabricCanvas={fabricCanvas} />
+                <TextFormatBar fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                <div className="border-t border-border">
+                  <TextStylesPanel fabricCanvas={fabricCanvas} />
+                </div>
                 <div className="border-t border-border">
                   <TextEffectsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
                 </div>
@@ -495,6 +530,24 @@ export default function EditorPage() {
               </ScrollArea>
             </TabsContent>
 
+            <TabsContent value="typography" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TypographyPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="shadow" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ShadowPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="border" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <BorderPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
             <TabsContent value="notes" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasNotesPanel />
@@ -503,6 +556,7 @@ export default function EditorPage() {
           </Tabs>
         </aside>
       </div>
+      <FloatingToolbar fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
       <CanvasStatusBar fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
       <KeyboardShortcutsModal open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
       {presentationOpen && fabricCanvas && (
