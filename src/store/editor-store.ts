@@ -40,6 +40,11 @@ interface EditorStore extends EditorState {
   // Auto-save indicator
   lastSavedAt: number | null;
   setLastSavedAt: (ts: number) => void;
+  // Global clipboard for copy/paste/cut across toolbar, shortcuts, context menu
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  clipboard: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setClipboard: (obj: any) => void;
 }
 
 const DEFAULT_EXPORT_OPTIONS: ExportOptions = {
@@ -62,6 +67,8 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   pages: [{ id: "page-1", label: "Página 1", fabricJSON: "" }],
   currentPageIndex: 0,
   lastSavedAt: null,
+  clipboard: null,
+  setClipboard: (obj) => set({ clipboard: obj }),
 
   setTemplate: (template) => {
     set({ template, elements: [], selectedElementId: null, history: [[]], historyIndex: 0 });

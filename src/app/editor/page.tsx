@@ -67,6 +67,9 @@ import { PatternsPanel } from "@/components/editor/patterns-panel";
 import { QuickStylesPanel } from "@/components/editor/quick-styles-panel";
 import { PhotoFramesPanel } from "@/components/editor/photo-frames-panel";
 import { TextEffectsAdvancedPanel } from "@/components/editor/text-effects-advanced-panel";
+import { ImageAdjustmentsPanel } from "@/components/editor/image-adjustments-panel";
+import { ObjectLockPanel } from "@/components/editor/object-lock-panel";
+import { TextSpacingPanel } from "@/components/editor/text-spacing-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -109,6 +112,9 @@ import {
   Crosshair,
   Wand2,
   SquareStack,
+  Sliders,
+  Lock,
+  MoveHorizontal,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -467,7 +473,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(21, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -530,6 +536,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="textfx" title="Efeitos de Texto Avançados" className="px-0.5">
                 <Sparkles className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="imgadj" title="Ajustes de Imagem" className="px-0.5">
+                <Sliders className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="objlock" title="Bloqueio e Ordenação" className="px-0.5">
+                <Lock className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textspacing" title="Espaçamento de Texto" className="px-0.5">
+                <MoveHorizontal className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -696,6 +711,24 @@ export default function EditorPage() {
             <TabsContent value="textfx" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextEffectsAdvancedPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="imgadj" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageAdjustmentsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="objlock" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectLockPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="textspacing" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextSpacingPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>

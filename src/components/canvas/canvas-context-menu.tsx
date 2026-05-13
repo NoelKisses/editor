@@ -23,6 +23,7 @@ import {
   MousePointer2,
 } from "lucide-react";
 import { CropImageDialog } from "@/components/editor/crop-image-dialog";
+import { useEditorStore } from "@/store/editor-store";
 
 interface CanvasContextMenuProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,8 +39,10 @@ export function CanvasContextMenu({ fabricCanvas }: CanvasContextMenuProps) {
   const [visible, setVisible] = useState(false);
   const [pos, setPos] = useState<MenuPosition>({ x: 0, y: 0 });
   const [cropOpen, setCropOpen] = useState(false);
+  const { clipboard, setClipboard } = useEditorStore();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const clipboardRef = useRef<any>(null);
+  useEffect(() => { clipboardRef.current = clipboard; }, [clipboard]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [targetObj, setTargetObj] = useState<any>(null);
 
@@ -82,14 +85,20 @@ export function CanvasContextMenu({ fabricCanvas }: CanvasContextMenuProps) {
   const handleCopy = () =>
     act(() => {
       if (!targetObj) return;
-      targetObj.clone((cloned: unknown) => { clipboardRef.current = cloned; });
+      targetObj.clone((cloned: unknown) => {
+        clipboardRef.current = cloned;
+        setClipboard(cloned);
+      });
       toast.success("Copiado");
     });
 
   const handleCut = () =>
     act(() => {
       if (!targetObj || !fabricCanvas) return;
-      targetObj.clone((cloned: unknown) => { clipboardRef.current = cloned; });
+      targetObj.clone((cloned: unknown) => {
+        clipboardRef.current = cloned;
+        setClipboard(cloned);
+      });
       fabricCanvas.remove(targetObj);
       fabricCanvas.requestRenderAll();
       toast.success("Recortado");
@@ -97,17 +106,18 @@ export function CanvasContextMenu({ fabricCanvas }: CanvasContextMenuProps) {
 
   const handlePaste = () =>
     act(() => {
-      if (!fabricCanvas || !clipboardRef.current) return;
+      const cb = clipboardRef.current;
+      if (!fabricCanvas || !cb) return;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      clipboardRef.current.clone((newObj: any) => {
+      cb.clone((newObj: any) => {
         fabricCanvas.discardActiveObject();
         newObj.set({
-          left: (clipboardRef.current.left ?? 0) + 15,
-          top: (clipboardRef.current.top ?? 0) + 15,
+          left: (cb.left ?? 0) + 15,
+          top: (cb.top ?? 0) + 15,
           evented: true,
         });
-        clipboardRef.current.left += 15;
-        clipboardRef.current.top += 15;
+        cb.left += 15;
+        cb.top += 15;
         fabricCanvas.add(newObj);
         fabricCanvas.setActiveObject(newObj);
         fabricCanvas.requestRenderAll();

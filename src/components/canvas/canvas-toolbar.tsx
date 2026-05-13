@@ -66,8 +66,6 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion, showRulers, onTo
   const [resizeOpen, setResizeOpen] = useState(false);
   const [textStylesOpen, setTextStylesOpen] = useState(false);
   const [presentationOpen, setPresentationOpen] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const clipboardRef = useRef<any>(null);
   const {
     undo,
     redo,
@@ -81,7 +79,13 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion, showRulers, onTo
     template,
     snapToGrid,
     setSnapToGrid,
+    clipboard,
+    setClipboard,
   } = useEditorStore();
+  // Keep a ref for paste so it can always read latest clipboard without stale closure
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const clipboardRef = useRef<any>(null);
+  useEffect(() => { clipboardRef.current = clipboard; }, [clipboard]);
 
   const handleCopy = useCallback(() => {
     if (!fabricCanvas) return;
@@ -89,23 +93,25 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion, showRulers, onTo
     if (!active) return;
     active.clone((cloned: unknown) => {
       clipboardRef.current = cloned;
+      setClipboard(cloned);
       toast.success("Copiado");
     });
-  }, [fabricCanvas]);
+  }, [fabricCanvas, setClipboard]);
 
   const handlePaste = useCallback(() => {
-    if (!fabricCanvas || !clipboardRef.current) return;
+    const cb = clipboardRef.current;
+    if (!fabricCanvas || !cb) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    clipboardRef.current.clone((newObj: any) => {
+    cb.clone((newObj: any) => {
       fabricCanvas.discardActiveObject();
       newObj.set({
-        left: (clipboardRef.current.left ?? 0) + 15,
-        top: (clipboardRef.current.top ?? 0) + 15,
+        left: (cb.left ?? 0) + 15,
+        top: (cb.top ?? 0) + 15,
         evented: true,
       });
       fabricCanvas.add(newObj);
-      clipboardRef.current.left += 15;
-      clipboardRef.current.top += 15;
+      cb.left += 15;
+      cb.top += 15;
       fabricCanvas.setActiveObject(newObj);
       fabricCanvas.requestRenderAll();
       toast.success("Colado");
@@ -116,12 +122,15 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion, showRulers, onTo
     if (!fabricCanvas) return;
     const active = fabricCanvas.getActiveObject();
     if (!active) return;
-    active.clone((cloned: unknown) => { clipboardRef.current = cloned; });
+    active.clone((cloned: unknown) => {
+      clipboardRef.current = cloned;
+      setClipboard(cloned);
+    });
     fabricCanvas.remove(active);
     fabricCanvas.requestRenderAll();
     if (selectedElementId) removeElement(selectedElementId);
     toast.success("Recortado");
-  }, [fabricCanvas, selectedElementId, removeElement]);
+  }, [fabricCanvas, selectedElementId, removeElement, setClipboard]);
 
   const handleDuplicate = useCallback(() => {
     if (!fabricCanvas) return;

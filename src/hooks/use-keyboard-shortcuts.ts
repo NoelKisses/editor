@@ -6,8 +6,11 @@ import { toast } from "sonner";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useKeyboardShortcuts(fabricRef: RefObject<any>) {
-  const { undo, redo, zoom, setZoom } = useEditorStore();
+  const { undo, redo, zoom, setZoom, clipboard, setClipboard } = useEditorStore();
   const clipboardRef = useRef<unknown>(null);
+
+  // Keep clipboardRef in sync with global store clipboard
+  useEffect(() => { clipboardRef.current = clipboard; }, [clipboard]);
 
   // Keep zoom in a ref so the keydown closure always sees the latest value
   const zoomRef = useRef(zoom);
@@ -34,6 +37,7 @@ export function useKeyboardShortcuts(fabricRef: RefObject<any>) {
       if (!active) return;
       active.clone((cloned: unknown) => {
         clipboardRef.current = cloned;
+        setClipboard(cloned);
         toast.success("Copiado");
       });
     };
@@ -65,7 +69,10 @@ export function useKeyboardShortcuts(fabricRef: RefObject<any>) {
       if (!fc) return;
       const active = fc.getActiveObject();
       if (!active) return;
-      active.clone((cloned: unknown) => { clipboardRef.current = cloned; });
+      active.clone((cloned: unknown) => {
+        clipboardRef.current = cloned;
+        setClipboard(cloned);
+      });
       fc.remove(active);
       fc.requestRenderAll();
       toast.success("Recortado");
@@ -313,5 +320,5 @@ export function useKeyboardShortcuts(fabricRef: RefObject<any>) {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [undo, redo, setZoom]);
+  }, [undo, redo, setZoom, setClipboard]);
 }
