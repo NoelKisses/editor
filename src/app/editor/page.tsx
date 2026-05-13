@@ -73,6 +73,9 @@ import { TextSpacingPanel } from "@/components/editor/text-spacing-panel";
 import { DropShadowAdvancedPanel } from "@/components/editor/drop-shadow-advanced-panel";
 import { ColorHarmonyPanel } from "@/components/editor/color-harmony-panel";
 import { TransformPanel } from "@/components/editor/transform-panel";
+import { StrokeOutlinePanel } from "@/components/editor/stroke-outline-panel";
+import { ObjectDuplicatorPanel } from "@/components/editor/object-duplicator-panel";
+import { PreciseCoordsPanel } from "@/components/editor/precise-coords-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -119,6 +122,8 @@ import {
   Lock,
   MoveHorizontal,
   RefreshCw,
+  Copy,
+  Ruler,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -477,7 +482,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(27, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(30, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -558,6 +563,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="transform" title="Transformações" className="px-0.5">
                 <RefreshCw className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="strokeadv" title="Contorno Avançado" className="px-0.5">
+                <PenLine className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="duplicator" title="Duplicador Inteligente" className="px-0.5">
+                <Copy className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="coords" title="Coordenadas Precisas" className="px-0.5">
+                <Ruler className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -760,6 +774,21 @@ export default function EditorPage() {
             <TabsContent value="transform" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TransformPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="strokeadv" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <StrokeOutlinePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="duplicator" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectDuplicatorPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="coords" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <PreciseCoordsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
