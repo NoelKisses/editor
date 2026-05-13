@@ -124,6 +124,9 @@ import { TextCaseTransformPanel } from "@/components/editor/text-case-transform-
 import { CanvasWatermarkPanel } from "@/components/editor/canvas-watermark-panel";
 import { ObjectCornerRadiusPanel } from "@/components/editor/object-corner-radius-panel";
 import { ImageBgColorRemovePanel } from "@/components/editor/image-bg-color-remove-panel";
+import { ImageFilterPanel } from "@/components/editor/image-filter-panel";
+import { ObjectAlignDistributePanel } from "@/components/editor/object-align-distribute-panel";
+import { CanvasGridSnapPanel } from "@/components/editor/canvas-grid-snap-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -205,6 +208,8 @@ import {
   CaseSensitive,
   Radius,
   Eraser,
+  SlidersVertical,
+  AlignCenterHorizontal,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -563,7 +568,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(78, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(81, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -797,6 +802,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="bgremove" title="Remover Fundo por Cor" className="px-0.5">
                 <Eraser className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="imagefilters" title="Filtros de Imagem" className="px-0.5">
+                <SlidersVertical className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="aligndistribute" title="Alinhar e Distribuir" className="px-0.5">
+                <AlignCenterHorizontal className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="gridsnap" title="Grade e Magnetismo" className="px-0.5">
+                <LayoutGrid className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1254,6 +1268,21 @@ export default function EditorPage() {
             <TabsContent value="bgremove" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ImageBgColorRemovePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="imagefilters" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageFilterPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="aligndistribute" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectAlignDistributePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="gridsnap" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasGridSnapPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
