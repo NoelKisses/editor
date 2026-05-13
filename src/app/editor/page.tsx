@@ -94,6 +94,9 @@ import { ObjectPropertiesInspectorPanel } from "@/components/editor/object-prope
 import { TextShadowPanel } from "@/components/editor/text-shadow-panel";
 import { ColorGradientTextPanel } from "@/components/editor/color-gradient-text-panel";
 import { CanvasRulerGuidePanel } from "@/components/editor/canvas-ruler-guide-panel";
+import { ObjectVisibilityPanel } from "@/components/editor/object-visibility-panel";
+import { CanvasExportSettingsPanel } from "@/components/editor/canvas-export-settings-panel";
+import { SmartAlignDistributePanel } from "@/components/editor/smart-align-distribute-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -155,6 +158,9 @@ import {
   FlaskConical,
   TextCursorInput,
   GalleryVerticalEnd,
+  ScanEye,
+  PackageOpen,
+  StretchHorizontal,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -513,7 +519,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(48, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(51, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -657,6 +663,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="rulerguides" title="Guias Manuais" className="px-0.5">
                 <GalleryVerticalEnd className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="objvisibility" title="Visibilidade dos Objetos" className="px-0.5">
+                <ScanEye className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="exportadv" title="Exportar Avançado" className="px-0.5">
+                <PackageOpen className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="smartalign" title="Alinhar Inteligente" className="px-0.5">
+                <StretchHorizontal className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -964,6 +979,21 @@ export default function EditorPage() {
             <TabsContent value="rulerguides" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasRulerGuidePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="objvisibility" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectVisibilityPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="exportadv" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasExportSettingsPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="smartalign" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <SmartAlignDistributePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
