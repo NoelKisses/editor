@@ -45,7 +45,7 @@ export function ProjectsPanel({ fabricCanvas }: ProjectsPanelProps) {
   const [autosaveEnabled, setAutosaveEnabled] = useState(true);
   const [lastAutosave, setLastAutosave] = useState<number | null>(null);
   const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { template } = useEditorStore();
+  const { template, setLastSavedAt } = useEditorStore();
 
   useEffect(() => {
     const saved = loadProjects();
@@ -68,7 +68,9 @@ export function ProjectsPanel({ fabricCanvas }: ProjectsPanelProps) {
           });
           const autosaveData = { templateId: template.id, templateName: template.name, canvasJson, thumbnail, savedAt: Date.now() };
           localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(autosaveData));
-          setLastAutosave(Date.now());
+          const now = Date.now();
+          setLastAutosave(now);
+          setLastSavedAt(now);
         } catch {
           // silently ignore autosave errors
         }
@@ -85,7 +87,7 @@ export function ProjectsPanel({ fabricCanvas }: ProjectsPanelProps) {
       fabricCanvas.off("object:removed", scheduleAutosave);
       if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
     };
-  }, [fabricCanvas, template, autosaveEnabled]);
+  }, [fabricCanvas, template, autosaveEnabled, setLastSavedAt]);
 
   const handleSave = useCallback(() => {
     if (!fabricCanvas || !template) {

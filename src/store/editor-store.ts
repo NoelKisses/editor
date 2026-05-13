@@ -37,6 +37,9 @@ interface EditorStore extends EditorState {
   savePageState: (index: number, fabricJSON: string, thumbnail?: string) => void;
   reorderPages: (fromIndex: number, toIndex: number) => void;
   duplicatePage: (index: number) => void;
+  // Auto-save indicator
+  lastSavedAt: number | null;
+  setLastSavedAt: (ts: number) => void;
 }
 
 const DEFAULT_EXPORT_OPTIONS: ExportOptions = {
@@ -58,6 +61,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   snapToGrid: false,
   pages: [{ id: "page-1", label: "Página 1", fabricJSON: "" }],
   currentPageIndex: 0,
+  lastSavedAt: null,
 
   setTemplate: (template) => {
     set({ template, elements: [], selectedElementId: null, history: [[]], historyIndex: 0 });
@@ -188,4 +192,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     const newPages = [...pages.slice(0, index + 1), newPage, ...pages.slice(index + 1)];
     set({ pages: newPages, currentPageIndex: index + 1 });
   },
+
+  setLastSavedAt: (ts) => set({ lastSavedAt: ts }),
 }));

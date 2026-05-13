@@ -32,6 +32,10 @@ import {
   Maximize2,
   ChevronDown,
   Presentation,
+  FlipHorizontal2,
+  FlipVertical2,
+  Lock,
+  Unlock,
 } from "lucide-react";
 
 interface CanvasToolbarProps {
@@ -289,7 +293,40 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
 
   // selectionVersion causes re-render so this stays fresh
   void selectionVersion;
-  const activeIsImage = fabricCanvas?.getActiveObject()?.type === "image";
+  const activeObj = fabricCanvas?.getActiveObject();
+  const activeIsImage = activeObj?.type === "image";
+  const isLocked = activeObj ? activeObj.lockMovementX === true : false;
+
+  const handleFlipH = useCallback(() => {
+    const active = fabricCanvas?.getActiveObject();
+    if (!active) return;
+    active.set({ flipX: !active.flipX });
+    fabricCanvas.requestRenderAll();
+  }, [fabricCanvas]);
+
+  const handleFlipV = useCallback(() => {
+    const active = fabricCanvas?.getActiveObject();
+    if (!active) return;
+    active.set({ flipY: !active.flipY });
+    fabricCanvas.requestRenderAll();
+  }, [fabricCanvas]);
+
+  const handleToggleLock = useCallback(() => {
+    const active = fabricCanvas?.getActiveObject();
+    if (!active) return;
+    const lock = !active.lockMovementX;
+    active.set({
+      lockMovementX: lock,
+      lockMovementY: lock,
+      lockRotation: lock,
+      lockScalingX: lock,
+      lockScalingY: lock,
+      hasControls: !lock,
+      hoverCursor: lock ? "not-allowed" : "move",
+    });
+    fabricCanvas.requestRenderAll();
+    toast.success(lock ? "Objeto bloqueado" : "Objeto desbloqueado");
+  }, [fabricCanvas]);
 
   return (
     <div className="flex items-center gap-1.5 px-4 py-2 border-b border-border bg-card/50 flex-wrap">
@@ -351,6 +388,25 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
           <Crop className="w-4 h-4 mr-1.5" />
           Recortar
         </Button>
+      )}
+      {activeObj && (
+        <>
+          <Button variant="ghost" size="icon" onClick={handleFlipH} title="Espelhar horizontalmente">
+            <FlipHorizontal2 className="w-4 h-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleFlipV} title="Espelhar verticalmente">
+            <FlipVertical2 className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleToggleLock}
+            title={isLocked ? "Desbloquear objeto" : "Bloquear objeto"}
+            className={isLocked ? "text-amber-400" : ""}
+          >
+            {isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+          </Button>
+        </>
       )}
       <input
         ref={fileInputRef}

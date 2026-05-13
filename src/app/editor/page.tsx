@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -27,6 +27,8 @@ import { ColorPalettePanel } from "@/components/editor/color-palette-panel";
 import { EffectsPanel } from "@/components/editor/effects-panel";
 import { DrawPanel } from "@/components/editor/draw-panel";
 import { PageStrip } from "@/components/editor/page-strip";
+import { StockPhotosPanel } from "@/components/editor/stock-photos-panel";
+import { KeyboardShortcutsModal } from "@/components/editor/keyboard-shortcuts-modal";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -48,6 +50,9 @@ import {
   PenLine,
   Frame,
   LayoutGrid,
+  Images,
+  Keyboard,
+  CheckCircle2,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -64,7 +69,8 @@ export default function EditorPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [fabricCanvas, setFabricCanvas] = useState<any>(null);
   const [selectionVersion, setSelectionVersion] = useState(0);
-  const { template } = useEditorStore();
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const { template, lastSavedAt } = useEditorStore();
 
   const handleCanvasReady = useCallback((canvas: unknown) => {
     fabricRef.current = canvas;
@@ -76,6 +82,16 @@ export default function EditorPage() {
   }, []);
 
   useKeyboardShortcuts(fabricRef);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (e.key === "?") setShortcutsOpen((v) => !v);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
   return (
     <div className="flex flex-col h-screen bg-background overflow-hidden">
@@ -89,6 +105,22 @@ export default function EditorPage() {
         </Link>
         <div className="h-4 w-px bg-border" />
         <h1 className="text-sm font-semibold text-foreground">Editor</h1>
+        <div className="ml-auto flex items-center gap-3">
+          {lastSavedAt && (
+            <span className="flex items-center gap-1 text-[11px] text-green-500/80" title={`Salvo às ${new Date(lastSavedAt).toLocaleTimeString()}`}>
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Salvo</span>
+            </span>
+          )}
+          <button
+            onClick={() => setShortcutsOpen(true)}
+            className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded hover:bg-accent"
+            title="Atalhos de teclado (?)"
+          >
+            <Keyboard className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Atalhos</span>
+          </button>
+        </div>
         {template && (
           <>
             <div className="h-4 w-px bg-border" />
@@ -104,7 +136,7 @@ export default function EditorPage() {
         {/* Left sidebar */}
         <aside className="w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden">
           <Tabs defaultValue="templates" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-8 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid grid-cols-9 m-2 flex-shrink-0 h-8">
               <TabsTrigger value="templates" className="text-[9px] px-0.5 gap-0.5" title="Templates">
                 <Layers className="w-3 h-3" />
               </TabsTrigger>
@@ -119,6 +151,9 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="frames" className="text-[9px] px-0.5 gap-0.5" title="Molduras">
                 <Frame className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="photos" className="text-[9px] px-0.5 gap-0.5" title="Fotos Stock">
+                <Images className="w-3 h-3" />
               </TabsTrigger>
               <TabsTrigger value="ai" className="text-[9px] px-0.5 gap-0.5" title="IA">
                 <Sparkles className="w-3 h-3" />
@@ -158,6 +193,12 @@ export default function EditorPage() {
             <TabsContent value="frames" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <FramesPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="photos" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <StockPhotosPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
 
@@ -316,6 +357,7 @@ export default function EditorPage() {
           </Tabs>
         </aside>
       </div>
+      <KeyboardShortcutsModal open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </div>
   );
 }
