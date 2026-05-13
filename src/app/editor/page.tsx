@@ -103,6 +103,9 @@ import { ObjectRenamePanel } from "@/components/editor/object-rename-panel";
 import { ClipboardPanel } from "@/components/editor/clipboard-panel";
 import { SnapSettingsPanel } from "@/components/editor/snap-settings-panel";
 import { ZoomControlsPanel } from "@/components/editor/zoom-controls-panel";
+import { AspectRatioLockPanel } from "@/components/editor/aspect-ratio-lock-panel";
+import { KeyboardShortcutsPanel } from "@/components/editor/keyboard-shortcuts-panel";
+import { ContextualToolbarPanel } from "@/components/editor/contextual-toolbar-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -529,7 +532,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(57, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(60, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -700,6 +703,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="zoom" title="Controle de Zoom" className="px-0.5">
                 <ZoomIn className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="aspectlock" title="Proporção e Tamanho" className="px-0.5">
+                <Lock className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="shortcuts" title="Atalhos de Teclado" className="px-0.5">
+                <Keyboard className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="contextual" title="Propriedades Contextuais" className="px-0.5">
+                <Wand2 className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1052,6 +1064,21 @@ export default function EditorPage() {
             <TabsContent value="zoom" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ZoomControlsPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="aspectlock" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <AspectRatioLockPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="shortcuts" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <KeyboardShortcutsPanel />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="contextual" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ContextualToolbarPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
