@@ -118,6 +118,12 @@ import { CanvasExportPreviewPanel } from "@/components/editor/canvas-export-prev
 import { ObjectFlipMirrorPanel } from "@/components/editor/object-flip-mirror-panel";
 import { TextParagraphPanel } from "@/components/editor/text-paragraph-panel";
 import { CanvasTemplateSizePanel } from "@/components/editor/canvas-template-size-panel";
+import { ObjectShadowPresetPanel } from "@/components/editor/object-shadow-preset-panel";
+import { ColorMixerPanel } from "@/components/editor/color-mixer-panel";
+import { TextCaseTransformPanel } from "@/components/editor/text-case-transform-panel";
+import { CanvasWatermarkPanel } from "@/components/editor/canvas-watermark-panel";
+import { ObjectCornerRadiusPanel } from "@/components/editor/object-corner-radius-panel";
+import { ImageBgColorRemovePanel } from "@/components/editor/image-bg-color-remove-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -195,6 +201,10 @@ import {
   FlipHorizontal2,
   Pilcrow,
   LayoutTemplate,
+  Paintbrush2,
+  CaseSensitive,
+  Radius,
+  Eraser,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -553,7 +563,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(72, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(78, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -769,6 +779,24 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="templatesize" title="Tamanho do Canvas / Templates" className="px-0.5">
                 <LayoutTemplate className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="shadowpreset" title="Presets de Sombra" className="px-0.5">
+                <Eclipse className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="colormixer" title="Misturador de Cores" className="px-0.5">
+                <Paintbrush2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textcase" title="Transformar Caixa de Texto" className="px-0.5">
+                <CaseSensitive className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="watermark" title="Marca d'água" className="px-0.5">
+                <Droplets className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="cornerradius" title="Raio dos Cantos" className="px-0.5">
+                <Radius className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="bgremove" title="Remover Fundo por Cor" className="px-0.5">
+                <Eraser className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1196,6 +1224,36 @@ export default function EditorPage() {
             <TabsContent value="templatesize" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasTemplateSizePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="shadowpreset" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectShadowPresetPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="colormixer" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ColorMixerPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textcase" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextCaseTransformPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="watermark" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasWatermarkPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="cornerradius" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectCornerRadiusPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="bgremove" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageBgColorRemovePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
