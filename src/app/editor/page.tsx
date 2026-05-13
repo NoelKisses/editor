@@ -127,6 +127,9 @@ import { ImageBgColorRemovePanel } from "@/components/editor/image-bg-color-remo
 import { ImageFilterPanel } from "@/components/editor/image-filter-panel";
 import { ObjectAlignDistributePanel } from "@/components/editor/object-align-distribute-panel";
 import { CanvasGridSnapPanel } from "@/components/editor/canvas-grid-snap-panel";
+import { ObjectGradientPanel } from "@/components/editor/object-gradient-panel";
+import { CanvasLayerExportPanel } from "@/components/editor/canvas-layer-export-panel";
+import { CanvasHistoryPanel } from "@/components/editor/canvas-history-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -210,6 +213,8 @@ import {
   Eraser,
   SlidersVertical,
   AlignCenterHorizontal,
+  SwatchBook,
+  Undo2,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -568,7 +573,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(81, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(84, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -811,6 +816,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="gridsnap" title="Grade e Magnetismo" className="px-0.5">
                 <LayoutGrid className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="gradient" title="Gradiente Avançado" className="px-0.5">
+                <SwatchBook className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="layerexport" title="Camadas e Exportação" className="px-0.5">
+                <Layers className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="history" title="Histórico de Ações" className="px-0.5">
+                <Undo2 className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1283,6 +1297,21 @@ export default function EditorPage() {
             <TabsContent value="gridsnap" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasGridSnapPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="gradient" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectGradientPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="layerexport" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasLayerExportPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="history" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasHistoryPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
