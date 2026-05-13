@@ -82,6 +82,9 @@ import { SmartMeasurementPanel } from "@/components/editor/smart-measurement-pan
 import { FavoritesPanel } from "@/components/editor/favorites-panel";
 import { VisualHistoryPanel } from "@/components/editor/visual-history-panel";
 import { ElementSearchPanel } from "@/components/editor/element-search-panel";
+import { QuickActionsPanel } from "@/components/editor/quick-actions-panel";
+import { AutoDistributePanel } from "@/components/editor/auto-distribute-panel";
+import { ObjectBlendPanel } from "@/components/editor/object-blend-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -135,6 +138,7 @@ import {
   Heart,
   History,
   SearchCheck,
+  Blend,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -493,7 +497,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(36, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(39, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -601,6 +605,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="elementsearch" title="Buscar Elementos" className="px-0.5">
                 <SearchCheck className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="quickactions" title="Ações Rápidas (Copiar/Colar/Recortar)" className="px-0.5">
+                <Copy className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="distribute" title="Distribuir e Alinhar" className="px-0.5">
+                <LayoutGrid className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="blend" title="Composição e Blend" className="px-0.5">
+                <Blend className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -848,6 +861,21 @@ export default function EditorPage() {
             <TabsContent value="elementsearch" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ElementSearchPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="quickactions" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <QuickActionsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="distribute" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <AutoDistributePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="blend" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectBlendPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
