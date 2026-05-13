@@ -91,6 +91,9 @@ import { DesignStatsPanel } from "@/components/editor/design-stats-panel";
 import { ImageCropAdvancedPanel } from "@/components/editor/image-crop-advanced-panel";
 import { CanvasBackgroundAdvancedPanel } from "@/components/editor/canvas-background-advanced-panel";
 import { ObjectPropertiesInspectorPanel } from "@/components/editor/object-properties-inspector-panel";
+import { TextShadowPanel } from "@/components/editor/text-shadow-panel";
+import { ColorGradientTextPanel } from "@/components/editor/color-gradient-text-panel";
+import { CanvasRulerGuidePanel } from "@/components/editor/canvas-ruler-guide-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -150,6 +153,8 @@ import {
   Scissors,
   Wallpaper,
   FlaskConical,
+  TextCursorInput,
+  GalleryVerticalEnd,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -508,7 +513,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(45, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(48, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -643,6 +648,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="inspector" title="Inspetor de Propriedades" className="px-0.5">
                 <FlaskConical className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textshadow" title="Sombra de Texto" className="px-0.5">
+                <Eclipse className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="gradienttext" title="Gradiente no Texto" className="px-0.5">
+                <TextCursorInput className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="rulerguides" title="Guias Manuais" className="px-0.5">
+                <GalleryVerticalEnd className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -935,6 +949,21 @@ export default function EditorPage() {
             <TabsContent value="inspector" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectPropertiesInspectorPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textshadow" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextShadowPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="gradienttext" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ColorGradientTextPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="rulerguides" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasRulerGuidePanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
