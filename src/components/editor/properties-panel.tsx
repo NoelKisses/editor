@@ -318,6 +318,33 @@ export function PropertiesPanel({ fabricCanvas, selectionVersion }: PropertiesPa
             />
           </Section>
 
+          <Section title="Espaçamento">
+            <div className="flex flex-col gap-2">
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] text-muted-foreground">Linha</span>
+                  <span className="text-[10px] tabular-nums text-foreground">{(active.lineHeight ?? 1.16).toFixed(2)}</span>
+                </div>
+                <Slider
+                  min={0.5} max={3} step={0.05}
+                  value={[active.lineHeight ?? 1.16]}
+                  onValueChange={(vals) => set({ lineHeight: (vals as number[])[0] })}
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] text-muted-foreground">Letras</span>
+                  <span className="text-[10px] tabular-nums text-foreground">{active.charSpacing ?? 0}</span>
+                </div>
+                <Slider
+                  min={-200} max={800} step={10}
+                  value={[active.charSpacing ?? 0]}
+                  onValueChange={(vals) => set({ charSpacing: (vals as number[])[0] })}
+                />
+              </div>
+            </div>
+          </Section>
+
           <Section title="Sombra">
             <div className="flex items-center justify-between">
               <span className="text-xs">Ativar sombra</span>

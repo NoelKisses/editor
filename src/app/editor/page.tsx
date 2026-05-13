@@ -38,6 +38,7 @@ import { ResizeCanvasDialog } from "@/components/editor/resize-canvas-dialog";
 import { OpacityBlendPanel } from "@/components/editor/opacity-blend-panel";
 import { CurvedTextPanel } from "@/components/editor/curved-text-panel";
 import { ColorPickerEyedropper } from "@/components/editor/color-picker-eyedropper";
+import { TextTemplatesPanel } from "@/components/editor/text-templates-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -349,6 +350,9 @@ export default function EditorPage() {
             <TabsContent value="text" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextEffectsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                <div className="border-t border-border mt-2">
+                  <TextTemplatesPanel fabricCanvas={fabricCanvas} />
+                </div>
                 <div className="border-t border-border mt-2">
                   <CurvedTextPanel fabricCanvas={fabricCanvas} />
                 </div>

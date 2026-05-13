@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useKeyboardShortcuts(fabricRef: RefObject<any>) {
-  const { undo, redo } = useEditorStore();
+  const { undo, redo, zoom, setZoom } = useEditorStore();
   // clipboard interno — clona o objeto Fabric sem usar window.clipboard
   const clipboardRef = useRef<unknown>(null);
 
@@ -266,9 +266,27 @@ export function useKeyboardShortcuts(fabricRef: RefObject<any>) {
         toast.success(active.visible ? "Objeto visível" : "Objeto oculto");
         return;
       }
+
+      // --- Zoom (Ctrl++ / Ctrl+- / Ctrl+0) ---
+      if (mod && (key === "=" || key === "+")) {
+        e.preventDefault();
+        setZoom(Math.min(5, parseFloat((zoom + 0.1).toFixed(2))));
+        return;
+      }
+      if (mod && key === "-") {
+        e.preventDefault();
+        setZoom(Math.max(0.1, parseFloat((zoom - 0.1).toFixed(2))));
+        return;
+      }
+      if (mod && key === "0") {
+        e.preventDefault();
+        setZoom(1);
+        toast.success("Zoom 100%");
+        return;
+      }
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [fabricRef, undo, redo]);
+  }, [fabricRef, undo, redo, zoom, setZoom]);
 }

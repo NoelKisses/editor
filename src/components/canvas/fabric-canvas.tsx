@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useCallback, useState } from "react";
-import { Copy, Trash2, Lock, Unlock, FlipHorizontal2, Bold, Italic, Underline, ZoomIn, ZoomOut, Maximize } from "lucide-react";
+import { Copy, Trash2, Lock, Unlock, FlipHorizontal2, Bold, Italic, Underline, ZoomIn, ZoomOut, Maximize, Upload } from "lucide-react";
 import { useEditorStore } from "@/store/editor-store";
 
 const RULER_SIZE = 20;
@@ -30,6 +30,7 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
   const [showGrid, setShowGrid] = useState(false);
   const [showRulers, setShowRulers] = useState(false);
   const [showSmartGuides, setShowSmartGuides] = useState(true);
+  const [isDragOver, setIsDragOver] = useState(false);
   const [canvasReady, setCanvasReady] = useState(0);
   const [guides, setGuides] = useState<{ type: "h" | "v"; pos: number }[]>([]);
   const [snapLines, setSnapLines] = useState<SnapLine[]>([]);
@@ -42,6 +43,31 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
   const showSmartGuidesRef = useRef(true);
   const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
   const { template, zoom, setZoom, snapToGrid } = useEditorStore();
+
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const files = Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith("image/"));
+    if (!files.length || !fabricRef.current) return;
+    const fabric = await import("fabric").then((m) => m.fabric);
+    for (const file of files) {
+      const dataURL = await new Promise<string>((res) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => res(ev.target?.result as string);
+        reader.readAsDataURL(file);
+      });
+      fabric.Image.fromURL(dataURL, (img: FabricInstance) => {
+        if (!img || !fabricRef.current) return;
+        const cw = template?.width ?? 800;
+        const ch = template?.height ?? 600;
+        const scale = Math.min(cw / (img.width ?? 1), ch / (img.height ?? 1), 1);
+        img.set({ left: 60, top: 60, scaleX: scale, scaleY: scale, selectable: true });
+        fabricRef.current.add(img);
+        fabricRef.current.setActiveObject(img);
+        fabricRef.current.requestRenderAll();
+      });
+    }
+  }, [template]);
 
   const initCanvas = useCallback(async () => {
     if (!canvasRef.current || !template) return;
@@ -464,6 +490,9 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
       }}
       onMouseLeave={() => setCursorPos(null)}
       onMouseUp={handleGuideMouseUp}
+      onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+      onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setIsDragOver(false); }}
+      onDrop={handleDrop}
     >
       {/* Corner square */}
       {showRulers && (
@@ -501,6 +530,15 @@ export function FabricCanvas({ onCanvasReady, onSelectionChange }: FabricCanvasP
         className="shadow-2xl absolute"
         style={{ left: showRulers ? RULER_SIZE : 0, top: showRulers ? RULER_SIZE : 0 }}
       >
+        {/* Drag & Drop overlay */}
+        {isDragOver && (
+          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center pointer-events-none"
+            style={{ background: "rgba(0,0,0,0.55)", border: "3px dashed rgba(99,102,241,0.85)", borderRadius: 4 }}
+          >
+            <Upload className="w-10 h-10 text-indigo-400 mb-2" />
+            <span className="text-white font-semibold text-base">Solte a imagem aqui</span>
+          </div>
+        )}
         {/* Grid overlay */}
         {showGrid && (
           <div
