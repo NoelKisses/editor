@@ -28,32 +28,46 @@ const SHORTCUTS = [
     group: "Seleção",
     items: [
       { keys: [`${MOD}`, "A"], label: "Selecionar todos os objetos" },
-      { keys: ["Esc"], label: "Desselecionar / fechar modal" },
-      { keys: ["Tab"], label: "Selecionar próximo objeto" },
+      { keys: ["Esc"], label: "Desselecionar / sair edição de texto" },
+      { keys: [`${MOD}`, "G"], label: "Agrupar objetos selecionados" },
+      { keys: [`${MOD}`, "Shift", "G"], label: "Desagrupar seleção" },
     ],
   },
   {
-    group: "Objetos",
+    group: "Mover & Camadas",
     items: [
       { keys: ["↑ ↓ ← →"], label: "Mover objeto (1px)" },
       { keys: ["Shift", "↑↓←→"], label: "Mover objeto (10px)" },
-      { keys: [`${MOD}`, "]"], label: "Avançar camada" },
-      { keys: [`${MOD}`, "["], label: "Recuar camada" },
+      { keys: [`${MOD}`, "]"], label: "Avançar uma camada" },
+      { keys: [`${MOD}`, "["], label: "Recuar uma camada" },
+      { keys: [`${MOD}`, "Shift", "]"], label: "Trazer para frente" },
+      { keys: [`${MOD}`, "Shift", "["], label: "Enviar para trás" },
+      { keys: [`${MOD}`, "M"], label: "Centralizar no canvas" },
     ],
   },
   {
-    group: "Canvas",
+    group: "Formatação de Texto",
+    items: [
+      { keys: [`${MOD}`, "B"], label: "Negrito" },
+      { keys: [`${MOD}`, "I"], label: "Itálico" },
+      { keys: [`${MOD}`, "U"], label: "Sublinhado" },
+    ],
+  },
+  {
+    group: "Zoom & Visualização",
     items: [
       { keys: [`${MOD}`, "+"], label: "Aumentar zoom" },
       { keys: [`${MOD}`, "-"], label: "Diminuir zoom" },
       { keys: [`${MOD}`, "0"], label: "Zoom 100%" },
+      { keys: [`${MOD}`, "Scroll"], label: "Zoom com mouse" },
+      { keys: ["Espaço", "+ Arrastar"], label: "Mover canvas (pan)" },
     ],
   },
   {
-    group: "Outros",
+    group: "Objeto",
     items: [
+      { keys: [`${MOD}`, "H"], label: "Mostrar / ocultar objeto" },
       { keys: ["?"], label: "Abrir este painel de atalhos" },
-      { keys: ["Esc"], label: "Fechar painel / sair da edição de texto" },
     ],
   },
 ];

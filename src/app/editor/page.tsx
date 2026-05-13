@@ -42,6 +42,11 @@ import { TextTemplatesPanel } from "@/components/editor/text-templates-panel";
 import { ImageCropPanel } from "@/components/editor/image-crop-panel";
 import { MyImagesPanel } from "@/components/editor/my-images-panel";
 import { CanvasStatusBar } from "@/components/editor/canvas-status-bar";
+import { CanvasWithRulers } from "@/components/canvas/canvas-with-rulers";
+import { GoogleFontsPanel } from "@/components/editor/google-fonts-panel";
+import { BrandKitPanel } from "@/components/editor/brand-kit-panel";
+import { TextStylesPanel } from "@/components/editor/text-styles-panel";
+import { CanvasNotesPanel } from "@/components/editor/canvas-notes-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -71,6 +76,7 @@ import {
   Maximize2,
   Crop,
   ImagePlus,
+  StickyNote,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -90,6 +96,8 @@ export default function EditorPage() {
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [presentationOpen, setPresentationOpen] = useState(false);
   const [resizeOpen, setResizeOpen] = useState(false);
+  const [showRulers, setShowRulers] = useState(true);
+  const [focusMode, setFocusMode] = useState(false);
   const { template, lastSavedAt } = useEditorStore();
 
   const handleCanvasReady = useCallback((canvas: unknown) => {
@@ -108,6 +116,7 @@ export default function EditorPage() {
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
       if (e.key === "?") setShortcutsOpen((v) => !v);
+      if (e.key === "F" && !e.ctrlKey && !e.metaKey) setFocusMode((v) => !v);
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -153,6 +162,14 @@ export default function EditorPage() {
             </button>
           )}
           <button
+            onClick={() => setFocusMode((v) => !v)}
+            className={`flex items-center gap-1.5 text-[11px] transition-colors px-2 py-1 rounded hover:bg-accent ${focusMode ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+            title="Modo Foco — esconde painéis laterais (F)"
+          >
+            <Maximize2 className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{focusMode ? "Foco" : "Foco"}</span>
+          </button>
+          <button
             onClick={() => setShortcutsOpen(true)}
             className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded hover:bg-accent"
             title="Atalhos de teclado (?)"
@@ -172,9 +189,19 @@ export default function EditorPage() {
       </header>
 
       {/* Main layout */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Focus mode toggle */}
+        {focusMode && (
+          <button
+            onClick={() => setFocusMode(false)}
+            className="absolute top-2 right-2 z-20 text-[10px] text-white/50 hover:text-white/80 bg-black/40 px-2 py-1 rounded transition-colors"
+            title="Sair do modo foco (F)"
+          >
+            Sair do Foco
+          </button>
+        )}
         {/* Left sidebar */}
-        <aside className="w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden">
+        <aside className={`w-72 flex-shrink-0 border-r border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="templates" className="flex flex-col flex-1 overflow-hidden">
             <TabsList className="grid grid-cols-12 m-2 flex-shrink-0 h-8">
               <TabsTrigger value="templates" className="text-[9px] px-0.5 gap-0.5" title="Templates">
@@ -265,7 +292,10 @@ export default function EditorPage() {
 
             <TabsContent value="fonts" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
-                <CustomFontPanel fabricCanvas={fabricCanvas} />
+                <GoogleFontsPanel fabricCanvas={fabricCanvas} />
+                <div className="border-t border-border">
+                  <CustomFontPanel fabricCanvas={fabricCanvas} />
+                </div>
               </ScrollArea>
             </TabsContent>
 
@@ -296,33 +326,37 @@ export default function EditorPage() {
 
         {/* Canvas area */}
         <main className="flex-1 flex flex-col overflow-hidden">
-          <CanvasToolbar fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+          <CanvasToolbar fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} showRulers={showRulers} onToggleRulers={() => setShowRulers((v) => !v)} />
           <CanvasContextMenu fabricCanvas={fabricCanvas} />
-          <div className="flex-1 overflow-auto bg-[#1a1a1a] flex items-center justify-center p-8">
-            {template ? (
-              <FabricCanvas
-                onCanvasReady={handleCanvasReady}
-                onSelectionChange={handleSelectionChange}
-              />
-            ) : (
-              <div className="flex flex-col items-center gap-4 text-muted-foreground text-center max-w-sm">
-                <Layers className="w-12 h-12 opacity-20" />
-                <div>
-                  <p className="font-medium text-foreground/60 mb-1">Nenhum template selecionado</p>
-                  <p className="text-sm opacity-60">
-                    Escolha um template no painel esquerdo para começar a criar sua thumbnail
-                  </p>
-                </div>
+          <div className="flex-1 overflow-hidden bg-[#1a1a1a]">
+            <CanvasWithRulers fabricCanvas={fabricCanvas} showRulers={showRulers} onToggleRulers={() => setShowRulers((v) => !v)}>
+              <div className="w-full h-full flex items-center justify-center p-8">
+                {template ? (
+                  <FabricCanvas
+                    onCanvasReady={handleCanvasReady}
+                    onSelectionChange={handleSelectionChange}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center gap-4 text-muted-foreground text-center max-w-sm">
+                    <Layers className="w-12 h-12 opacity-20" />
+                    <div>
+                      <p className="font-medium text-foreground/60 mb-1">Nenhum template selecionado</p>
+                      <p className="text-sm opacity-60">
+                        Escolha um template no painel esquerdo para começar a criar sua thumbnail
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </CanvasWithRulers>
           </div>
           {template && <PageStrip fabricCanvas={fabricCanvas} />}
         </main>
 
-        {/* Right sidebar — 10 abas */}
-        <aside className="w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden">
+        {/* Right sidebar — 12 abas */}
+        <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid grid-cols-11 m-2 flex-shrink-0 h-8">
+            <TabsList className="grid grid-cols-12 m-2 flex-shrink-0 h-8">
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -356,6 +390,9 @@ export default function EditorPage() {
               <TabsTrigger value="effects" title="Efeitos (Sombra e Borda)" className="px-0.5">
                 <Zap className="w-3 h-3" />
               </TabsTrigger>
+              <TabsTrigger value="notes" title="Notas do Design" className="px-0.5">
+                <StickyNote className="w-3 h-3" />
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="properties" className="flex-1 overflow-hidden m-0">
@@ -366,7 +403,10 @@ export default function EditorPage() {
 
             <TabsContent value="text" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
-                <TextEffectsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                <TextStylesPanel fabricCanvas={fabricCanvas} />
+                <div className="border-t border-border">
+                  <TextEffectsPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                </div>
                 <div className="border-t border-border mt-2">
                   <TextTemplatesPanel fabricCanvas={fabricCanvas} />
                 </div>
@@ -433,7 +473,10 @@ export default function EditorPage() {
 
             <TabsContent value="palette" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
-                <ColorPalettePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                <BrandKitPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                <div className="border-t border-border">
+                  <ColorPalettePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+                </div>
                 <div className="border-t border-border mt-2">
                   <ColorPickerEyedropper fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
                 </div>
@@ -449,6 +492,12 @@ export default function EditorPage() {
                 <div className="border-t border-border mt-2">
                   <OpacityBlendPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
                 </div>
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="notes" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasNotesPanel />
               </ScrollArea>
             </TabsContent>
           </Tabs>

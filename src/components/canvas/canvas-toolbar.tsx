@@ -40,12 +40,15 @@ import {
   SendToBack,
   Group,
   Ungroup,
+  Ruler as RulerIcon,
 } from "lucide-react";
 
 interface CanvasToolbarProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fabricCanvas: any;
   selectionVersion?: number;
+  showRulers?: boolean;
+  onToggleRulers?: () => void;
 }
 
 const TEXT_STYLES = [
@@ -55,7 +58,7 @@ const TEXT_STYLES = [
   { label: "Legenda", fontSize: 18, fontWeight: "normal", fontFamily: "Arial", fill: "#aaaaaa", shadow: "" },
 ] as const;
 
-export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarProps) {
+export function CanvasToolbar({ fabricCanvas, selectionVersion, showRulers, onToggleRulers }: CanvasToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [generateOpen, setGenerateOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
@@ -581,6 +584,19 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
       >
         <Grid3X3 className="w-4 h-4" />
       </Button>
+
+      {/* Rulers toggle */}
+      {onToggleRulers && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggleRulers}
+          title={showRulers ? "Ocultar réguas" : "Mostrar réguas"}
+          className={showRulers ? "text-primary bg-primary/10" : ""}
+        >
+          <RulerIcon className="w-4 h-4" />
+        </Button>
+      )}
 
       <Separator orientation="vertical" className="h-6" />
 

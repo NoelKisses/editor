@@ -1,16 +1,17 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useEditorStore } from "@/store/editor-store";
 import { toast } from "sonner";
+import { ImageIcon, Trash2 } from "lucide-react";
 
 interface BackgroundPanelProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fabricCanvas: any;
 }
 
-type BgMode = "solid" | "linear" | "radial";
+type BgMode = "solid" | "linear" | "radial" | "image";
 
 const GRADIENT_PRESETS = [
   { label: "Pôr do Sol", colors: ["#f97316", "#ec4899"] },
@@ -37,6 +38,9 @@ export function BackgroundPanel({ fabricCanvas }: BackgroundPanelProps) {
   const [gradColor1, setGradColor1] = useState("#6366f1");
   const [gradColor2, setGradColor2] = useState("#ec4899");
   const [gradAngle, setGradAngle] = useState(135);
+  const [bgImagePreview, setBgImagePreview] = useState<string | null>(null);
+  const [bgFit, setBgFit] = useState<"cover" | "contain" | "fill">("cover");
+  const bgFileRef = useRef<HTMLInputElement>(null);
 
   const applySolid = useCallback(
     (color: string) => {
@@ -99,10 +103,66 @@ export function BackgroundPanel({ fabricCanvas }: BackgroundPanelProps) {
     [fabricCanvas]
   );
 
+  const applyBgImage = useCallback(
+    async (dataURL: string, fit: "cover" | "contain" | "fill") => {
+      if (!fabricCanvas) return;
+      const { fabric } = await import("fabric");
+      const cw: number = fabricCanvas.getWidth() / (fabricCanvas.getZoom() || 1);
+      const ch: number = fabricCanvas.getHeight() / (fabricCanvas.getZoom() || 1);
+
+      fabric.Image.fromURL(dataURL, (img: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const fi = img as any;
+        if (!fi) return;
+        const iw = fi.width ?? 1;
+        const ih = fi.height ?? 1;
+
+        let scaleX = 1, scaleY = 1;
+        if (fit === "cover") {
+          const s = Math.max(cw / iw, ch / ih);
+          scaleX = s; scaleY = s;
+        } else if (fit === "contain") {
+          const s = Math.min(cw / iw, ch / ih);
+          scaleX = s; scaleY = s;
+        } else {
+          scaleX = cw / iw; scaleY = ch / ih;
+        }
+
+        fi.set({ left: 0, top: 0, scaleX, scaleY, selectable: false, evented: false });
+        fabricCanvas.setBackgroundImage(fi, () => fabricCanvas.requestRenderAll());
+        toast.success("Fundo com imagem aplicado");
+      });
+    },
+    [fabricCanvas]
+  );
+
+  const removeBgImage = useCallback(() => {
+    if (!fabricCanvas) return;
+    fabricCanvas.setBackgroundImage(null, () => fabricCanvas.requestRenderAll());
+    setBgImagePreview(null);
+    toast.success("Imagem de fundo removida");
+  }, [fabricCanvas]);
+
+  const handleBgFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataURL = ev.target?.result as string;
+        setBgImagePreview(dataURL);
+        applyBgImage(dataURL, bgFit);
+      };
+      reader.readAsDataURL(file);
+      e.target.value = "";
+    },
+    [applyBgImage, bgFit]
+  );
+
   const handleApply = () => {
     if (mode === "solid") applySolid(solidColor);
     else if (mode === "linear") applyLinearGradient(gradColor1, gradColor2, gradAngle);
-    else applyRadialGradient(gradColor1, gradColor2);
+    else if (mode === "radial") applyRadialGradient(gradColor1, gradColor2);
   };
 
   return (
@@ -110,16 +170,16 @@ export function BackgroundPanel({ fabricCanvas }: BackgroundPanelProps) {
       <h3 className="text-sm font-semibold text-foreground">Fundo</h3>
 
       {/* Mode tabs */}
-      <div className="flex rounded-md overflow-hidden border border-border">
-        {(["solid", "linear", "radial"] as BgMode[]).map((m) => (
+      <div className="grid grid-cols-4 rounded-md overflow-hidden border border-border">
+        {(["solid", "linear", "radial", "image"] as BgMode[]).map((m) => (
           <button
             key={m}
             onClick={() => setMode(m)}
-            className={`flex-1 text-xs py-1.5 transition-colors ${
+            className={`text-[10px] py-1.5 transition-colors ${
               mode === m ? "bg-primary text-primary-foreground" : "hover:bg-accent text-muted-foreground"
             }`}
           >
-            {m === "solid" ? "Sólido" : m === "linear" ? "Linear" : "Radial"}
+            {m === "solid" ? "Sólido" : m === "linear" ? "Linear" : m === "radial" ? "Radial" : "Imagem"}
           </button>
         ))}
       </div>
@@ -231,9 +291,69 @@ export function BackgroundPanel({ fabricCanvas }: BackgroundPanelProps) {
         </div>
       )}
 
-      <Button size="sm" onClick={handleApply} disabled={!fabricCanvas} className="w-full">
-        Aplicar Fundo
-      </Button>
+      {/* Image background */}
+      {mode === "image" && (
+        <div className="flex flex-col gap-3">
+          <input ref={bgFileRef} type="file" accept="image/*" className="hidden" onChange={handleBgFileChange} />
+
+          {bgImagePreview ? (
+            <div className="relative rounded-lg overflow-hidden border border-border aspect-video">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={bgImagePreview} alt="Fundo" className="w-full h-full object-cover" />
+              <button
+                onClick={removeBgImage}
+                className="absolute top-1 right-1 w-6 h-6 rounded bg-red-500/80 hover:bg-red-600 flex items-center justify-center"
+                title="Remover imagem de fundo"
+              >
+                <Trash2 className="w-3 h-3 text-white" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => bgFileRef.current?.click()}
+              className="flex flex-col items-center gap-2 border-2 border-dashed border-border rounded-lg py-6 hover:border-primary/50 hover:bg-accent/20 transition-colors cursor-pointer"
+            >
+              <ImageIcon className="w-6 h-6 text-muted-foreground" />
+              <span className="text-[11px] text-muted-foreground">Clique para escolher imagem</span>
+            </button>
+          )}
+
+          {/* Fit mode */}
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Ajuste</span>
+            <div className="flex gap-1">
+              {(["cover", "contain", "fill"] as const).map((f) => (
+                <button
+                  key={f}
+                  onClick={() => {
+                    setBgFit(f);
+                    if (bgImagePreview) applyBgImage(bgImagePreview, f);
+                  }}
+                  className={`flex-1 text-[10px] py-1 rounded border transition-colors ${
+                    bgFit === f
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "border-border text-muted-foreground hover:bg-accent/30"
+                  }`}
+                >
+                  {f === "cover" ? "Cobrir" : f === "contain" ? "Conter" : "Esticar"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {bgImagePreview && (
+            <Button size="sm" onClick={() => bgFileRef.current?.click()} variant="outline" className="w-full text-xs">
+              Trocar imagem
+            </Button>
+          )}
+        </div>
+      )}
+
+      {mode !== "image" && (
+        <Button size="sm" onClick={handleApply} disabled={!fabricCanvas} className="w-full">
+          Aplicar Fundo
+        </Button>
+      )}
     </div>
   );
 }
