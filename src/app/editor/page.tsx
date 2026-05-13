@@ -106,6 +106,9 @@ import { ZoomControlsPanel } from "@/components/editor/zoom-controls-panel";
 import { AspectRatioLockPanel } from "@/components/editor/aspect-ratio-lock-panel";
 import { KeyboardShortcutsPanel } from "@/components/editor/keyboard-shortcuts-panel";
 import { ContextualToolbarPanel } from "@/components/editor/contextual-toolbar-panel";
+import { ObjectGroupPanel } from "@/components/editor/object-group-panel";
+import { TextBackgroundPanel } from "@/components/editor/text-background-panel";
+import { ImagePlaceholderPanel } from "@/components/editor/image-placeholder-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -174,6 +177,9 @@ import {
   Magnet,
   ZoomIn,
   Clipboard,
+  Group,
+  Highlighter,
+  Replace,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -532,7 +538,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(60, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(63, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -712,6 +718,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="contextual" title="Propriedades Contextuais" className="px-0.5">
                 <Wand2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="objgroup" title="Grupos de Objetos" className="px-0.5">
+                <Group className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textbg" title="Fundo do Texto" className="px-0.5">
+                <Highlighter className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="imgplaceholder" title="Placeholder de Imagem" className="px-0.5">
+                <Replace className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1079,6 +1094,21 @@ export default function EditorPage() {
             <TabsContent value="contextual" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ContextualToolbarPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="objgroup" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectGroupPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textbg" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextBackgroundPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="imgplaceholder" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImagePlaceholderPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
