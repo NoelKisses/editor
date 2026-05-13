@@ -115,6 +115,9 @@ import { ObjectTransparencyPanel } from "@/components/editor/object-transparency
 import { ShapeLibraryPanel } from "@/components/editor/shape-library-panel";
 import { TextPathEffectPanel } from "@/components/editor/text-path-effect-panel";
 import { CanvasExportPreviewPanel } from "@/components/editor/canvas-export-preview-panel";
+import { ObjectFlipMirrorPanel } from "@/components/editor/object-flip-mirror-panel";
+import { TextParagraphPanel } from "@/components/editor/text-paragraph-panel";
+import { CanvasTemplateSizePanel } from "@/components/editor/canvas-template-size-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -189,6 +192,9 @@ import {
   ALargeSmall,
   LibraryBig,
   FileDown,
+  FlipHorizontal2,
+  Pilcrow,
+  LayoutTemplate,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -547,7 +553,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(69, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(72, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -754,6 +760,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="exportpreview" title="Exportar com Prévia" className="px-0.5">
                 <FileDown className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="flipmirror" title="Espelhar e Rotacionar" className="px-0.5">
+                <FlipHorizontal2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="paragraph" title="Parágrafo e Alinhamento de Texto" className="px-0.5">
+                <Pilcrow className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="templatesize" title="Tamanho do Canvas / Templates" className="px-0.5">
+                <LayoutTemplate className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1166,6 +1181,21 @@ export default function EditorPage() {
             <TabsContent value="exportpreview" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasExportPreviewPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="flipmirror" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectFlipMirrorPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="paragraph" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextParagraphPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="templatesize" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasTemplateSizePanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
