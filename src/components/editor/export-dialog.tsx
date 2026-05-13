@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, X, Image as ImageIcon, Copy, FileCode } from "lucide-react";
+import { Download, X, Image as ImageIcon, Copy, FileCode, Images } from "lucide-react";
 import { useEditorStore } from "@/store/editor-store";
 import { toast } from "sonner";
 
@@ -27,12 +27,13 @@ const SCALES = [
 ];
 
 export function ExportDialog({ open, onClose, fabricCanvas }: ExportDialogProps) {
-  const { template } = useEditorStore();
+  const { template, pages, currentPageIndex, savePageState } = useEditorStore();
   const [format, setFormat] = useState<"png" | "jpeg" | "webp" | "svg">("png");
   const [scale, setScale] = useState(2);
   const [quality, setQuality] = useState(95);
   const [loading, setLoading] = useState(false);
   const [copying, setCopying] = useState(false);
+  const [exportingAll, setExportingAll] = useState(false);
 
   const buildDataURL = useCallback(async (): Promise<{ dataURL: string; ext: string } | null> => {
     if (!fabricCanvas || !template) return null;
@@ -90,6 +91,58 @@ export function ExportDialog({ open, onClose, fabricCanvas }: ExportDialogProps)
       setLoading(false);
     }
   }, [fabricCanvas, template, format, scale, buildDataURL, onClose]);
+
+  const handleExportAll = useCallback(async () => {
+    if (!fabricCanvas || !template || pages.length <= 1) return;
+    setExportingAll(true);
+
+    try {
+      // Save current page state first
+      const currentJSON = JSON.stringify(fabricCanvas.toJSON());
+      const currentThumb = fabricCanvas.toDataURL({ format: "jpeg", quality: 0.3, multiplier: 0.15 });
+      savePageState(currentPageIndex, currentJSON, currentThumb);
+
+      const allPages = [...pages];
+      allPages[currentPageIndex] = { ...allPages[currentPageIndex], fabricJSON: currentJSON };
+
+      for (let i = 0; i < allPages.length; i++) {
+        const page = allPages[i];
+
+        if (i !== currentPageIndex && page.fabricJSON) {
+          await new Promise<void>((resolve) => {
+            fabricCanvas.loadFromJSON(page.fabricJSON, () => {
+              fabricCanvas.requestRenderAll();
+              resolve();
+            });
+          });
+        }
+
+        const dataURL = fabricCanvas.toDataURL({ format: format === "svg" ? "png" : format, quality: quality / 100, multiplier: scale });
+        const link = document.createElement("a");
+        link.download = `${template.id}-pagina-${i + 1}.${format === "jpeg" ? "jpg" : format}`;
+        link.href = dataURL;
+        link.click();
+        await new Promise((r) => setTimeout(r, 200));
+      }
+
+      // Restore current page
+      if (pages[currentPageIndex].fabricJSON) {
+        await new Promise<void>((resolve) => {
+          fabricCanvas.loadFromJSON(pages[currentPageIndex].fabricJSON, () => {
+            fabricCanvas.requestRenderAll();
+            resolve();
+          });
+        });
+      }
+
+      toast.success(`${allPages.length} páginas exportadas`);
+      onClose();
+    } catch {
+      toast.error("Erro ao exportar páginas");
+    } finally {
+      setExportingAll(false);
+    }
+  }, [fabricCanvas, template, pages, currentPageIndex, format, scale, quality, savePageState, onClose]);
 
   const handleCopyToClipboard = useCallback(async () => {
     if (!fabricCanvas || !template) return;
@@ -198,7 +251,7 @@ export function ExportDialog({ open, onClose, fabricCanvas }: ExportDialogProps)
 
         {/* Actions */}
         <div className="flex gap-2">
-          <Button onClick={handleExport} disabled={loading} className="flex-1 gap-2">
+          <Button onClick={handleExport} disabled={loading || exportingAll} className="flex-1 gap-2">
             {format === "svg" ? <FileCode className="w-4 h-4" /> : <Download className="w-4 h-4" />}
             {loading ? "Exportando..." : `Exportar ${format.toUpperCase()}`}
           </Button>
@@ -207,13 +260,26 @@ export function ExportDialog({ open, onClose, fabricCanvas }: ExportDialogProps)
               variant="outline"
               size="icon"
               onClick={handleCopyToClipboard}
-              disabled={copying}
+              disabled={copying || exportingAll}
               title="Copiar para área de transferência"
             >
               <Copy className="w-4 h-4" />
             </Button>
           )}
         </div>
+
+        {/* Export all pages */}
+        {pages.length > 1 && format !== "svg" && (
+          <Button
+            variant="outline"
+            onClick={handleExportAll}
+            disabled={loading || exportingAll}
+            className="w-full gap-2 text-xs"
+          >
+            <Images className="w-3.5 h-3.5" />
+            {exportingAll ? "Exportando páginas..." : `Exportar todas as ${pages.length} páginas`}
+          </Button>
+        )}
       </div>
     </div>
   );

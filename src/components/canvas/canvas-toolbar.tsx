@@ -9,6 +9,7 @@ import { GenerateImageDialog } from "@/components/editor/generate-image-dialog";
 import { ExportDialog } from "@/components/editor/export-dialog";
 import { CropImageDialog } from "@/components/editor/crop-image-dialog";
 import { ResizeCanvasDialog } from "@/components/editor/resize-canvas-dialog";
+import { PresentationMode } from "@/components/editor/presentation-mode";
 import {
   Type,
   ImagePlus,
@@ -30,6 +31,7 @@ import {
   Crop,
   Maximize2,
   ChevronDown,
+  Presentation,
 } from "lucide-react";
 
 interface CanvasToolbarProps {
@@ -52,6 +54,7 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
   const [cropOpen, setCropOpen] = useState(false);
   const [resizeOpen, setResizeOpen] = useState(false);
   const [textStylesOpen, setTextStylesOpen] = useState(false);
+  const [presentationOpen, setPresentationOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const clipboardRef = useRef<any>(null);
   const {
@@ -261,9 +264,28 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
     return () => document.removeEventListener("click", close);
   }, [textStylesOpen]);
 
+  const [zoomMenuOpen, setZoomMenuOpen] = useState(false);
+
   const zoomIn = () => setZoom(Math.min(parseFloat((zoom + 0.1).toFixed(2)), 5));
   const zoomOut = () => setZoom(Math.max(parseFloat((zoom - 0.1).toFixed(2)), 0.1));
-  const zoomReset = () => setZoom(1);
+  const zoomFit = useCallback(() => {
+    if (!template || !fabricCanvas) { setZoom(1); return; }
+    const containerEl = fabricCanvas.wrapperEl?.parentElement as HTMLElement | null;
+    if (!containerEl) { setZoom(1); return; }
+    const availW = containerEl.clientWidth - 64;
+    const availH = containerEl.clientHeight - 64;
+    const fit = Math.min(availW / template.width, availH / template.height, 1);
+    setZoom(parseFloat(fit.toFixed(2)));
+  }, [template, fabricCanvas, setZoom]);
+
+  useEffect(() => {
+    if (!zoomMenuOpen) return;
+    const close = () => setZoomMenuOpen(false);
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [zoomMenuOpen]);
+
+  const ZOOM_PRESETS = [0.25, 0.5, 0.75, 1, 1.5, 2, 3];
 
   // selectionVersion causes re-render so this stays fresh
   void selectionVersion;
@@ -368,17 +390,43 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
       <Separator orientation="vertical" className="h-6" />
 
       {/* Zoom */}
-      <Button variant="ghost" size="icon" onClick={zoomOut} title="Reduzir zoom">
+      <Button variant="ghost" size="icon" onClick={zoomOut} title="Reduzir zoom (Ctrl+-)">
         <ZoomOut className="w-4 h-4" />
       </Button>
-      <button
-        onClick={zoomReset}
-        className="text-xs text-muted-foreground hover:text-foreground w-12 text-center tabular-nums hover:bg-accent rounded px-1 py-0.5 transition-colors"
-        title="Resetar zoom (100%)"
-      >
-        {Math.round(zoom * 100)}%
-      </button>
-      <Button variant="ghost" size="icon" onClick={zoomIn} title="Aumentar zoom">
+      <div className="relative">
+        <button
+          onClick={() => setZoomMenuOpen((v) => !v)}
+          className="text-xs text-muted-foreground hover:text-foreground w-14 text-center tabular-nums hover:bg-accent rounded px-1 py-0.5 transition-colors"
+          title="Clique para escolher zoom"
+        >
+          {Math.round(zoom * 100)}%
+        </button>
+        {zoomMenuOpen && (
+          <div
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-1 z-50 bg-card border border-border rounded-lg shadow-xl overflow-hidden min-w-[110px]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => { zoomFit(); setZoomMenuOpen(false); }}
+              className="w-full text-left px-3 py-1.5 text-xs hover:bg-accent transition-colors text-primary font-medium"
+            >
+              Ajustar à tela
+            </button>
+            <div className="border-t border-border" />
+            {ZOOM_PRESETS.map((z) => (
+              <button
+                key={z}
+                onClick={() => { setZoom(z); setZoomMenuOpen(false); }}
+                className={`w-full text-left px-3 py-1.5 text-xs hover:bg-accent transition-colors flex items-center justify-between ${zoom === z ? "text-primary bg-primary/10" : "text-foreground"}`}
+              >
+                <span>{Math.round(z * 100)}%</span>
+                {zoom === z && <span className="text-[9px]">●</span>}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <Button variant="ghost" size="icon" onClick={zoomIn} title="Aumentar zoom (Ctrl++)">
         <ZoomIn className="w-4 h-4" />
       </Button>
 
@@ -443,10 +491,28 @@ export function CanvasToolbar({ fabricCanvas, selectionVersion }: CanvasToolbarP
         Analisar
       </Button>
 
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setPresentationOpen(true)}
+        title="Modo apresentação (slideshow)"
+        className="gap-1.5 border-border"
+      >
+        <Presentation className="w-4 h-4" />
+        Apresentar
+      </Button>
+
       <Button size="sm" onClick={handleExport} className="gap-1.5">
         <Download className="w-4 h-4" />
         Exportar
       </Button>
+
+      {presentationOpen && fabricCanvas && (
+        <PresentationMode
+          fabricCanvas={fabricCanvas}
+          onClose={() => setPresentationOpen(false)}
+        />
+      )}
 
       <GenerateImageDialog
         open={generateOpen}
