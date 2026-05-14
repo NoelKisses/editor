@@ -220,6 +220,9 @@ import { CanvasAutoLayoutPanel } from "@/components/editor/canvas-auto-layout-pa
 import { CanvasBrandGuidelinesPanel } from "@/components/editor/canvas-brand-guidelines-panel";
 import { ObjectOpacityMapPanel } from "@/components/editor/object-opacity-map-panel";
 import { CanvasImageOverlayPanel } from "@/components/editor/canvas-image-overlay-panel";
+import { CanvasPatternFillPanel } from "@/components/editor/canvas-pattern-fill-panel";
+import { TextOutlineShadowPanel } from "@/components/editor/text-outline-shadow-panel";
+import { CanvasZoomControlsPanel } from "@/components/editor/canvas-zoom-controls-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -354,6 +357,7 @@ import {
   Monitor,
   Bookmark,
   Eye,
+  Pencil,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -712,7 +716,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(174, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(177, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1234,6 +1238,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="imageoverlay" title="Overlay de Imagem" className="px-0.5">
                 <Layers className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="patternfill" title="Preenchimento com Padrão" className="px-0.5">
+                <Grid3X3 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textoutlineshadow" title="Contorno & Sombra" className="px-0.5">
+                <Pencil className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="zoomcontrols" title="Zoom & Viewport" className="px-0.5">
+                <ZoomIn className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2198,6 +2211,21 @@ export default function EditorPage() {
             <TabsContent value="imageoverlay" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasImageOverlayPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="patternfill" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasPatternFillPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textoutlineshadow" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextOutlineShadowPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="zoomcontrols" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasZoomControlsPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
