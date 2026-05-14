@@ -214,6 +214,9 @@ import { ObjectReflectionAdvancedPanel } from "@/components/editor/object-reflec
 import { CanvasMockupScenePanel } from "@/components/editor/canvas-mockup-scene-panel";
 import { TextKineticAnimationPanel } from "@/components/editor/text-kinetic-animation-panel";
 import { CanvasSmartCropPanel } from "@/components/editor/canvas-smart-crop-panel";
+import { CanvasColorWheelPanel } from "@/components/editor/canvas-color-wheel-panel";
+import { ObjectStickerPackPanel } from "@/components/editor/object-sticker-pack-panel";
+import { CanvasAutoLayoutPanel } from "@/components/editor/canvas-auto-layout-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -704,7 +707,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(168, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(171, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1208,6 +1211,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="smartcrop" title="Recorte Inteligente" className="px-0.5">
                 <Crop className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="colorwheel" title="Roda de Cores" className="px-0.5">
+                <Palette className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="stickerpack" title="Pack de Stickers" className="px-0.5">
+                <Smile className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="autolayout" title="Auto Layout" className="px-0.5">
+                <LayoutGrid className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2142,6 +2154,21 @@ export default function EditorPage() {
             <TabsContent value="smartcrop" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasSmartCropPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="colorwheel" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasColorWheelPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="stickerpack" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectStickerPackPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="autolayout" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasAutoLayoutPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
