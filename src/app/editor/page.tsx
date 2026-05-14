@@ -172,6 +172,9 @@ import { ImageHalftonePanel } from "@/components/editor/image-halftone-panel";
 import { ImageCropResizePanel } from "@/components/editor/image-crop-resize-panel";
 import { CanvasClipboardPanel } from "@/components/editor/canvas-clipboard-panel";
 import { ObjectTransformOriginPanel } from "@/components/editor/object-transform-origin-panel";
+import { ImageContrastBrightnessPanel } from "@/components/editor/image-contrast-brightness-panel";
+import { CanvasLassoSelectPanel } from "@/components/editor/canvas-lasso-select-panel";
+import { ObjectFeatherPanel } from "@/components/editor/object-feather-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -286,6 +289,9 @@ import {
   ScanLine,
   ClipboardCopy,
   Pin,
+  Contrast,
+  Lasso,
+  Feather,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -644,7 +650,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(126, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(129, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1022,6 +1028,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="transformorigin" title="Origem da Transformação (Pivot)" className="px-0.5">
                 <Pin className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="contrastbrightness" title="Contraste, Brilho, Exposição" className="px-0.5">
+                <Contrast className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="lassoselect" title="Seleção Lasso" className="px-0.5">
+                <Lasso className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="feather" title="Desfoque de Bordas (Feather)" className="px-0.5">
+                <Feather className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1719,6 +1734,21 @@ export default function EditorPage() {
             <TabsContent value="transformorigin" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectTransformOriginPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="contrastbrightness" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageContrastBrightnessPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="lassoselect" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasLassoSelectPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="feather" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectFeatherPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
