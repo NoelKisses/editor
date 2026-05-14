@@ -202,6 +202,9 @@ import { ObjectSnapGridPanel } from "@/components/editor/object-snap-grid-panel"
 import { CanvasTextOnImagePanel } from "@/components/editor/canvas-text-on-image-panel";
 import { ObjectSkewPanel } from "@/components/editor/object-skew-panel";
 import { CanvasExportSocialPanel } from "@/components/editor/canvas-export-social-panel";
+import { CanvasCountdownTimerPanel } from "@/components/editor/canvas-countdown-timer-panel";
+import { ObjectParticleEffectPanel } from "@/components/editor/object-particle-effect-panel";
+import { TextShadow3dPanel } from "@/components/editor/text-shadow-3d-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -331,6 +334,7 @@ import {
   Upload,
   Share2,
   Loader2,
+  BoxSelect,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -689,7 +693,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(156, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(159, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1157,6 +1161,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="exportsocial" title="Exportar Redes Sociais" className="px-0.5">
                 <Share2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="countdowntimer" title="Timer Countdown" className="px-0.5">
+                <Timer className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="particleeffect" title="Efeito de Partículas" className="px-0.5">
+                <Sparkles className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="shadow3d" title="Sombra 3D" className="px-0.5">
+                <BoxSelect className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2028,6 +2041,24 @@ export default function EditorPage() {
             <TabsContent value="exportsocial" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasExportSocialPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="countdowntimer" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasCountdownTimerPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="particleeffect" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectParticleEffectPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="shadow3d" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextShadow3dPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
