@@ -205,6 +205,9 @@ import { CanvasExportSocialPanel } from "@/components/editor/canvas-export-socia
 import { CanvasCountdownTimerPanel } from "@/components/editor/canvas-countdown-timer-panel";
 import { ObjectParticleEffectPanel } from "@/components/editor/object-particle-effect-panel";
 import { TextShadow3dPanel } from "@/components/editor/text-shadow-3d-panel";
+import { CanvasSpeechBubblePanel } from "@/components/editor/canvas-speech-bubble-panel";
+import { ImageNoiseTexturePanel } from "@/components/editor/image-noise-texture-panel";
+import { ObjectHighlightGlowPanel } from "@/components/editor/object-highlight-glow-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -335,6 +338,7 @@ import {
   Share2,
   Loader2,
   BoxSelect,
+  MessageCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -693,7 +697,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(159, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(162, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1170,6 +1174,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="shadow3d" title="Sombra 3D" className="px-0.5">
                 <BoxSelect className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="speechbubble" title="Balão de Fala" className="px-0.5">
+                <MessageCircle className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="noisetexture" title="Textura de Ruído" className="px-0.5">
+                <FlaskConical className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="highlightglow" title="Highlight e Glow" className="px-0.5">
+                <Sun className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2059,6 +2072,21 @@ export default function EditorPage() {
             <TabsContent value="shadow3d" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextShadow3dPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="speechbubble" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasSpeechBubblePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="noisetexture" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageNoiseTexturePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="highlightglow" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectHighlightGlowPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
