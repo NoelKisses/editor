@@ -154,6 +154,9 @@ import { TextVariablePanel } from "@/components/editor/text-variable-panel";
 import { TextAnimationPanel } from "@/components/editor/text-animation-panel";
 import { ObjectPatternFillPanel } from "@/components/editor/object-pattern-fill-panel";
 import { CanvasMultiPagePanel } from "@/components/editor/canvas-multi-page-panel";
+import { ImageDuotonePanel } from "@/components/editor/image-duotone-panel";
+import { ObjectBorderAnimPanel } from "@/components/editor/object-border-anim-panel";
+import { CanvasMarkerPanel } from "@/components/editor/canvas-marker-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -254,6 +257,9 @@ import {
   Activity,
   Shuffle,
   Layers2,
+  Gem,
+  Waves,
+  Target,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -612,7 +618,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(108, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(111, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -936,6 +942,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="multipage" title="Múltiplas Páginas" className="px-0.5">
                 <Layers2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="duotone" title="Duotone / Bicolor" className="px-0.5">
+                <Gem className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="borderanim" title="Borda Animada" className="px-0.5">
+                <Waves className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="markers" title="Marcadores no Canvas" className="px-0.5">
+                <Target className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1543,6 +1558,21 @@ export default function EditorPage() {
             <TabsContent value="multipage" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasMultiPagePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="duotone" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageDuotonePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="borderanim" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectBorderAnimPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="markers" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasMarkerPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
