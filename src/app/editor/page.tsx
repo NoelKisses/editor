@@ -175,6 +175,9 @@ import { ObjectTransformOriginPanel } from "@/components/editor/object-transform
 import { ImageContrastBrightnessPanel } from "@/components/editor/image-contrast-brightness-panel";
 import { CanvasLassoSelectPanel } from "@/components/editor/canvas-lasso-select-panel";
 import { ObjectFeatherPanel } from "@/components/editor/object-feather-panel";
+import { CanvasPaintBucketPanel } from "@/components/editor/canvas-paint-bucket-panel";
+import { TextFormattingPanel } from "@/components/editor/text-formatting-panel";
+import { ImageSprayEffectPanel } from "@/components/editor/image-spray-effect-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -292,6 +295,9 @@ import {
   Contrast,
   Lasso,
   Feather,
+  PaintBucket,
+  PencilRuler,
+  SprayCan,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -650,7 +656,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(129, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(132, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1037,6 +1043,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="feather" title="Desfoque de Bordas (Feather)" className="px-0.5">
                 <Feather className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="paintbucket" title="Balde de Tinta" className="px-0.5">
+                <PaintBucket className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textformatting" title="Formatação Completa de Texto" className="px-0.5">
+                <PencilRuler className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="sprayeffect" title="Efeito Spray / Granulado" className="px-0.5">
+                <SprayCan className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1749,6 +1764,21 @@ export default function EditorPage() {
             <TabsContent value="feather" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectFeatherPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="paintbucket" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasPaintBucketPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textformatting" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextFormattingPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="sprayeffect" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageSprayEffectPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
