@@ -190,6 +190,9 @@ import { ObjectAspectRatioPanel } from "@/components/editor/object-aspect-ratio-
 import { CanvasMockupPanel } from "@/components/editor/canvas-mockup-panel";
 import { TextTypewriterPanel } from "@/components/editor/text-typewriter-panel";
 import { CanvasSmartFitPanel } from "@/components/editor/canvas-smart-fit-panel";
+import { CanvasThumbnailTemplatesPanel } from "@/components/editor/canvas-thumbnail-templates-panel";
+import { CanvasBackgroundGeneratorPanel } from "@/components/editor/canvas-background-generator-panel";
+import { ObjectMultiShadowPanel } from "@/components/editor/object-multi-shadow-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -675,7 +678,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(144, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(147, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1107,6 +1110,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="smartfit" title="Ajuste Inteligente" className="px-0.5">
                 <Maximize className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="thumbtemplates" title="Templates de Thumbnail" className="px-0.5">
+                <LayoutTemplate className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="bggenerator" title="Gerador de Fundo" className="px-0.5">
+                <Layers className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="multishadow" title="Multi-Sombra" className="px-0.5">
+                <Layers2 className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1906,6 +1918,24 @@ export default function EditorPage() {
             <TabsContent value="smartfit" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasSmartFitPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="thumbtemplates" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasThumbnailTemplatesPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="bggenerator" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasBackgroundGeneratorPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="multishadow" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectMultiShadowPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
