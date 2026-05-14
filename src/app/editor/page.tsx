@@ -160,6 +160,9 @@ import { CanvasMarkerPanel } from "@/components/editor/canvas-marker-panel";
 import { TextSpeechPanel } from "@/components/editor/text-speech-panel";
 import { ObjectMagnetPanel } from "@/components/editor/object-magnet-panel";
 import { CanvasFocusModePanel } from "@/components/editor/canvas-focus-mode-panel";
+import { CanvasTimerPanel } from "@/components/editor/canvas-timer-panel";
+import { ObjectLinkPanel } from "@/components/editor/object-link-panel";
+import { CanvasColorThemePanel } from "@/components/editor/canvas-color-theme-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -266,6 +269,8 @@ import {
   Radio,
   Move,
   Focus,
+  Timer,
+  Link as LinkIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -624,7 +629,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(114, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(117, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -966,6 +971,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="focus" title="Modo Foco / Camadas" className="px-0.5">
                 <Focus className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="timer" title="Timer / Cronômetro" className="px-0.5">
+                <Timer className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="links" title="Links nos Objetos" className="px-0.5">
+                <LinkIcon className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="theme" title="Temas de Cor" className="px-0.5">
+                <Palette className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1603,6 +1617,21 @@ export default function EditorPage() {
             <TabsContent value="focus" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasFocusModePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="timer" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasTimerPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="links" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectLinkPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="theme" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasColorThemePanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
