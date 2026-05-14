@@ -163,6 +163,9 @@ import { CanvasFocusModePanel } from "@/components/editor/canvas-focus-mode-pane
 import { CanvasTimerPanel } from "@/components/editor/canvas-timer-panel";
 import { ObjectLinkPanel } from "@/components/editor/object-link-panel";
 import { CanvasColorThemePanel } from "@/components/editor/canvas-color-theme-panel";
+import { ImageVignettePanel } from "@/components/editor/image-vignette-panel";
+import { CanvasPresentationTimerPanel } from "@/components/editor/canvas-presentation-timer-panel";
+import { ObjectOutlineGlowPanel } from "@/components/editor/object-outline-glow-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -271,6 +274,8 @@ import {
   Focus,
   Timer,
   Link as LinkIcon,
+  Moon,
+  Sunrise,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -629,7 +634,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(117, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(120, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -980,6 +985,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="theme" title="Temas de Cor" className="px-0.5">
                 <Palette className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="vignette" title="Vinheta (Vignette)" className="px-0.5">
+                <Moon className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="prestimer" title="Timer de Apresentação" className="px-0.5">
+                <Sunrise className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="outlineglow" title="Contorno com Brilho" className="px-0.5">
+                <Sparkles className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1632,6 +1646,21 @@ export default function EditorPage() {
             <TabsContent value="theme" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasColorThemePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="vignette" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageVignettePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="prestimer" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasPresentationTimerPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="outlineglow" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectOutlineGlowPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
