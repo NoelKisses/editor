@@ -211,6 +211,9 @@ import { ObjectHighlightGlowPanel } from "@/components/editor/object-highlight-g
 import CanvasPerspectiveTransformPanel from "@/components/editor/canvas-perspective-transform-panel";
 import { CanvasTextMaskPanel } from "@/components/editor/canvas-text-mask-panel";
 import { ObjectReflectionAdvancedPanel } from "@/components/editor/object-reflection-advanced-panel";
+import { CanvasMockupScenePanel } from "@/components/editor/canvas-mockup-scene-panel";
+import { TextKineticAnimationPanel } from "@/components/editor/text-kinetic-animation-panel";
+import { CanvasSmartCropPanel } from "@/components/editor/canvas-smart-crop-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -342,6 +345,7 @@ import {
   Loader2,
   BoxSelect,
   MessageCircle,
+  Monitor,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -700,7 +704,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(165, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(168, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1195,6 +1199,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="reflectionadvanced" title="Reflexo Avançado" className="px-0.5">
                 <FlipVertical2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="mockupscene" title="Cena de Mockup" className="px-0.5">
+                <Monitor className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="kinetictext" title="Animação Cinética de Texto" className="px-0.5">
+                <Clapperboard className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="smartcrop" title="Recorte Inteligente" className="px-0.5">
+                <Crop className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2114,6 +2127,21 @@ export default function EditorPage() {
             <TabsContent value="reflectionadvanced" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectReflectionAdvancedPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="mockupscene" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasMockupScenePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="kinetictext" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextKineticAnimationPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="smartcrop" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasSmartCropPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
