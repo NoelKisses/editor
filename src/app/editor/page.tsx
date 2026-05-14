@@ -208,6 +208,9 @@ import { TextShadow3dPanel } from "@/components/editor/text-shadow-3d-panel";
 import { CanvasSpeechBubblePanel } from "@/components/editor/canvas-speech-bubble-panel";
 import { ImageNoiseTexturePanel } from "@/components/editor/image-noise-texture-panel";
 import { ObjectHighlightGlowPanel } from "@/components/editor/object-highlight-glow-panel";
+import CanvasPerspectiveTransformPanel from "@/components/editor/canvas-perspective-transform-panel";
+import { CanvasTextMaskPanel } from "@/components/editor/canvas-text-mask-panel";
+import { ObjectReflectionAdvancedPanel } from "@/components/editor/object-reflection-advanced-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -697,7 +700,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(162, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(165, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1183,6 +1186,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="highlightglow" title="Highlight e Glow" className="px-0.5">
                 <Sun className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="perspectivetransform" title="Perspectiva" className="px-0.5">
+                <Maximize2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textmask" title="Texto com Máscara" className="px-0.5">
+                <Type className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="reflectionadvanced" title="Reflexo Avançado" className="px-0.5">
+                <FlipVertical2 className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2087,6 +2099,21 @@ export default function EditorPage() {
             <TabsContent value="highlightglow" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectHighlightGlowPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="perspectivetransform" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasPerspectiveTransformPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textmask" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasTextMaskPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="reflectionadvanced" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectReflectionAdvancedPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
