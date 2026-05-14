@@ -169,6 +169,9 @@ import { ObjectOutlineGlowPanel } from "@/components/editor/object-outline-glow-
 import { CanvasPixelArtPanel } from "@/components/editor/canvas-pixel-art-panel";
 import { ObjectTextOnShapePanel } from "@/components/editor/object-text-on-shape-panel";
 import { ImageHalftonePanel } from "@/components/editor/image-halftone-panel";
+import { ImageCropResizePanel } from "@/components/editor/image-crop-resize-panel";
+import { CanvasClipboardPanel } from "@/components/editor/canvas-clipboard-panel";
+import { ObjectTransformOriginPanel } from "@/components/editor/object-transform-origin-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -280,6 +283,9 @@ import {
   Moon,
   Sunrise,
   Disc,
+  ScanLine,
+  ClipboardCopy,
+  Pin,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -638,7 +644,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(123, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(126, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1007,6 +1013,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="halftone" title="Halftone / Pontilhado" className="px-0.5">
                 <Disc className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="cropresizepanel" title="Recortar e Redimensionar Imagem" className="px-0.5">
+                <ScanLine className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="canvasclipboard" title="Área de Transferência (Copiar/Colar/Recortar)" className="px-0.5">
+                <ClipboardCopy className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="transformorigin" title="Origem da Transformação (Pivot)" className="px-0.5">
+                <Pin className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1689,6 +1704,21 @@ export default function EditorPage() {
             <TabsContent value="halftone" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ImageHalftonePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="cropresizepanel" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageCropResizePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="canvasclipboard" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasClipboardPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="transformorigin" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectTransformOriginPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
