@@ -187,6 +187,9 @@ import { TextGlowEffectPanel } from "@/components/editor/text-glow-effect-panel"
 import { ObjectStyleCopyPanel } from "@/components/editor/object-style-copy-panel";
 import { CanvasDragDropUploadPanel } from "@/components/editor/canvas-drag-drop-upload-panel";
 import { ObjectAspectRatioPanel } from "@/components/editor/object-aspect-ratio-panel";
+import { CanvasMockupPanel } from "@/components/editor/canvas-mockup-panel";
+import { TextTypewriterPanel } from "@/components/editor/text-typewriter-panel";
+import { CanvasSmartFitPanel } from "@/components/editor/canvas-smart-fit-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -210,6 +213,9 @@ import {
   LayoutGrid,
   Images,
   Keyboard,
+  Smartphone,
+  Maximize,
+  Expand,
   CheckCircle2,
   QrCode,
   Play,
@@ -669,7 +675,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(141, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(144, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1092,6 +1098,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="aspectratio" title="Proporção e Posição" className="px-0.5">
                 <Lock className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="mockup" title="Mockup de Dispositivo" className="px-0.5">
+                <Smartphone className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="typewriter" title="Máquina de Escrever" className="px-0.5">
+                <Keyboard className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="smartfit" title="Ajuste Inteligente" className="px-0.5">
+                <Maximize className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1873,6 +1888,24 @@ export default function EditorPage() {
             <TabsContent value="aspectratio" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectAspectRatioPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="mockup" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasMockupPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="typewriter" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextTypewriterPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="smartfit" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasSmartFitPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
