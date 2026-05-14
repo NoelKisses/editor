@@ -166,6 +166,9 @@ import { CanvasColorThemePanel } from "@/components/editor/canvas-color-theme-pa
 import { ImageVignettePanel } from "@/components/editor/image-vignette-panel";
 import { CanvasPresentationTimerPanel } from "@/components/editor/canvas-presentation-timer-panel";
 import { ObjectOutlineGlowPanel } from "@/components/editor/object-outline-glow-panel";
+import { CanvasPixelArtPanel } from "@/components/editor/canvas-pixel-art-panel";
+import { ObjectTextOnShapePanel } from "@/components/editor/object-text-on-shape-panel";
+import { ImageHalftonePanel } from "@/components/editor/image-halftone-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -276,6 +279,7 @@ import {
   Link as LinkIcon,
   Moon,
   Sunrise,
+  Disc,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -634,7 +638,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(120, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(123, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -994,6 +998,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="outlineglow" title="Contorno com Brilho" className="px-0.5">
                 <Sparkles className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="pixelart" title="Pixel Art" className="px-0.5">
+                <Grid2X2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textonshape" title="Texto na Forma" className="px-0.5">
+                <Shapes className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="halftone" title="Halftone / Pontilhado" className="px-0.5">
+                <Disc className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1661,6 +1674,21 @@ export default function EditorPage() {
             <TabsContent value="outlineglow" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectOutlineGlowPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="pixelart" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasPixelArtPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textonshape" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectTextOnShapePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="halftone" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageHalftonePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
