@@ -223,6 +223,9 @@ import { CanvasImageOverlayPanel } from "@/components/editor/canvas-image-overla
 import { CanvasPatternFillPanel } from "@/components/editor/canvas-pattern-fill-panel";
 import { TextOutlineShadowPanel } from "@/components/editor/text-outline-shadow-panel";
 import { CanvasZoomControlsPanel } from "@/components/editor/canvas-zoom-controls-panel";
+import { CanvasBlendModesPanel } from "@/components/editor/canvas-blend-modes-panel";
+import { ObjectWaveDistortionPanel } from "@/components/editor/object-wave-distortion-panel";
+import { CanvasArtboardPanel } from "@/components/editor/canvas-artboard-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -716,7 +719,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(177, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(180, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1247,6 +1250,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="zoomcontrols" title="Zoom & Viewport" className="px-0.5">
                 <ZoomIn className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="blendmodes" title="Modos de Blend" className="px-0.5">
+                <Blend className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="wavedistortion" title="Distorção de Onda" className="px-0.5">
+                <Waves className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="artboard" title="Prancheta" className="px-0.5">
+                <Monitor className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2226,6 +2238,21 @@ export default function EditorPage() {
             <TabsContent value="zoomcontrols" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasZoomControlsPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="blendmodes" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasBlendModesPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="wavedistortion" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectWaveDistortionPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="artboard" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasArtboardPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
