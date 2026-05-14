@@ -193,6 +193,9 @@ import { CanvasSmartFitPanel } from "@/components/editor/canvas-smart-fit-panel"
 import { CanvasThumbnailTemplatesPanel } from "@/components/editor/canvas-thumbnail-templates-panel";
 import { CanvasBackgroundGeneratorPanel } from "@/components/editor/canvas-background-generator-panel";
 import { ObjectMultiShadowPanel } from "@/components/editor/object-multi-shadow-panel";
+import { CanvasFrameBorderPanel } from "@/components/editor/canvas-frame-border-panel";
+import { TextGradientOutlinePanel } from "@/components/editor/text-gradient-outline-panel";
+import { CanvasElementRepeaterPanel } from "@/components/editor/canvas-element-repeater-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -678,7 +681,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(147, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(150, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1119,6 +1122,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="multishadow" title="Multi-Sombra" className="px-0.5">
                 <Layers2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="frameborder" title="Moldura e Borda" className="px-0.5">
+                <Frame className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textgradoutline" title="Gradiente e Contorno" className="px-0.5">
+                <TextCursorInput className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="elementrepeater" title="Repetidor de Elementos" className="px-0.5">
+                <Copy className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1936,6 +1948,24 @@ export default function EditorPage() {
             <TabsContent value="multishadow" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectMultiShadowPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="frameborder" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasFrameBorderPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="textgradoutline" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextGradientOutlinePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="elementrepeater" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasElementRepeaterPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
