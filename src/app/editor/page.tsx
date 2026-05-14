@@ -181,6 +181,9 @@ import { ImageSprayEffectPanel } from "@/components/editor/image-spray-effect-pa
 import { CanvasObjectHierarchyPanel } from "@/components/editor/canvas-object-hierarchy-panel";
 import { CanvasRulerGuideAdvancedPanel } from "@/components/editor/canvas-ruler-guide-advanced-panel";
 import { ImageColorGradingPanel } from "@/components/editor/image-color-grading-panel";
+import { CanvasInsertQuickPanel } from "@/components/editor/canvas-insert-quick-panel";
+import { ImagePerspectivePanel } from "@/components/editor/image-perspective-panel";
+import { TextGlowEffectPanel } from "@/components/editor/text-glow-effect-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -662,7 +665,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(135, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(138, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1067,6 +1070,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="colorgrading" title="Color Grading (Sombras/Meios/Luzes)" className="px-0.5">
                 <TrendingUp className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="insertquick" title="Inserção Rápida de Objetos" className="px-0.5">
+                <Zap className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="perspective" title="Perspectiva e Warp de Imagem" className="px-0.5">
+                <Maximize2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textglow" title="Glow / Neon no Texto" className="px-0.5">
+                <Sparkles className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -1812,6 +1824,24 @@ export default function EditorPage() {
             <TabsContent value="colorgrading" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ImageColorGradingPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="insertquick" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasInsertQuickPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="perspective" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImagePerspectivePanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="textglow" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextGlowEffectPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
