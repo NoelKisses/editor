@@ -318,6 +318,9 @@ import { TextKeywordHighlightPanel } from "@/components/editor/text-keyword-high
 import { CanvasComicStripPanel } from "@/components/editor/canvas-comic-strip-panel";
 import { ObjectCookieCutterPanel } from "@/components/editor/object-cookie-cutter-panel";
 import { TextEngravedCoinPanel } from "@/components/editor/text-engraved-coin-panel";
+import { CanvasMagazineCoverPanel } from "@/components/editor/canvas-magazine-cover-panel";
+import { ObjectTextWrapFlowPanel } from "@/components/editor/object-text-wrap-flow-panel";
+import { TextAsymmetricLayoutPanel } from "@/components/editor/text-asymmetric-layout-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -464,6 +467,7 @@ import {
   Quote,
   Globe,
   Award,
+  Newspaper,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -822,7 +826,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(273, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(276, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1641,6 +1645,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="engravedcoin" title="Moeda Gravada" className="px-0.5">
                 <Award className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="magazinecover" title="Capa de Revista" className="px-0.5">
+                <Newspaper className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="textwrap" title="Texto Wrap" className="px-0.5">
+                <Wind className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="asymlayout" title="Layout Assimétrico" className="px-0.5">
+                <Pilcrow className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -3097,6 +3110,21 @@ export default function EditorPage() {
             <TabsContent value="engravedcoin" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextEngravedCoinPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="magazinecover" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasMagazineCoverPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="textwrap" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectTextWrapFlowPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="asymlayout" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextAsymmetricLayoutPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
