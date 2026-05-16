@@ -288,6 +288,9 @@ import { TextScriptHandwritingPanel } from "@/components/editor/text-script-hand
 import { CanvasDotGridBgPanel } from "@/components/editor/canvas-dot-grid-bg-panel";
 import { ObjectBatchEditPanel } from "@/components/editor/object-batch-edit-panel";
 import { TextMixedStylePanel } from "@/components/editor/text-mixed-style-panel";
+import { CanvasAuroraBgPanel } from "@/components/editor/canvas-aurora-bg-panel";
+import { ObjectMaskShapePanel } from "@/components/editor/object-mask-shape-panel";
+import { TextStrokeOnlyPanel } from "@/components/editor/text-stroke-only-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -789,7 +792,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(243, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(246, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1518,6 +1521,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="mixedstyle" title="Estilo Misto" className="px-0.5">
                 <CaseSensitive className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="aurorabg" title="Fundo Aurora" className="px-0.5">
+                <Sparkles className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="maskshape" title="Máscara em Forma" className="px-0.5">
+                <Crop className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="strokeonly" title="Contorno Apenas" className="px-0.5">
+                <Type className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2824,6 +2836,21 @@ export default function EditorPage() {
             <TabsContent value="mixedstyle" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextMixedStylePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="aurorabg" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasAuroraBgPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="maskshape" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectMaskShapePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="strokeonly" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextStrokeOnlyPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
