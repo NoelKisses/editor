@@ -279,6 +279,9 @@ import { TextColorSplitPanel } from "@/components/editor/text-color-split-panel"
 import { CanvasGradientMeshBgPanel } from "@/components/editor/canvas-gradient-mesh-bg-panel";
 import { ObjectStampWatermarkPanel } from "@/components/editor/object-stamp-watermark-panel";
 import { TextMarqueeScrollPanel } from "@/components/editor/text-marquee-scroll-panel";
+import { CanvasNoisePatternBgPanel } from "@/components/editor/canvas-noise-pattern-bg-panel";
+import { ObjectBeforeAfterSplitPanel } from "@/components/editor/object-before-after-split-panel";
+import { Text3dBlockPanel } from "@/components/editor/text-3d-block-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -780,7 +783,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(234, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(237, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1482,6 +1485,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="marquee" title="Marquee Scroll" className="px-0.5">
                 <MoveHorizontal className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="noisepattern" title="Padrões de Fundo" className="px-0.5">
+                <Wallpaper className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="beforeafter" title="Antes / Depois" className="px-0.5">
+                <ArrowLeftRight className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="text3dblock" title="Texto 3D Block" className="px-0.5">
+                <Layers3 className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2743,6 +2755,21 @@ export default function EditorPage() {
             <TabsContent value="marquee" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextMarqueeScrollPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="noisepattern" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasNoisePatternBgPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="beforeafter" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectBeforeAfterSplitPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="text3dblock" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <Text3dBlockPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
