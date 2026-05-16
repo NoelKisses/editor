@@ -300,6 +300,9 @@ import { TextQuoteStylePanel } from "@/components/editor/text-quote-style-panel"
 import { Object3DCardTiltPanel } from "@/components/editor/object-3d-card-tilt-panel";
 import { CanvasGalleryCollagePanel } from "@/components/editor/canvas-gallery-collage-panel";
 import { TextDataMergePanel } from "@/components/editor/text-data-merge-panel";
+import { CanvasPdfPrintExportPanel } from "@/components/editor/canvas-pdf-print-export-panel";
+import { ObjectImageReplacePanel } from "@/components/editor/object-image-replace-panel";
+import { TextLanguageStylesPanel } from "@/components/editor/text-language-styles-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -444,6 +447,7 @@ import {
   Snowflake,
   Stamp,
   Quote,
+  Globe,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -802,7 +806,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(255, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(258, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1567,6 +1571,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="datamerge" title="Mail Merge" className="px-0.5">
                 <Variable className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="pdfprint" title="PDF / Print" className="px-0.5">
+                <Printer className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="imagereplace" title="Substituir Imagem" className="px-0.5">
+                <Replace className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="langstyles" title="Estilos por Idioma" className="px-0.5">
+                <Globe className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2933,6 +2946,21 @@ export default function EditorPage() {
             <TabsContent value="datamerge" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextDataMergePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="pdfprint" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasPdfPrintExportPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="imagereplace" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectImageReplacePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="langstyles" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextLanguageStylesPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
