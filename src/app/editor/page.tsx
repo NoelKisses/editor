@@ -240,6 +240,9 @@ import { ObjectAnimationTimelinePanel } from "@/components/editor/object-animati
 import { CanvasExportPresetsPanel } from "@/components/editor/canvas-export-presets-panel";
 import { ObjectMagneticSnapPanel } from "@/components/editor/object-magnetic-snap-panel";
 import { TextShadow3DDeepPanel } from "@/components/editor/text-shadow-3d-deep-panel";
+import { ImageBgReplacePanel } from "@/components/editor/image-bg-replace-panel";
+import { CanvasLightRaysPanel } from "@/components/editor/canvas-light-rays-panel";
+import { ObjectStackGridPanel } from "@/components/editor/object-stack-grid-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -735,7 +738,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(195, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(198, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1320,6 +1323,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="shadow3ddeep" title="Sombra 3D Profunda" className="px-0.5">
                 <Layers3 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="bgreplace" title="Substituir Fundo" className="px-0.5">
+                <ImageIcon className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="lightrays" title="Raios de Luz" className="px-0.5">
+                <Sun className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="stackgrid" title="Stack & Grid" className="px-0.5">
+                <LayoutGrid className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2386,6 +2398,21 @@ export default function EditorPage() {
             <TabsContent value="shadow3ddeep" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextShadow3DDeepPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="bgreplace" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageBgReplacePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="lightrays" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasLightRaysPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="stackgrid" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectStackGridPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
