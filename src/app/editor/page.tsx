@@ -294,6 +294,9 @@ import { TextStrokeOnlyPanel } from "@/components/editor/text-stroke-only-panel"
 import { ObjectIconLibraryPanel } from "@/components/editor/object-icon-library-panel";
 import { CanvasSmartGuidesShowPanel } from "@/components/editor/canvas-smart-guides-show-panel";
 import { TextMultiLineBalancePanel } from "@/components/editor/text-multi-line-balance-panel";
+import { CanvasGridBentoPanel } from "@/components/editor/canvas-grid-bento-panel";
+import { ObjectStrokeDashAnimPanel } from "@/components/editor/object-stroke-dash-anim-panel";
+import { TextQuoteStylePanel } from "@/components/editor/text-quote-style-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -437,6 +440,7 @@ import {
   PartyPopper,
   Snowflake,
   Stamp,
+  Quote,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -795,7 +799,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(249, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(252, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1542,6 +1546,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="linebalance" title="Balanço de Linhas" className="px-0.5">
                 <AlignCenterHorizontal className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="bentogrid" title="Grid Bento" className="px-0.5">
+                <LayoutGrid className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="dashanim" title="Dash Animado" className="px-0.5">
+                <Activity className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="quotestyle" title="Cards de Citação" className="px-0.5">
+                <Quote className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2878,6 +2891,21 @@ export default function EditorPage() {
             <TabsContent value="linebalance" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextMultiLineBalancePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="bentogrid" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasGridBentoPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="dashanim" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectStrokeDashAnimPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="quotestyle" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextQuoteStylePanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
