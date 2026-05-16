@@ -276,6 +276,9 @@ import { TextRainbowGradientPanel } from "@/components/editor/text-rainbow-gradi
 import { ObjectRadialPatternPanel } from "@/components/editor/object-radial-pattern-panel";
 import { CanvasGridOverlayAdvancedPanel } from "@/components/editor/canvas-grid-overlay-advanced-panel";
 import { TextColorSplitPanel } from "@/components/editor/text-color-split-panel";
+import { CanvasGradientMeshBgPanel } from "@/components/editor/canvas-gradient-mesh-bg-panel";
+import { ObjectStampWatermarkPanel } from "@/components/editor/object-stamp-watermark-panel";
+import { TextMarqueeScrollPanel } from "@/components/editor/text-marquee-scroll-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -418,6 +421,7 @@ import {
   AlignVerticalJustifyCenter,
   PartyPopper,
   Snowflake,
+  Stamp,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -776,7 +780,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(231, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(234, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1469,6 +1473,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="colorsplit" title="Split de Cor" className="px-0.5">
                 <Replace className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="meshbg" title="Fundo Mesh Gradient" className="px-0.5">
+                <Layers className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="stampwm" title="Carimbo / Marca d'Água" className="px-0.5">
+                <Stamp className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="marquee" title="Marquee Scroll" className="px-0.5">
+                <MoveHorizontal className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2715,6 +2728,21 @@ export default function EditorPage() {
             <TabsContent value="colorsplit" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextColorSplitPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="meshbg" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasGradientMeshBgPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="stampwm" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectStampWatermarkPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="marquee" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextMarqueeScrollPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
