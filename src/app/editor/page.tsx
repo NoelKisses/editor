@@ -255,6 +255,9 @@ import { TextEmbossEngravePanel } from "@/components/editor/text-emboss-engrave-
 import { CanvasOverlayTextBannerPanel } from "@/components/editor/canvas-overlay-text-banner-panel";
 import { ObjectCutoutShadowPanel } from "@/components/editor/object-cutout-shadow-panel";
 import { TextHighlightMarkerPanel } from "@/components/editor/text-highlight-marker-panel";
+import { ObjectRaysBurstPanel } from "@/components/editor/object-rays-burst-panel";
+import { CanvasPhotoFramePanel } from "@/components/editor/canvas-photo-frame-panel";
+import { TextTapeLabelPanel } from "@/components/editor/text-tape-label-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -754,7 +757,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(210, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(213, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1384,6 +1387,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="highlightmarker" title="Marca-texto" className="px-0.5">
                 <Highlighter className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="raysburst" title="Raios Decorativos" className="px-0.5">
+                <Radio className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="photoframe" title="Moldura Fotográfica" className="px-0.5">
+                <ImageIcon className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="tapelabel" title="Etiqueta / Fita" className="px-0.5">
+                <Tag className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2525,6 +2537,21 @@ export default function EditorPage() {
             <TabsContent value="highlightmarker" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextHighlightMarkerPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="raysburst" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectRaysBurstPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="photoframe" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasPhotoFramePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="tapelabel" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextTapeLabelPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
