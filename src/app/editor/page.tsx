@@ -297,6 +297,9 @@ import { TextMultiLineBalancePanel } from "@/components/editor/text-multi-line-b
 import { CanvasGridBentoPanel } from "@/components/editor/canvas-grid-bento-panel";
 import { ObjectStrokeDashAnimPanel } from "@/components/editor/object-stroke-dash-anim-panel";
 import { TextQuoteStylePanel } from "@/components/editor/text-quote-style-panel";
+import { Object3DCardTiltPanel } from "@/components/editor/object-3d-card-tilt-panel";
+import { CanvasGalleryCollagePanel } from "@/components/editor/canvas-gallery-collage-panel";
+import { TextDataMergePanel } from "@/components/editor/text-data-merge-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -799,7 +802,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(252, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(255, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1555,6 +1558,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="quotestyle" title="Cards de Citação" className="px-0.5">
                 <Quote className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="card3dtilt" title="Card 3D Tilt" className="px-0.5">
+                <Box className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="gallerycollage" title="Galeria / Colagem" className="px-0.5">
+                <Images className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="datamerge" title="Mail Merge" className="px-0.5">
+                <Variable className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2906,6 +2918,21 @@ export default function EditorPage() {
             <TabsContent value="quotestyle" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextQuoteStylePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="card3dtilt" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <Object3DCardTiltPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="gallerycollage" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasGalleryCollagePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="datamerge" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextDataMergePanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
