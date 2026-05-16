@@ -234,6 +234,9 @@ import { TextComicEffectPanel } from "@/components/editor/text-comic-effect-pane
 import { ImageColorIsolatePanel } from "@/components/editor/image-color-isolate-panel";
 import { CanvasPageManagerPanel } from "@/components/editor/canvas-page-manager-panel";
 import { ObjectDistortGridPanel } from "@/components/editor/object-distort-grid-panel";
+import { CanvasShapeBuilderPanel } from "@/components/editor/canvas-shape-builder-panel";
+import { TextGlyphDecoratorPanel } from "@/components/editor/text-glyph-decorator-panel";
+import { ObjectAnimationTimelinePanel } from "@/components/editor/object-animation-timeline-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -729,7 +732,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(189, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(192, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1296,6 +1299,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="distortgrid" title="Distorção em Grade" className="px-0.5">
                 <Grid2X2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="shapebuilder" title="Construtor de Formas" className="px-0.5">
+                <Shapes className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="glyphdecorator" title="Decorador de Glifos" className="px-0.5">
+                <Type className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="animtimeline" title="Animação Timeline" className="px-0.5">
+                <Clock className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2332,6 +2344,21 @@ export default function EditorPage() {
             <TabsContent value="distortgrid" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectDistortGridPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="shapebuilder" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasShapeBuilderPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="glyphdecorator" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextGlyphDecoratorPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="animtimeline" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectAnimationTimelinePanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
