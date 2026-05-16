@@ -231,6 +231,9 @@ import { CanvasFrameMockupPanel } from "@/components/editor/canvas-frame-mockup-
 import { Object3DExtrudePanel } from "@/components/editor/object-3d-extrude-panel";
 import { CanvasQuickActionsBarPanel } from "@/components/editor/canvas-quick-actions-bar-panel";
 import { TextComicEffectPanel } from "@/components/editor/text-comic-effect-panel";
+import { ImageColorIsolatePanel } from "@/components/editor/image-color-isolate-panel";
+import { CanvasPageManagerPanel } from "@/components/editor/canvas-page-manager-panel";
+import { ObjectDistortGridPanel } from "@/components/editor/object-distort-grid-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -367,6 +370,7 @@ import {
   Eye,
   Pencil,
   Box,
+  FileStack,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -725,7 +729,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(186, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(189, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1283,6 +1287,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="comiceffect" title="Efeito Cômico" className="px-0.5">
                 <Sparkles className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="colorisolate" title="Isolar Cor" className="px-0.5">
+                <Palette className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="pagemanager" title="Gerenciador de Páginas" className="px-0.5">
+                <FileStack className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="distortgrid" title="Distorção em Grade" className="px-0.5">
+                <Grid2X2 className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2304,6 +2317,21 @@ export default function EditorPage() {
             <TabsContent value="comiceffect" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextComicEffectPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="colorisolate" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ImageColorIsolatePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="pagemanager" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasPageManagerPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="distortgrid" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectDistortGridPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
