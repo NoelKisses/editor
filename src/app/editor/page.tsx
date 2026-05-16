@@ -285,6 +285,9 @@ import { Text3dBlockPanel } from "@/components/editor/text-3d-block-panel";
 import { ObjectShapeMorphPanel } from "@/components/editor/object-shape-morph-panel";
 import { CanvasSvgImportPanel } from "@/components/editor/canvas-svg-import-panel";
 import { TextScriptHandwritingPanel } from "@/components/editor/text-script-handwriting-panel";
+import { CanvasDotGridBgPanel } from "@/components/editor/canvas-dot-grid-bg-panel";
+import { ObjectBatchEditPanel } from "@/components/editor/object-batch-edit-panel";
+import { TextMixedStylePanel } from "@/components/editor/text-mixed-style-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -786,7 +789,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(240, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(243, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1506,6 +1509,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="scripttext" title="Texto Manuscrito" className="px-0.5">
                 <PenLine className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="dotgridbg" title="Grade de Pontos" className="px-0.5">
+                <Grid2X2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="batchedit" title="Edição em Lote" className="px-0.5">
+                <Layers className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="mixedstyle" title="Estilo Misto" className="px-0.5">
+                <CaseSensitive className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2797,6 +2809,21 @@ export default function EditorPage() {
             <TabsContent value="scripttext" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextScriptHandwritingPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="dotgridbg" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasDotGridBgPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="batchedit" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectBatchEditPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="mixedstyle" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextMixedStylePanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
