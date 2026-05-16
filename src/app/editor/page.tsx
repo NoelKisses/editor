@@ -309,6 +309,9 @@ import { TextPoemLayoutPanel } from "@/components/editor/text-poem-layout-panel"
 import { CanvasGlassmorphismCardPanel } from "@/components/editor/canvas-glassmorphism-card-panel";
 import { ObjectBatchPositionPanel } from "@/components/editor/object-batch-position-panel";
 import { TextFindReplacePanel } from "@/components/editor/text-find-replace-panel";
+import { ObjectTemplateLibraryPanel } from "@/components/editor/object-template-library-panel";
+import { CanvasHistoryTreePanel } from "@/components/editor/canvas-history-tree-panel";
+import { TextTypographyPairPanel } from "@/components/editor/text-typography-pair-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -812,7 +815,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(264, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(267, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1604,6 +1607,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="findreplace" title="Find & Replace" className="px-0.5">
                 <Replace className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="templatelib" title="Biblioteca de Templates" className="px-0.5">
+                <LibraryBig className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="historytree" title="Histórico em Árvore" className="px-0.5">
+                <History className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="typopair" title="Pares Tipográficos" className="px-0.5">
+                <Type className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -3015,6 +3027,21 @@ export default function EditorPage() {
             <TabsContent value="findreplace" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextFindReplacePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="templatelib" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectTemplateLibraryPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="historytree" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasHistoryTreePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="typopair" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextTypographyPairPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
