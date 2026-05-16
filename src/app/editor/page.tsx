@@ -243,6 +243,9 @@ import { TextShadow3DDeepPanel } from "@/components/editor/text-shadow-3d-deep-p
 import { ImageBgReplacePanel } from "@/components/editor/image-bg-replace-panel";
 import { CanvasLightRaysPanel } from "@/components/editor/canvas-light-rays-panel";
 import { ObjectStackGridPanel } from "@/components/editor/object-stack-grid-panel";
+import { TextWrapShapePanel } from "@/components/editor/text-wrap-shape-panel";
+import { CanvasVignettePanel } from "@/components/editor/canvas-vignette-panel";
+import { ObjectEaselStandPanel } from "@/components/editor/object-easel-stand-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -380,6 +383,7 @@ import {
   Pencil,
   Box,
   FileStack,
+  Aperture,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -738,7 +742,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(198, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(201, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1332,6 +1336,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="stackgrid" title="Stack & Grid" className="px-0.5">
                 <LayoutGrid className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="wrapshape" title="Texto em Forma" className="px-0.5">
+                <Type className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="vignette" title="Vinheta" className="px-0.5">
+                <Aperture className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="easelstand" title="Suporte / Pedestal" className="px-0.5">
+                <Gem className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2413,6 +2426,21 @@ export default function EditorPage() {
             <TabsContent value="stackgrid" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectStackGridPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="wrapshape" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextWrapShapePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="vignette" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasVignettePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="easelstand" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectEaselStandPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
