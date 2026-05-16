@@ -273,6 +273,9 @@ import { TextGraffitiSprayPanel } from "@/components/editor/text-graffiti-spray-
 import { CanvasCelebrationFireworksPanel } from "@/components/editor/canvas-celebration-fireworks-panel";
 import { ObjectColorPickerFromImagePanel } from "@/components/editor/object-color-picker-from-image-panel";
 import { TextRainbowGradientPanel } from "@/components/editor/text-rainbow-gradient-panel";
+import { ObjectRadialPatternPanel } from "@/components/editor/object-radial-pattern-panel";
+import { CanvasGridOverlayAdvancedPanel } from "@/components/editor/canvas-grid-overlay-advanced-panel";
+import { TextColorSplitPanel } from "@/components/editor/text-color-split-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -773,7 +776,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(228, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(231, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1457,6 +1460,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="rainbowgrad" title="Gradiente Arco-Íris" className="px-0.5">
                 <Palette className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="radialpattern" title="Padrão Radial" className="px-0.5">
+                <Disc className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="gridoverlayadv" title="Guias Avançadas" className="px-0.5">
+                <Grid3X3 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="colorsplit" title="Split de Cor" className="px-0.5">
+                <Replace className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2688,6 +2700,21 @@ export default function EditorPage() {
             <TabsContent value="rainbowgrad" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextRainbowGradientPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="radialpattern" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectRadialPatternPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="gridoverlayadv" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasGridOverlayAdvancedPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="colorsplit" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextColorSplitPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
