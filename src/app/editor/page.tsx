@@ -9,7 +9,6 @@ import { CanvasContextMenu } from "@/components/canvas/canvas-context-menu";
 import { TemplatePicker } from "@/components/editor/template-picker";
 import { AiSuggestionsPanel } from "@/components/editor/ai-suggestions-panel";
 import { AiTemplateGenerator } from "@/components/editor/ai-template-generator";
-import { RemoveBgButton } from "@/components/editor/remove-bg-button";
 import { PropertiesPanel } from "@/components/editor/properties-panel";
 import { LayersPanel } from "@/components/editor/layers-panel";
 import { ShapesPanel } from "@/components/editor/shapes-panel";
@@ -226,6 +225,9 @@ import { CanvasZoomControlsPanel } from "@/components/editor/canvas-zoom-control
 import { CanvasBlendModesPanel } from "@/components/editor/canvas-blend-modes-panel";
 import { ObjectWaveDistortionPanel } from "@/components/editor/object-wave-distortion-panel";
 import { CanvasArtboardPanel } from "@/components/editor/canvas-artboard-panel";
+import { CanvasRulerSnapPanel } from "@/components/editor/canvas-ruler-snap-panel";
+import { TextBubbleCaptionPanel } from "@/components/editor/text-bubble-caption-panel";
+import { CanvasFrameMockupPanel } from "@/components/editor/canvas-frame-mockup-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -719,7 +721,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(180, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(183, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1260,6 +1262,15 @@ export default function EditorPage() {
               <TabsTrigger value="artboard" title="Prancheta" className="px-0.5">
                 <Monitor className="w-3 h-3" />
               </TabsTrigger>
+              <TabsTrigger value="rulersnap" title="Régua & Snap" className="px-0.5">
+                <Ruler className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="bubblecaption" title="Balão de Texto" className="px-0.5">
+                <MessageSquare className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="framemockup" title="Frame & Moldura" className="px-0.5">
+                <Frame className="w-3 h-3" />
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="properties" className="flex-1 overflow-hidden m-0">
@@ -1317,9 +1328,6 @@ export default function EditorPage() {
               <ScrollArea className="h-full">
                 <div className="px-3 pb-3">
                   <AlignTools fabricCanvas={fabricCanvas} />
-                  <div className="mt-4">
-                    <RemoveBgButton fabricCanvas={fabricCanvas} />
-                  </div>
                   <div className="mt-4 border-t border-border pt-4">
                     <ImageCropPanel fabricCanvas={fabricCanvas} selectionVersion={selectionVersion} />
                   </div>
@@ -2253,6 +2261,21 @@ export default function EditorPage() {
             <TabsContent value="artboard" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasArtboardPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="rulersnap" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasRulerSnapPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="bubblecaption" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextBubbleCaptionPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="framemockup" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasFrameMockupPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
