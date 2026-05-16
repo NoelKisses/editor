@@ -261,6 +261,9 @@ import { TextTapeLabelPanel } from "@/components/editor/text-tape-label-panel";
 import { CanvasBokehParticlesPanel } from "@/components/editor/canvas-bokeh-particles-panel";
 import { ObjectPixelatePanel } from "@/components/editor/object-pixelate-panel";
 import { TextStrokePatternPanel } from "@/components/editor/text-stroke-pattern-panel";
+import { ObjectArrangeDistributePanel } from "@/components/editor/object-arrange-distribute-panel";
+import { CanvasSnowfallRainPanel } from "@/components/editor/canvas-snowfall-rain-panel";
+import { TextBalloonCalloutPanel } from "@/components/editor/text-balloon-callout-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -402,6 +405,7 @@ import {
   Sparkle,
   AlignVerticalJustifyCenter,
   PartyPopper,
+  Snowflake,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -760,7 +764,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(216, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(219, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1408,6 +1412,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="strokepattern" title="Padrão de Contorno" className="px-0.5">
                 <Pencil className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="arrangedistribute" title="Arranjar & Distribuir" className="px-0.5">
+                <AlignCenter className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="snowfallrain" title="Neve & Chuva" className="px-0.5">
+                <Snowflake className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="balloncallout" title="Callout & Balão" className="px-0.5">
+                <MessageCircle className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2579,6 +2592,21 @@ export default function EditorPage() {
             <TabsContent value="strokepattern" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextStrokePatternPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="arrangedistribute" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectArrangeDistributePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="snowfallrain" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasSnowfallRainPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="balloncallout" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextBalloonCalloutPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
