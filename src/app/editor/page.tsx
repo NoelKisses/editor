@@ -312,6 +312,9 @@ import { TextFindReplacePanel } from "@/components/editor/text-find-replace-pane
 import { ObjectTemplateLibraryPanel } from "@/components/editor/object-template-library-panel";
 import { CanvasHistoryTreePanel } from "@/components/editor/canvas-history-tree-panel";
 import { TextTypographyPairPanel } from "@/components/editor/text-typography-pair-panel";
+import { CanvasStickersCollectionPanel } from "@/components/editor/canvas-stickers-collection-panel";
+import { ObjectMirrorSymmetryPanel } from "@/components/editor/object-mirror-symmetry-panel";
+import { TextKeywordHighlightPanel } from "@/components/editor/text-keyword-highlight-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -815,7 +818,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(267, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(270, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1616,6 +1619,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="typopair" title="Pares Tipográficos" className="px-0.5">
                 <Type className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="stickerscoll" title="Stickers Animados" className="px-0.5">
+                <Smile className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="mirrorsym" title="Espelhamento" className="px-0.5">
+                <FlipHorizontal2 className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="kwhighlight" title="Destacar Palavras" className="px-0.5">
+                <Highlighter className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -3042,6 +3054,21 @@ export default function EditorPage() {
             <TabsContent value="typopair" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextTypographyPairPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="stickerscoll" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasStickersCollectionPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="mirrorsym" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectMirrorSymmetryPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="kwhighlight" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextKeywordHighlightPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
