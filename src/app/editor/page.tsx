@@ -249,6 +249,9 @@ import { ObjectEaselStandPanel } from "@/components/editor/object-easel-stand-pa
 import { CanvasLensFlarePanel } from "@/components/editor/canvas-lens-flare-panel";
 import { ObjectCornerTabsPanel } from "@/components/editor/object-corner-tabs-panel";
 import { TextVerticalStackPanel } from "@/components/editor/text-vertical-stack-panel";
+import { CanvasConfettiBurstPanel } from "@/components/editor/canvas-confetti-burst-panel";
+import { ObjectIsoExtrudePanel } from "@/components/editor/object-iso-extrude-panel";
+import { TextEmbossEngravePanel } from "@/components/editor/text-emboss-engrave-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -389,6 +392,7 @@ import {
   Aperture,
   Sparkle,
   AlignVerticalJustifyCenter,
+  PartyPopper,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -747,7 +751,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(204, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(207, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1359,6 +1363,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="verticalstack" title="Texto Vertical" className="px-0.5">
                 <AlignVerticalJustifyCenter className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="confettiburst" title="Explosão de Confete" className="px-0.5">
+                <PartyPopper className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="isoextrude" title="Extrusão Isométrica" className="px-0.5">
+                <BoxSelect className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="embossengrave" title="Relevo / Gravado" className="px-0.5">
+                <Hash className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2470,6 +2483,21 @@ export default function EditorPage() {
             <TabsContent value="verticalstack" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextVerticalStackPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="confettiburst" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasConfettiBurstPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="isoextrude" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectIsoExtrudePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="embossengrave" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextEmbossEngravePanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
