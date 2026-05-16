@@ -264,6 +264,9 @@ import { TextStrokePatternPanel } from "@/components/editor/text-stroke-pattern-
 import { ObjectArrangeDistributePanel } from "@/components/editor/object-arrange-distribute-panel";
 import { CanvasSnowfallRainPanel } from "@/components/editor/canvas-snowfall-rain-panel";
 import { TextBalloonCalloutPanel } from "@/components/editor/text-balloon-callout-panel";
+import { ObjectColorSwatchPanel } from "@/components/editor/object-color-swatch-panel";
+import { CanvasEmojiRainPanel } from "@/components/editor/canvas-emoji-rain-panel";
+import { TextCurveArcAdvancedPanel } from "@/components/editor/text-curve-arc-advanced-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -764,7 +767,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(219, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(222, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1421,6 +1424,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="balloncallout" title="Callout & Balão" className="px-0.5">
                 <MessageCircle className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="colorswatch" title="Paleta Rápida" className="px-0.5">
+                <Palette className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="emojirain" title="Chuva de Emojis" className="px-0.5">
+                <Smile className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="curvearcadv" title="Texto em Arco" className="px-0.5">
+                <Spline className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2607,6 +2619,21 @@ export default function EditorPage() {
             <TabsContent value="balloncallout" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextBalloonCalloutPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="colorswatch" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectColorSwatchPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="emojirain" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasEmojiRainPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="curvearcadv" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextCurveArcAdvancedPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
