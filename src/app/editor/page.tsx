@@ -246,6 +246,9 @@ import { ObjectStackGridPanel } from "@/components/editor/object-stack-grid-pane
 import { TextWrapShapePanel } from "@/components/editor/text-wrap-shape-panel";
 import { CanvasVignettePanel } from "@/components/editor/canvas-vignette-panel";
 import { ObjectEaselStandPanel } from "@/components/editor/object-easel-stand-panel";
+import { CanvasLensFlarePanel } from "@/components/editor/canvas-lens-flare-panel";
+import { ObjectCornerTabsPanel } from "@/components/editor/object-corner-tabs-panel";
+import { TextVerticalStackPanel } from "@/components/editor/text-vertical-stack-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -384,6 +387,8 @@ import {
   Box,
   FileStack,
   Aperture,
+  Sparkle,
+  AlignVerticalJustifyCenter,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -742,7 +747,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(201, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(204, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1345,6 +1350,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="easelstand" title="Suporte / Pedestal" className="px-0.5">
                 <Gem className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="lensflare" title="Lens Flare" className="px-0.5">
+                <Sparkle className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="cornertabs" title="Etiquetas de Canto" className="px-0.5">
+                <Tag className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="verticalstack" title="Texto Vertical" className="px-0.5">
+                <AlignVerticalJustifyCenter className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2441,6 +2455,21 @@ export default function EditorPage() {
             <TabsContent value="easelstand" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <ObjectEaselStandPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="lensflare" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasLensFlarePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="cornertabs" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectCornerTabsPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="verticalstack" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextVerticalStackPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
