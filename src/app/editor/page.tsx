@@ -252,6 +252,9 @@ import { TextVerticalStackPanel } from "@/components/editor/text-vertical-stack-
 import { CanvasConfettiBurstPanel } from "@/components/editor/canvas-confetti-burst-panel";
 import { ObjectIsoExtrudePanel } from "@/components/editor/object-iso-extrude-panel";
 import { TextEmbossEngravePanel } from "@/components/editor/text-emboss-engrave-panel";
+import { CanvasOverlayTextBannerPanel } from "@/components/editor/canvas-overlay-text-banner-panel";
+import { ObjectCutoutShadowPanel } from "@/components/editor/object-cutout-shadow-panel";
+import { TextHighlightMarkerPanel } from "@/components/editor/text-highlight-marker-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -751,7 +754,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(207, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(210, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1372,6 +1375,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="embossengrave" title="Relevo / Gravado" className="px-0.5">
                 <Hash className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="overlaybanner" title="Banner Sobreposto" className="px-0.5">
+                <Tag className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="cutoutshadow" title="Sombra de Recorte" className="px-0.5">
+                <Scissors className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="highlightmarker" title="Marca-texto" className="px-0.5">
+                <Highlighter className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2498,6 +2510,21 @@ export default function EditorPage() {
             <TabsContent value="embossengrave" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <TextEmbossEngravePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="overlaybanner" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasOverlayTextBannerPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="cutoutshadow" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <ObjectCutoutShadowPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="highlightmarker" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextHighlightMarkerPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
