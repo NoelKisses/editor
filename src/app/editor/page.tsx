@@ -228,6 +228,9 @@ import { CanvasArtboardPanel } from "@/components/editor/canvas-artboard-panel";
 import { CanvasRulerSnapPanel } from "@/components/editor/canvas-ruler-snap-panel";
 import { TextBubbleCaptionPanel } from "@/components/editor/text-bubble-caption-panel";
 import { CanvasFrameMockupPanel } from "@/components/editor/canvas-frame-mockup-panel";
+import { Object3DExtrudePanel } from "@/components/editor/object-3d-extrude-panel";
+import { CanvasQuickActionsBarPanel } from "@/components/editor/canvas-quick-actions-bar-panel";
+import { TextComicEffectPanel } from "@/components/editor/text-comic-effect-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
@@ -363,6 +366,7 @@ import {
   Bookmark,
   Eye,
   Pencil,
+  Box,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -721,7 +725,7 @@ export default function EditorPage() {
         {/* Right sidebar */}
         <aside className={`w-64 flex-shrink-0 border-l border-border bg-card/30 flex flex-col overflow-hidden transition-all duration-300 ${focusMode ? "hidden" : ""}`}>
           <Tabs defaultValue="properties" className="flex flex-col flex-1 overflow-hidden">
-            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(183, minmax(0, 1fr))" }}>
+            <TabsList className="grid m-2 flex-shrink-0 h-8" style={{ gridTemplateColumns: "repeat(186, minmax(0, 1fr))" }}>
               <TabsTrigger value="properties" title="Propriedades" className="px-0.5">
                 <SlidersHorizontal className="w-3 h-3" />
               </TabsTrigger>
@@ -1270,6 +1274,15 @@ export default function EditorPage() {
               </TabsTrigger>
               <TabsTrigger value="framemockup" title="Frame & Moldura" className="px-0.5">
                 <Frame className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="extrude3d" title="Extrusão 3D" className="px-0.5">
+                <Box className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="quickactionsbar" title="Ações Rápidas" className="px-0.5">
+                <Zap className="w-3 h-3" />
+              </TabsTrigger>
+              <TabsTrigger value="comiceffect" title="Efeito Cômico" className="px-0.5">
+                <Sparkles className="w-3 h-3" />
               </TabsTrigger>
             </TabsList>
 
@@ -2276,6 +2289,21 @@ export default function EditorPage() {
             <TabsContent value="framemockup" className="flex-1 overflow-hidden m-0">
               <ScrollArea className="h-full">
                 <CanvasFrameMockupPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="extrude3d" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <Object3DExtrudePanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="quickactionsbar" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <CanvasQuickActionsBarPanel fabricCanvas={fabricCanvas} />
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="comiceffect" className="flex-1 overflow-hidden m-0">
+              <ScrollArea className="h-full">
+                <TextComicEffectPanel fabricCanvas={fabricCanvas} />
               </ScrollArea>
             </TabsContent>
           </Tabs>
